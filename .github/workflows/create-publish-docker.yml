@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     permissions:                       # for `GITHUB_TOKEN`
-      content: read
+      contents: read
       packages: write
 
     
