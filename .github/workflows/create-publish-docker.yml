@@ -4,3 +4,7 @@ on:
   push:
     tags:
       - "*"
+
+env:
+  DOCKER_REGISTRY: ghcr.io             # where to register the image
+  IMAGE_NAME: ${{ github.repository }} # name of the image TODO: change this!
