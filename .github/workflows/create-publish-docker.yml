@@ -2,8 +2,11 @@ name: Create Docker image and publish to GH Packages
 
 on:
   push:
+    branches:
+      - "main"                         # only run on the main branch
+      - "1-setting-up-pipeline-to-push-a-container-to-registry"
     tags:
-      - "*"
+      - "*"                            # only when a new tag is pushed ("v*"?)
 
 env:
   DOCKER_REGISTRY: ghcr.io             # where to register the image
@@ -29,3 +32,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract tags and labels
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY}}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/test/
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
