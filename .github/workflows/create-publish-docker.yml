@@ -35,10 +35,7 @@ jobs:
           # TODO: set a proper name of the image (same as in context below)
           images: ${{ env.DOCKER_REGISTRY}}/${{ env.IMAGE_PATH }}/test
           tags: |                     # set Docker tags to git tags
-            type=ref,event=branch
-            type=ref,event=pr
             type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
 
       - name: Build and push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
