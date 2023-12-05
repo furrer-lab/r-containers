@@ -2,9 +2,6 @@ name: Create Docker image and publish to GH Packages
 
 on:
   push:
-    branches:
-      - "main"                         # only run on the main branch
-      - "1-setting-up-pipeline-to-push-a-container-to-registry"
     tags:
       - "*"                            # only when a new tag is pushed ("v*"?)
 
@@ -20,6 +17,7 @@ jobs:
       contents: read
       packages: write
 
+    if: github.ref == 'refs/heads/main' # only run on main
     
     steps:
       - name: Checkout
