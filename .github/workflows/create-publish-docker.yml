@@ -8,3 +8,24 @@ on:
 env:
   DOCKER_REGISTRY: ghcr.io             # where to register the image
   IMAGE_NAME: ${{ github.repository }} # name of the image TODO: change this!
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-22.04
+
+    permissions:                       # for `GITHUB_TOKEN`
+      content: read
+      packages: write
+
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to the registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
