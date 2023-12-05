@@ -1,0 +1,6 @@
+name: Create Docker image and publish to GH Packages
+
+on:
+  push:
+    tags:
+      - "*"
