@@ -9,7 +9,7 @@ env:
   DOCKER_REGISTRY: ghcr.io             # where to register the image
   OS_NAME: debian
   COMPILER: clang
-  R_VERSION: r-devel
+  R_VERSION: R-devel
 
 jobs:
   build-and-push:
@@ -46,3 +46,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: 'FLAVOUR=${{ env.R_VERSION }}'
