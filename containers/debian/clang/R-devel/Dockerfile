@@ -27,4 +27,8 @@ RUN R -e "install.packages('devtools')" \
 RUN apt-get update && apt-get install -y --no-install-recommends \
       libgsl-dev
       libnlopt-dev
-RUN R -e "install.packages('lme4')" \
+RUN R -e "install.packages('lme4')"
+# rjags:
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      jags
+RUN R -e "install.packages('rjags')"
