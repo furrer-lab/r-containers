@@ -35,3 +35,6 @@ RUN R -e "install.packages('rjags')"
 # Graphviz
 RUN R -e "install.packages('BiocManager')" \
  && R -e "BiocManager::install('Rgraphviz')"
+# INLA
+RUN R -e "install.packages('fmesher')" \
+ && R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
