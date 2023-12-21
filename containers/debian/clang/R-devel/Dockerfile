@@ -38,7 +38,12 @@ RUN R -e "install.packages('BiocManager')" \
 # INLA
 # - sf
 RUN apt-get -y update && apt-get install -y \
-  libudunits2-dev libgdal-dev libgeos-dev libproj-dev
+  libudunits2-dev libgdal-dev libgeos-dev libproj-dev \
+RUN R -e "install.packages('sf')"
+# - gsl
+RUN apt-get -y update && apt-get install -y \
+  libgsl-dev
+RUN R -e "install.packages('gsl')"
 # - fmesher
 RUN apt-get update && apt-get install -y --no-install-recommends \
       libudunits2-dev
