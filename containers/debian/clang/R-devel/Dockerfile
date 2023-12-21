@@ -25,10 +25,13 @@ RUN R -e "install.packages('devtools')" \
 # Install dependencies not managed by CRAN
 # lme4:
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      libgsl-dev
+      libgsl-dev \
       libnlopt-dev
 RUN R -e "install.packages('lme4')"
 # rjags:
 RUN apt-get update && apt-get install -y --no-install-recommends \
       jags
 RUN R -e "install.packages('rjags')"
+# Graphviz
+RUN R -e "install.packages('BiocManager')" \
+ && R -e "BiocManager::install('Rgraphviz')"
