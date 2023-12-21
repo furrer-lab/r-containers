@@ -36,5 +36,12 @@ RUN R -e "install.packages('rjags')"
 RUN R -e "install.packages('BiocManager')" \
  && R -e "BiocManager::install('Rgraphviz')"
 # INLA
-RUN R -e "install.packages('fmesher')" \
- && R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
+# - sf
+RUN apt-get -y update && apt-get install -y \
+  libudunits2-dev libgdal-dev libgeos-dev libproj-dev
+# - fmesher
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libudunits2-dev
+RUN R -e "install.packages('fmesher')"
+# - INLA
+RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
