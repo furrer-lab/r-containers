@@ -12,12 +12,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # add R to PATH
 ENV PATH="/opt/$FLAVOUR/bin:${PATH}"
+
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
 RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
     >> /opt/$FLAVOUR/lib/R/library/base/R/Rprofile
 
-
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
  && R -e "install.packages('remotes')"
+
+# Install dependencies not managed by CRAN
+# lme4:
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libgsl-dev
+      libnlopt-dev
+RUN R -e "install.packages('lme4')" \
