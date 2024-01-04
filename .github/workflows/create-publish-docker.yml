@@ -52,3 +52,4 @@ jobs:
             FLAVOUR=${{ env.R_VERSION }}
             REPO_PATH=${{ env.REPO_PATH }}
             REPO_NAME=${{ env.REPO_NAME }}
+            ACC_TOKEN=${{ secrets.GITHUB_TOKEN }}

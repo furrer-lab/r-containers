@@ -4,6 +4,7 @@ FROM rhub/debian-clang-devel
 ARG FLAVOUR
 ARG REPO_PATH
 ARG REPO_NAME
+ARG ACC_TOKEN
 # # sets the date for the CRAN snapshot (e.g. BUILD_DATE=2023-12-20)
 # ARG BUILD_DATE
 
@@ -28,7 +29,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       jags \
       git \
       openssh-client
-RUN git clone --depth=1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@$REPO_PATH target
+RUN git clone --depth=1 https://x-access-token:$ACC_TOKEN@$REPO_PATH target
 RUN cd target
 # get a list of all dependencies; install remaining packages
 # RUN R -e 'install.packages(unique(renv::dependencies($REPO_NAME)$Package))' 
