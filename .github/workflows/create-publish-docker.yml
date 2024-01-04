@@ -61,4 +61,4 @@ jobs:
             REPO_PATH=${{ env.REPO_PATH }}
             REPO_NAME=${{ env.REPO_NAME }}
           secret-files: |
-            ssh_key=./ssh_key
+            key=./ssh_key
