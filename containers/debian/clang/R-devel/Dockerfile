@@ -20,30 +20,10 @@ ENV PATH="/opt/$FLAVOUR/bin:${PATH}"
 RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
     >> /opt/$FLAVOUR/lib/R/library/base/R/Rprofile
 
-###
-# install all abn dependencies
-###
-# get a shallow copy of the target repository
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      jags \
-      git \
-      openssh-client
-#RUN echo $SSH_PRIV_KEY >> /root/ssh_key
-#RUN chmod 600 /root/ssh_key
-#RUN echo "IdentityFile /root/ssh_key" >> /etc/ssh/ssh_config
-#RUN echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-WORKDIR /root/
-RUN --mount=type=secret,id=key,dst=/root/.ssh/key GIT_SSH_COMMAND="ssh -i /root/.ssh/key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone --depth=1 git@$REPO_PATH target
-WORKDIR target/
-# get a list of all dependencies; install remaining packages
-# NOTE: abn is hardcoded here
-RUN R -e "install.packages('renv')" 
-RUN R -e "list.files()"
-RUN R -e 'pckgs<-unique(renv::dependencies("abn")$Package);pres_pckgs<-installed.packages()[,"Package"];install.packages(pckgs[!(pckgs %in% pres_pckgs)])'
-
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
  && R -e "install.packages('remotes')"
+ && R -e "install.packages('renv')"
 
 # Install dependencies not managed by CRAN
 # lme4:
@@ -77,3 +57,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # - INLA
 RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
 
+###
+# install all abn dependencies
+###
+WORKDIR /root/
+# get a shallow copy of the target repository
+RUN --mount=type=secret,id=key,dst=/root/.ssh/key GIT_SSH_COMMAND="ssh -i /root/.ssh/key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone --depth=1 git@$REPO_PATH target
+WORKDIR target/
+# get a list of all dependencies; install remaining packages
+# NOTE: abn is hardcoded here
+RUN R -e 'pckgs<-unique(renv::dependencies("abn")$Package);pres_pckgs<-installed.packages()[,"Package"];install.packages(pckgs[!(pckgs %in% pres_pckgs)])'
