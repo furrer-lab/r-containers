@@ -32,8 +32,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 #RUN chmod 600 /root/ssh_key
 #RUN echo "IdentityFile /root/ssh_key" >> /etc/ssh/ssh_config
 #RUN echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+WORKDIR /root/
 RUN --mount=type=secret,id=key,dst=/root/.ssh/key GIT_SSH_COMMAND="ssh -i /root/.ssh/key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone --depth=1 git@$REPO_PATH target
-RUN cd target
+WORKDIR target/
 # get a list of all dependencies; install remaining packages
 # NOTE: abn is hardcoded here
 RUN R -e "install.packages('renv')" 
