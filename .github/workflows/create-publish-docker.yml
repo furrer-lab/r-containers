@@ -11,7 +11,7 @@ env:
   COMPILER: clang
   R_VERSION: R-devel
   REPO_PATH: github.com:furrer-lab/devel-abn.git
-  REPO_NAkE: abn
+  REPO_NAME: abn
 
 jobs:
   build-and-push:
