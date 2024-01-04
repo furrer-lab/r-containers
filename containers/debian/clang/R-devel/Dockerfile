@@ -39,7 +39,7 @@ WORKDIR target/
 # NOTE: abn is hardcoded here
 RUN R -e "install.packages('renv')" 
 RUN R -e "list.files()"
-RUN R -e 'pckgs<-unique(renv::dependencies("abn")$Package);pres_pckgs<-installed.packages()[,"Package"];install.packages(pckgs$Package[!(pckgs$Package %in% pres_pckgs)])'
+RUN R -e 'pckgs<-unique(renv::dependencies("abn")$Package);pres_pckgs<-installed.packages()[,"Package"];install.packages(pckgs[!(pckgs %in% pres_pckgs)])'
 
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
