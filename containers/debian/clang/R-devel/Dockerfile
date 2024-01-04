@@ -22,7 +22,7 @@ RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
 
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
- && R -e "install.packages('remotes')"
+ && R -e "install.packages('remotes')" \
  && R -e "install.packages('renv')"
 
 # Install dependencies not managed by CRAN
