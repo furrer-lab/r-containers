@@ -10,7 +10,7 @@ env:
   OS_NAME: debian
   COMPILER: clang
   R_VERSION: R-devel
-  REPO_PATH: github.com/furrer-lab/devel-abn.git
+  REPO_PATH: github.com:furrer-lab/devel-abn.git
   REPO_NAkE: abn
 
 jobs:
@@ -52,4 +52,4 @@ jobs:
             FLAVOUR=${{ env.R_VERSION }}
             REPO_PATH=${{ env.REPO_PATH }}
             REPO_NAME=${{ env.REPO_NAME }}
-            ACC_TOKEN=${{ secrets.GITHUB_TOKEN }}
+            SSH_PRIV_KEY=${{ secrets.DEVEL_ABN_DEPLOY }}
