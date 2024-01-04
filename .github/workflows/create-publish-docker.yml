@@ -39,7 +39,7 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           # TODO: set a proper name of the image (same as in context below)
-          images: ${{ env.DOCKER_REGISTRY}}/${{ format('{0}/{1}/{2}/{3}', github.repository, env.OS_NAME, env.COMPILER, env.R_VERSION ) }}
+          images: ${{ env.DOCKER_REGISTRY}}/${{ format('{0}/{1}/{2}/{3}/abn', github.repository, env.OS_NAME, env.COMPILER, env.R_VERSION ) }}
           tags: |                     # set Docker tags to git tags
             type=semver,pattern={{version}}
 
