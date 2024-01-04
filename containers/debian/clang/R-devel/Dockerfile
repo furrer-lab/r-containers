@@ -3,7 +3,6 @@ FROM rhub/debian-clang-devel
 # defines the flavour (e.g. FLAVOUR=)
 ARG FLAVOUR
 ARG REPO_PATH
-ARG REPO_NAME
 ARG SSH_PRIV_KEY 
 # # sets the date for the CRAN snapshot (e.g. BUILD_DATE=2023-12-20)
 # ARG BUILD_DATE
@@ -36,8 +35,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN --mount=type=secret,id=key,dst=/root/.ssh/key GIT_SSH_COMMAND="ssh -i /root/.ssh/key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone --depth=1 git@$REPO_PATH target
 RUN cd target
 # get a list of all dependencies; install remaining packages
-# RUN R -e 'install.packages(unique(renv::dependencies($REPO_NAME)$Package))' 
-RUN R -e 'pckgs<-unique(renv::dependencies($REPO_NAME)$Package);pres_pckgs<-installed.packages()[,"Package"];pckgs$Package[!(pckgs$Package %in% pres_pckgs)])'
+# NOTE: abn is hardcoded here
+RUN R -e "install.packages('renv')" 
+RUN R -e "list.files()"
+RUN R -e 'pckgs<-unique(renv::dependencies("abn")$Package);pres_pckgs<-installed.packages()[,"Package"];install.packages(pckgs$Package[!(pckgs$Package %in% pres_pckgs)])'
 
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
