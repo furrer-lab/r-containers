@@ -9,8 +9,8 @@ ARG SSH_PRIV_KEY
 
 # Update package repositories
 RUN dnf check-update && dnf -y install \
-  libssl-dev \
-  libcurl4-openssl-dev
+  openssl-devel \
+  libcurl-devel
 
 # add R to PATH
 ENV PATH="/opt/$FLAVOUR/bin:${PATH}"
@@ -23,6 +23,7 @@ RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
  && R -e "install.packages('remotes')" \
+ && R -e "install.packages('R.rsp')" \ 
  && R -e "install.packages('renv')"
 
 # Install dependencies not managed by CRAN
