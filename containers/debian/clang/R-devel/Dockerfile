@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       jags \
       git \
       openssh-client
-RUN git clone --depth=1 https:///$GIT_TOKEN:$REPO_PATH target
+RUN git clone --depth=1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@$REPO_PATH target
 RUN cd target
 # get a list of all dependencies; install remaining packages
 # RUN R -e 'install.packages(unique(renv::dependencies($REPO_NAME)$Package))' 
