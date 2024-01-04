@@ -10,6 +10,8 @@ env:
   OS_NAME: debian
   COMPILER: clang
   R_VERSION: R-devel
+  REPO_PATH: github.com/furrer-lab/devel-abn.git
+  REPO_NAME: abn
 
 jobs:
   build-and-push:
@@ -46,4 +48,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: 'FLAVOUR=${{ env.R_VERSION }}'
+          build-args: 'FLAVOUR=${{ env.R_VERSION }},REPOSITORY=${{ env.REPOSITORY }},REPO_PATH=${{ env.REPO_PATH }},REPO_NAME=${{ env.REPO_NAME }}'

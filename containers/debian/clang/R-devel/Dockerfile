@@ -2,6 +2,8 @@ FROM rhub/debian-clang-devel
 
 # defines the flavour (e.g. FLAVOUR=)
 ARG FLAVOUR
+ARG REPO_PATH
+ARG REPO_NAME
 # # sets the date for the CRAN snapshot (e.g. BUILD_DATE=2023-12-20)
 # ARG BUILD_DATE
 
@@ -18,6 +20,20 @@ ENV PATH="/opt/$FLAVOUR/bin:${PATH}"
 RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
     >> /opt/$FLAVOUR/lib/R/library/base/R/Rprofile
 
+###
+# install all abn dependencies
+###
+# get a shallow copy of the target repository
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      jags \
+      git \
+      openssh-client
+RUN git clone --depth=1 https:///$GIT_TOKEN:$REPO_PATH target
+RUN cd target
+# get a list of all dependencies; install remaining packages
+# RUN R -e 'install.packages(unique(renv::dependencies($REPO_NAME)$Package))' 
+RUN R -e 'pckgs<-unique(renv::dependencies($REPO_NAME)$Package);pres_pckgs<-installed.packages()[,"Package"];pckgs$Package[!(pckgs$Package %in% pres_pckgs)])'
+
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
  && R -e "install.packages('remotes')"
@@ -30,7 +46,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # RUN R -e "install.packages('lme4')"
 # rjags:
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      jags
+      jags \
+      git \
+      openssh-client
+
 # RUN R -e "install.packages('rjags')"
 # Graphviz
 RUN R -e "install.packages('BiocManager')" \
@@ -50,3 +69,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # RUN R -e "install.packages('fmesher')"
 # - INLA
 RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
+
