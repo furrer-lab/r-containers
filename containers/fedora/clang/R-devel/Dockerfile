@@ -17,8 +17,9 @@ ENV PATH="/opt/$FLAVOUR/bin:${PATH}"
 
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
+# diff to debian: /lib/ > /lib64/
 RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
-    >> /opt/$FLAVOUR/lib/R/library/base/R/Rprofile
+    >> /opt/$FLAVOUR/lib64/R/library/base/R/Rprofile
 
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
