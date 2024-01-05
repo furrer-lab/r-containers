@@ -29,13 +29,13 @@ RUN R -e "install.packages('devtools')" \
 
 # Install dependencies not managed by CRAN
 # lme4:
-RUN dnf -y \
+RUN dnf -y install \
       gsl-devel \
       NLopt-devel
 # RUN R -e "install.packages('lme4')"
 # rjags:
 
-RUN dnf -y \
+RUN dnf -y install \
       jags \
       openssh-client
 
@@ -45,7 +45,7 @@ RUN R -e "install.packages('BiocManager')" \
  && R -e "BiocManager::install('Rgraphviz')"
 # INLA
 # - sf
-RUN dnf -y \
+RUN dnf -y install \
   udunits2-devel gdal-devel geos-devel proj-devel
 # RUN R -e "install.packages('sf')"
 # - gsl
@@ -53,7 +53,7 @@ RUN dnf -y \
 #   gsl-devel
 # RUN R -e "install.packages('gsl')"
 # - fmesher
-RUN dnf -y \
+RUN dnf -y intall \
       udunits2-devel 
 # RUN R -e "install.packages('fmesher')"
 # - INLA
@@ -62,7 +62,7 @@ RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.
 ###
 # install all abn dependencies
 ###
-RUN dnf -y \
+RUN dnf -y install \
       git \
       openssh-client
 WORKDIR /root/
