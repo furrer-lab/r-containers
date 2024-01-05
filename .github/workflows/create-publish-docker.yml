@@ -7,7 +7,7 @@ on:
 
 env:
   DOCKER_REGISTRY: ghcr.io             # where to register the image
-  OS_NAME: fedora
+  OS_NAME: fedora  # debian
   COMPILER: clang
   R_VERSION: R-devel
   REPO_PATH: github.com:furrer-lab/devel-abn.git
