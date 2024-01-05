@@ -30,13 +30,13 @@ RUN R -e "install.packages('devtools')" \
 # Install dependencies not managed by CRAN
 # lme4:
 RUN dnf -y \
-      libgsl-dev \
-      libnlopt-dev
+      gsl-devel \
+      NLopt-devel
 # RUN R -e "install.packages('lme4')"
 # rjags:
+
 RUN dnf -y \
       jags \
-      git \
       openssh-client
 
 # RUN R -e "install.packages('rjags')"
@@ -46,15 +46,15 @@ RUN R -e "install.packages('BiocManager')" \
 # INLA
 # - sf
 RUN dnf -y \
-  libudunits2-dev libgdal-dev libgeos-dev libproj-dev
+  udunits2-devel gdal-devel geos-devel proj-devel
 # RUN R -e "install.packages('sf')"
 # - gsl
-RUN dnf -y \
-  libgsl-dev
+# RUN dnf -y \
+#   gsl-devel
 # RUN R -e "install.packages('gsl')"
 # - fmesher
 RUN dnf -y \
-      libudunits2-dev
+      udunits2-devel 
 # RUN R -e "install.packages('fmesher')"
 # - INLA
 RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
@@ -62,6 +62,9 @@ RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.
 ###
 # install all abn dependencies
 ###
+RUN dnf -y \
+      git \
+      openssh-client
 WORKDIR /root/
 # get a shallow copy of the target repository
 RUN --mount=type=secret,id=key,dst=/root/.ssh/key GIT_SSH_COMMAND="ssh -i /root/.ssh/key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone --depth=1 git@$REPO_PATH target
