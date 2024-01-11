@@ -32,6 +32,7 @@ RUN R -e "install.packages('devtools')" \
 # lme4:
 RUN dnf -y install \
       gsl-devel \
+      sqlite-devel \
       NLopt-devel
 # RUN R -e "install.packages('lme4')"
 
