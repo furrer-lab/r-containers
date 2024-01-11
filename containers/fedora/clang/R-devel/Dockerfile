@@ -69,7 +69,7 @@ RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.
 ###
 RUN dnf -y install \
       git \
-      openssh-client
+      openssh-clients
 WORKDIR /root/
 # get a shallow copy of the target repository
 RUN --mount=type=secret,id=key,dst=/root/.ssh/key GIT_SSH_COMMAND="ssh -i /root/.ssh/key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone --depth=1 git@$REPO_PATH target
