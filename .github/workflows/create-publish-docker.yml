@@ -11,6 +11,7 @@ env:
   COMPILER: clang
   R_VERSION: R-devel
   REPO_PATH: github.com:furrer-lab/devel-abn.git
+  JAGS: JAGS-4.3.2
 
 jobs:
   build-and-push:
@@ -58,5 +59,6 @@ jobs:
           build-args: |
             FLAVOUR=${{ env.R_VERSION }}
             REPO_PATH=${{ env.REPO_PATH }}
+            JAGS=${{ env.JAGS}}
           secret-files: |
             key=./ssh_key

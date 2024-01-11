@@ -4,6 +4,7 @@ FROM rhub/fedora-clang-devel
 ARG FLAVOUR
 ARG REPO_PATH
 ARG SSH_PRIV_KEY 
+ARG JAGS
 # # sets the date for the CRAN snapshot (e.g. BUILD_DATE=2023-12-20)
 # ARG BUILD_DATE
 
@@ -33,13 +34,17 @@ RUN dnf -y install \
       gsl-devel \
       NLopt-devel
 # RUN R -e "install.packages('lme4')"
+
 # rjags:
-
 RUN dnf -y install \
-      jags \
-      openssh-client
-
+  lapack-devel
+ADD https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/$JAGS.tar.gz/download /tmp/jags.tar.gz
+WORKDIR /tmp/
+RUN tar -xf jags.tar.gz
+WORKDIR /tmp/$JAGS
+RUN ./configure && make && make install
 # RUN R -e "install.packages('rjags')"
+
 # Graphviz
 RUN R -e "install.packages('BiocManager')" \
  && R -e "BiocManager::install('Rgraphviz')"
