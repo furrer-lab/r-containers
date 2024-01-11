@@ -58,7 +58,7 @@ RUN dnf -y install \
 #   gsl-devel
 # RUN R -e "install.packages('gsl')"
 # - fmesher
-RUN dnf -y intall \
+RUN dnf -y install \
       udunits2-devel 
 # RUN R -e "install.packages('fmesher')"
 # - INLA
