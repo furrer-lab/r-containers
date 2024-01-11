@@ -44,7 +44,8 @@ WORKDIR /tmp/
 RUN tar -xf jags.tar.gz
 WORKDIR /tmp/$JAGS
 RUN ./configure && make && make install
-# RUN R -e "install.packages('rjags')"
+ARG PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+RUN R -e "install.packages('rjags')"
 
 # Graphviz
 RUN R -e "install.packages('BiocManager')" \
