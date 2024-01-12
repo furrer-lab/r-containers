@@ -21,6 +21,7 @@ ENV PATH="/opt/$FLAVOUR/bin:${PATH}"
 # diff to debian: /lib/ > /lib64/
 RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
     >> /opt/$FLAVOUR/lib64/R/library/base/R/Rprofile
+
 # rjags:
 RUN dnf -y install \
   lapack* blas* atlas* 
@@ -29,12 +30,9 @@ WORKDIR /tmp/
 RUN ls /tmp/
 RUN tar -xf jags.tar.gz
 WORKDIR /tmp/$JAGS
-RUN LD="llvm-ld" CC="clang" CXX="clang++" ./configure && make && make install
-# RUN LD="llvm-ld" CC="clang" CXX="clang++" ./configure --libdir=/usr/local/lib64 && make && make install
-RUN ls /tmp/$JAGS
+RUN LD="llvm-ld" CC="clang" CXX="clang++" ./configure --libdir=/usr/local/lib64 && make && make install
 # ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 RUN R -e "install.packages('rjags', configure.args = '--enable-rpath')"
-
 
 # # Get and install packages for local debugging
 # RUN R -e "install.packages('devtools')" \
@@ -58,7 +56,7 @@ RUN R -e "install.packages('rjags', configure.args = '--enable-rpath')"
 # RUN ls /tmp/
 # RUN tar -xf jags.tar.gz
 # WORKDIR /tmp/$JAGS
-# RUN LD="llvm-ld" CC="clang" CXX="clang++" ./configure && make && make install
+# RUN LD="llvm-ld" CC="clang" CXX="clang++" ./configure --libdir=/usr/local/lib64 && make && make install
 # RUN ls /tmp/$JAGS
 # # ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 # RUN R -e "install.packages('rjags', configure.args = '--enable-rpath')"
