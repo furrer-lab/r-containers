@@ -22,6 +22,20 @@ ENV PATH="/opt/$FLAVOUR/bin:${PATH}"
 RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
     >> /opt/$FLAVOUR/lib64/R/library/base/R/Rprofile
 
+# Get and install packages for local debugging
+RUN R -e "install.packages('devtools')" \
+ && R -e "install.packages('remotes')" \
+ && R -e "install.packages('R.rsp')" \
+ && R -e "install.packages('renv')"
+
+# Install dependencies not managed by CRAN
+# lme4:
+RUN dnf -y install \
+      gsl-devel \
+      sqlite-devel \
+      NLopt-devel
+# RUN R -e "install.packages('lme4')"
+
 # rjags:
 RUN dnf -y install \
   lapack* blas* atlas* 
@@ -31,65 +45,39 @@ RUN ls /tmp/
 RUN tar -xf jags.tar.gz
 WORKDIR /tmp/$JAGS
 RUN LD="llvm-ld" CC="clang" CXX="clang++" ./configure --libdir=/usr/local/lib64 && make && make install
+RUN ls /tmp/$JAGS
 # ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 RUN R -e "install.packages('rjags', configure.args = '--enable-rpath')"
 
-# # Get and install packages for local debugging
-# RUN R -e "install.packages('devtools')" \
-#  && R -e "install.packages('remotes')" \
-#  && R -e "install.packages('R.rsp')" \
-#  && R -e "install.packages('renv')"
-# 
-# # Install dependencies not managed by CRAN
-# # lme4:
-# RUN dnf -y install \
-#       gsl-devel \
-#       sqlite-devel \
-#       NLopt-devel
-# # RUN R -e "install.packages('lme4')"
-# 
-# # rjags:
-# RUN dnf -y install \
-#   lapack* blas* atlas* 
-# ADD https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/$JAGS.tar.gz/download /tmp/jags.tar.gz
-# WORKDIR /tmp/
-# RUN ls /tmp/
-# RUN tar -xf jags.tar.gz
-# WORKDIR /tmp/$JAGS
-# RUN LD="llvm-ld" CC="clang" CXX="clang++" ./configure --libdir=/usr/local/lib64 && make && make install
-# RUN ls /tmp/$JAGS
-# # ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
-# RUN R -e "install.packages('rjags', configure.args = '--enable-rpath')"
-# 
-# # Graphviz
-# RUN R -e "install.packages('BiocManager')" \
-#  && R -e "BiocManager::install('Rgraphviz')"
-# # INLA
-# # - sf
-# RUN dnf -y install \
-#   udunits2-devel gdal-devel geos-devel proj-devel
-# # RUN R -e "install.packages('sf')"
-# # - gsl
-# # RUN dnf -y \
-# #   gsl-devel
-# # RUN R -e "install.packages('gsl')"
-# # - fmesher
-# RUN dnf -y install \
-#       udunits2-devel
-# # RUN R -e "install.packages('fmesher')"
-# # - INLA
-# RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
-# 
-# ###
-# # install all abn dependencies
-# ###
-# RUN dnf -y install \
-#       git \
-#       openssh-clients
-# WORKDIR /root/
-# # get a shallow copy of the target repository
-# RUN --mount=type=secret,id=key,dst=/root/.ssh/key GIT_SSH_COMMAND="ssh -i /root/.ssh/key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone --depth=1 git@$REPO_PATH target
-# WORKDIR target/
-# # get a list of all dependencies; install remaining packages
-# # NOTE: abn is hardcoded here
-# RUN R -e 'pckgs<-unique(renv::dependencies("abn")$Package);pres_pckgs<-installed.packages()[,"Package"];install.packages(pckgs[!(pckgs %in% pres_pckgs)])'
+# Graphviz
+RUN R -e "install.packages('BiocManager')" \
+ && R -e "BiocManager::install('Rgraphviz')"
+# INLA
+# - sf
+RUN dnf -y install \
+  udunits2-devel gdal-devel geos-devel proj-devel
+# RUN R -e "install.packages('sf')"
+# - gsl
+# RUN dnf -y \
+#   gsl-devel
+# RUN R -e "install.packages('gsl')"
+# - fmesher
+RUN dnf -y install \
+      udunits2-devel
+# RUN R -e "install.packages('fmesher')"
+# - INLA
+RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
+
+###
+# install all abn dependencies
+###
+RUN dnf -y install \
+      git \
+      openssh-clients
+WORKDIR /root/
+# get a shallow copy of the target repository
+RUN --mount=type=secret,id=key,dst=/root/.ssh/key GIT_SSH_COMMAND="ssh -i /root/.ssh/key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone --depth=1 git@$REPO_PATH target
+WORKDIR target/
+# get a list of all dependencies; install remaining packages
+# NOTE: abn is hardcoded here
+RUN R -e 'pckgs<-unique(renv::dependencies("abn")$Package);pres_pckgs<-installed.packages()[,"Package"];install.packages(pckgs[!(pckgs %in% pres_pckgs)])'
