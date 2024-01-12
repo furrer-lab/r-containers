@@ -3,7 +3,7 @@ FROM rhub/fedora-clang-devel
 # defines the flavour (e.g. FLAVOUR=)
 ARG FLAVOUR
 ARG REPO_PATH
-ARG SSH_PRIV_KEY 
+ARG SSH_PRIV_KEY
 ARG JAGS
 # # sets the date for the CRAN snapshot (e.g. BUILD_DATE=2023-12-20)
 # ARG BUILD_DATE
@@ -25,7 +25,7 @@ RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
  && R -e "install.packages('remotes')" \
- && R -e "install.packages('R.rsp')" \ 
+ && R -e "install.packages('R.rsp')" \
  && R -e "install.packages('renv')"
 
 # Install dependencies not managed by CRAN
@@ -38,14 +38,16 @@ RUN dnf -y install \
 
 # rjags:
 RUN dnf -y install \
-  lapack-devel
+  lapack* blas* atlas* 
 ADD https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/$JAGS.tar.gz/download /tmp/jags.tar.gz
 WORKDIR /tmp/
+RUN ls /tmp/
 RUN tar -xf jags.tar.gz
 WORKDIR /tmp/$JAGS
 RUN ./configure && make && make install
-ARG PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
-RUN R -e "install.packages('rjags')"
+RUN ls /tmp/$JAGS
+# ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+RUN R -e "install.packages('rjags', configure.args = '--enable-rpath')"
 
 # Graphviz
 RUN R -e "install.packages('BiocManager')" \
@@ -61,7 +63,7 @@ RUN dnf -y install \
 # RUN R -e "install.packages('gsl')"
 # - fmesher
 RUN dnf -y install \
-      udunits2-devel 
+      udunits2-devel
 # RUN R -e "install.packages('fmesher')"
 # - INLA
 RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
