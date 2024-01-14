@@ -22,6 +22,21 @@ ENV PATH="/opt/$FLAVOUR/bin:${PATH}"
 RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
     >> /opt/$FLAVOUR/lib64/R/library/base/R/Rprofile
 
+# rjags:
+RUN dnf -y install \
+  lapack* blas* atlas* 
+ADD https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/$JAGS.tar.gz/download /tmp/jags.tar.gz
+WORKDIR /tmp/
+RUN ls /tmp/
+RUN tar -xf jags.tar.gz
+WORKDIR /tmp/$JAGS
+# RUN ./configure --libdir=/usr/local/lib64 && make && make install
+RUN LD="llvm-ld" CC="/usr/bin/clang" CXX="/usr/bin/clang++ -std=gnu++17 -stdlib=libc++" ./configure --with-blas="-L/opt/R-devel/lib64/R/lib -lRblas" --with-lapack="-L/opt/R-devel/lib64/R/lib -lRlapack" --libdir=/usr/local/lib64 && make && make install
+RUN ls /tmp/$JAGS
+# ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+# RUN R -e "install.packages('rjags')"
+RUN R -e "install.packages('rjags', configure.args = '--enable-rpath')"
+
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
  && R -e "install.packages('remotes')" \
@@ -35,19 +50,6 @@ RUN dnf -y install \
       sqlite-devel \
       NLopt-devel
 # RUN R -e "install.packages('lme4')"
-
-# rjags:
-RUN dnf -y install \
-  lapack* blas* atlas* 
-ADD https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/$JAGS.tar.gz/download /tmp/jags.tar.gz
-WORKDIR /tmp/
-RUN ls /tmp/
-RUN tar -xf jags.tar.gz
-WORKDIR /tmp/$JAGS
-RUN LD="llvm-ld" CC="clang" CXX="clang++" ./configure --libdir=/usr/local/lib64 && make && make install
-RUN ls /tmp/$JAGS
-# ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
-RUN R -e "install.packages('rjags', configure.args = '--enable-rpath')"
 
 # Graphviz
 RUN R -e "install.packages('BiocManager')" \
