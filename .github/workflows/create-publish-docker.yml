@@ -8,6 +8,7 @@ on:
 env:
   DOCKER_REGISTRY: ghcr.io             # where to register the image
   OS_NAME: fedora  # debian
+  PACKAGE: abn
   COMPILER: clang
   R_VERSION: R-devel
   REPO_PATH: github.com:furrer-lab/devel-abn.git
@@ -58,6 +59,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             FLAVOUR=${{ env.R_VERSION }}
+            PACKAGE=${{ env.PACKAGE }}
             REPO_PATH=${{ env.REPO_PATH }}
             JAGS=${{ env.JAGS}}
           secret-files: |
