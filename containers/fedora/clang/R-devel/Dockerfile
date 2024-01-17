@@ -30,7 +30,12 @@ WORKDIR /tmp/
 RUN ls /tmp/
 RUN tar -xf jags.tar.gz
 WORKDIR /tmp/$JAGS
-# RUN ./configure --libdir=/usr/local/lib64 && make && make install
+# Building JAGS requires the same environment that is then used to build rjags.
+# To achieve this we follow the approach for building JAGS with Clang outlined
+# in the JAGS installation guide
+# (https://usermanual.wiki/Document/jagsinstallationmanual.880863585.pdf)
+# and substitute the compilers with the specifics from the R installation that
+# we can get by using the `R CMD config CC/CXX/BLAS_LIBS/LAPACK_LIBS' commands:
 RUN LD="llvm-ld" CC="/usr/bin/clang" CXX="/usr/bin/clang++ -std=gnu++17 -stdlib=libc++" ./configure --with-blas="-L/opt/R-devel/lib64/R/lib -lRblas" --with-lapack="-L/opt/R-devel/lib64/R/lib -lRlapack" --libdir=/usr/local/lib64 && make && make install
 RUN ls /tmp/$JAGS
 # ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
