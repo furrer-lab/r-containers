@@ -2,6 +2,8 @@ FROM rhub/debian-clang-devel
 
 # defines the flavour (e.g. FLAVOUR=)
 ARG FLAVOUR
+# ARG PACKAGE
+ARG DESCRIPTION_FILE
 ARG REPO_PATH
 ARG SSH_PRIV_KEY 
 # # sets the date for the CRAN snapshot (e.g. BUILD_DATE=2023-12-20)
@@ -59,12 +61,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
 
 ###
-# install all abn dependencies
+# install all package dependencies
 ###
+RUN dnf -y install \
+      git \
+      openssh-clients
 WORKDIR /root/
 # get a shallow copy of the target repository
+# Note: If the repository is private you must use a deploy token here (ssh key) 
 RUN --mount=type=secret,id=key,dst=/root/.ssh/key GIT_SSH_COMMAND="ssh -i /root/.ssh/key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone --depth=1 git@$REPO_PATH target
 WORKDIR target/
 # get a list of all dependencies; install remaining packages
-# NOTE: abn is hardcoded here
-RUN R -e 'pckgs<-unique(renv::dependencies("abn")$Package);pres_pckgs<-installed.packages()[,"Package"];install.packages(pckgs[!(pckgs %in% pres_pckgs)])'
+RUN PACKAGE="$(cat $DESCRIPTION_FILE | grep -oP '(?<=Package:).*')" && R -e "pckgs<-unique(renv::dependencies('$PACKAGE')[,'Package']);pres_pckgs<-installed.packages()[,'Package'];install.packages(pckgs[!(pckgs %in% pres_pckgs)])"
