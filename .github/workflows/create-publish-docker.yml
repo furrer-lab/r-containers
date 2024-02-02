@@ -10,8 +10,6 @@ env:
   PACKAGE: abn
   REPO_PATH: github.com:furrer-lab/devel-abn.git
   JAGS: JAGS-4.3.2
-  OS_NAME: fedora
-  COMPILER: clang
   R_VERSION: R-devel
 
 jobs:
@@ -21,6 +19,12 @@ jobs:
     permissions:                       # for `GITHUB_TOKEN`
       contents: read
       packages: write
+
+    strategy:
+      matrix:
+        target-os: ['fedora', 'debian']
+        compiler: ['clang', ]  # , 'gcc']
+        r-version: ['R-devel', ]
     
     steps:
       - name: Checkout
@@ -41,7 +45,7 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           # TODO: set a proper name of the image (same as in context below)
-          images: ${{ env.DOCKER_REGISTRY}}/${{ format('{0}/{1}/{2}/{3}/abn', github.repository, env.OS_NAME, env.COMPILER, env.R_VERSION ) }}
+          images: ${{ env.DOCKER_REGISTRY}}/${{ format('{0}/{1}/{2}/{3}/abn', github.repository, matrix.target-os, matrix.compiler, matrix.r-version ) }}
           tags: |                     # set Docker tags to git tags
             type=semver,pattern={{version}}
 
@@ -53,12 +57,12 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
-          context: ${{ format('./containers/{0}/{1}/{2}/', env.OS_NAME, env.COMPILER, env.R_VERSION ) }}
+          context: ${{ format('./containers/{0}/{1}/{2}/', matrix.target-os, matrix.compiler, matrix.r-version ) }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            FLAVOUR=${{ env.R_VERSION }}
+            FLAVOUR=${{ matrix.r-version }}
             PACKAGE=${{ env.PACKAGE }}
             REPO_PATH=${{ env.REPO_PATH }}
             JAGS=${{ env.JAGS}}
