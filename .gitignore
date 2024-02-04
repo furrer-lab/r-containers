@@ -1,5 +1,7 @@
 # vim temp. files
 *.swp
+# R files
+.R*
 # renv files
 .Rprofile
 renv.lock

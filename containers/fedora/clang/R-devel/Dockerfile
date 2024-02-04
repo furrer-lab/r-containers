@@ -2,8 +2,8 @@ FROM rhub/fedora-clang-devel
 
 # defines the flavour (e.g. FLAVOUR=)
 ARG FLAVOUR
-# Folder name in the root directory that contains the package (package name)
-ARG PACKAGE
+# ARG PACKAGE
+ARG DESCRIPTION_FILE
 ARG REPO_PATH
 ARG SSH_PRIV_KEY
 ARG JAGS
@@ -87,4 +87,5 @@ WORKDIR /root/
 RUN --mount=type=secret,id=key,dst=/root/.ssh/key GIT_SSH_COMMAND="ssh -i /root/.ssh/key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone --depth=1 git@$REPO_PATH target
 WORKDIR target/
 # get a list of all dependencies; install remaining packages
-RUN R -e "pckgs<-unique(renv::dependencies('$PACKAGE')[,'Package']);pres_pckgs<-installed.packages()[,'Package'];install.packages(pckgs[!(pckgs %in% pres_pckgs)])"
+# escape=\
+RUN R -e "package<-desc::desc(file='$DESCRIPTION_FILE')\$get_field('Package');pckgs<-unique(renv::dependencies(package)[,'Package']);pres_pckgs<-installed.packages()[,'Package'];install.packages(pckgs[!(pckgs %in% pres_pckgs)])"

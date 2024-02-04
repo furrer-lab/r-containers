@@ -7,8 +7,9 @@ on:
 
 env:
   DOCKER_REGISTRY: ghcr.io             # where to register the image
-  PACKAGE: abn
   REPO_PATH: github.com:furrer-lab/devel-abn.git
+  # Set the path to the DESCRIPTION file in the R package you want to target
+  DESCRIPTION_FILE: ${{ vars.DESCRIPTION_FILE || './DESCRIPTION' }}
   JAGS: JAGS-4.3.2
   R_VERSION: R-devel
 
@@ -22,7 +23,7 @@ jobs:
 
     strategy:
       matrix:
-        target-os: ['fedora', 'debian']
+        target-os: ['fedora', ]  # 'debian']
         compiler: ['clang', ]  # , 'gcc']
         r-version: ['R-devel', ]
     
@@ -63,7 +64,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             FLAVOUR=${{ matrix.r-version }}
-            PACKAGE=${{ env.PACKAGE }}
+            DESCRIPTION_FILE=${{ env.DESCRIPTION_FILE }}
             REPO_PATH=${{ env.REPO_PATH }}
             JAGS=${{ env.JAGS}}
           secret-files: |
