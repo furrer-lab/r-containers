@@ -28,7 +28,6 @@ jobs:
         r-version: ['devel', 'release', 'patched']
         exclude:
           - target-os: 'fedora'
-          - target-os: 'fedora'
             r-version: 'release'
           - target-os: 'fedora'
             r-version: 'patched'
@@ -36,6 +35,8 @@ jobs:
             r-version: 'patched'
           - compiler: 'clang'
             r-version: 'release'
+          - target-os: 'fedora'
+          - r-version: 'release'
     
     steps:
       - name: Checkout
