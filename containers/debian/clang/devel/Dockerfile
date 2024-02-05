@@ -1,7 +1,6 @@
-FROM rhub/debian-clang-devel
-
-# defines the flavour (e.g. FLAVOUR=)
-ARG FLAVOUR
+ARG TARGET_OS
+ARG COMPILER
+ARG R_VERSION
 # ARG PACKAGE
 ARG DESCRIPTION_FILE
 ARG REPO_PATH
@@ -9,18 +8,20 @@ ARG SSH_PRIV_KEY
 # # sets the date for the CRAN snapshot (e.g. BUILD_DATE=2023-12-20)
 # ARG BUILD_DATE
 
+FROM rhub/${TARGET_OS}-${COMPILER}-devel
+
 # Unsure why this is needed as openssl seems to be installed already
 RUN apt-get update && apt-get install -y --no-install-recommends \
   libssl-dev \
   libcurl4-openssl-dev
 
 # add R to PATH
-ENV PATH="/opt/$FLAVOUR/bin:${PATH}"
+ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
 RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
-    >> /opt/$FLAVOUR/lib/R/library/base/R/Rprofile
+    >> /opt/$R_VERSION/lib/R/library/base/R/Rprofile
 
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \

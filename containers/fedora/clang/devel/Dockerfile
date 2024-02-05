@@ -1,7 +1,6 @@
-FROM rhub/fedora-clang-devel
-
-# defines the flavour (e.g. FLAVOUR=)
-ARG FLAVOUR
+ARG TARGET_OS
+ARG COMPILER
+ARG R_VERSION
 # ARG PACKAGE
 ARG DESCRIPTION_FILE
 ARG REPO_PATH
@@ -10,19 +9,21 @@ ARG JAGS
 # # sets the date for the CRAN snapshot (e.g. BUILD_DATE=2023-12-20)
 # ARG BUILD_DATE
 
+FROM rhub/${TARGET_OS}-${COMPILER}-${R_VERSION}
+
 # Update package repositories
 RUN dnf check-update && dnf -y install \
   openssl-devel \
   libcurl-devel
 
 # add R to PATH
-ENV PATH="/opt/$FLAVOUR/bin:${PATH}"
+ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
 # diff to debian: /lib/ > /lib64/
 RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
-    >> /opt/$FLAVOUR/lib64/R/library/base/R/Rprofile
+    >> /opt/R-$R_VERSION/lib64/R/library/base/R/Rprofile
 
 # rjags:
 RUN dnf -y install \

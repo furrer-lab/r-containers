@@ -23,9 +23,18 @@ jobs:
 
     strategy:
       matrix:
-        target-os: ['fedora', ]  # 'debian']
-        compiler: ['clang', ]  # , 'gcc']
-        r-version: ['R-devel', ]
+        target-os: ['debian', 'fedora']
+        compiler: ['gcc', 'clang']
+        r-version: ['devel', 'release', 'patched']
+        exclude:
+          - target-os: 'fedora'
+            r-version: 'release'
+          - target-os: 'fedora'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'release'
     
     steps:
       - name: Checkout
@@ -63,7 +72,9 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            FLAVOUR=${{ matrix.r-version }}
+            TARGET_OS=${{ matrix.target-os }}
+            COMPILER=${{ matrix.compiler }}
+            R_VERSION=${{ matrix.r-version }}
             DESCRIPTION_FILE=${{ env.DESCRIPTION_FILE }}
             REPO_PATH=${{ env.REPO_PATH }}
             JAGS=${{ env.JAGS}}
