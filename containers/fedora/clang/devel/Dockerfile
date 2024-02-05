@@ -1,3 +1,11 @@
+# Before the build stage
+ARG TARGET_OS
+ARG COMPILER
+ARG R_VERSION
+
+FROM rhub/${TARGET_OS}-${COMPILER}-${R_VERSION}
+
+# Build stage: ARGs need to be redeclared
 ARG TARGET_OS
 ARG COMPILER
 ARG R_VERSION

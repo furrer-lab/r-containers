@@ -1,3 +1,11 @@
+# Before the build stage
+ARG TARGET_OS
+ARG COMPILER
+ARG R_VERSION
+
+FROM rhub/${TARGET_OS}-${COMPILER}-${R_VERSION}
+
+# Build stage: ARGs need to be redeclared
 ARG TARGET_OS
 ARG COMPILER
 ARG R_VERSION
@@ -7,8 +15,6 @@ ARG REPO_PATH
 ARG SSH_PRIV_KEY 
 # # sets the date for the CRAN snapshot (e.g. BUILD_DATE=2023-12-20)
 # ARG BUILD_DATE
-
-FROM rhub/${TARGET_OS}-${COMPILER}-${R_VERSION}
 
 # Unsure why this is needed as openssl seems to be installed already
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -21,7 +27,7 @@ ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
 RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
-    >> /opt/${R_VERSION}/lib/R/library/base/R/Rprofile
+    >> /opt/$R_VERSION/lib/R/library/base/R/Rprofile
 
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
