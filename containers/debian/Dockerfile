@@ -70,9 +70,6 @@ RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.
 ###
 # install all package dependencies
 ###
-RUN dnf -y install \
-      git \
-      openssh-clients
 WORKDIR /root/
 # get a shallow copy of the target repository
 # Note: If the repository is private you must use a deploy token here (ssh key) 
