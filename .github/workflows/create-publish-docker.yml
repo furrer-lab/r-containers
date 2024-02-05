@@ -22,6 +22,7 @@ jobs:
       packages: write
 
     strategy:
+      fail-fast: false
       matrix:
         target-os: ['debian', 'fedora']
         compiler: ['gcc', 'clang']
