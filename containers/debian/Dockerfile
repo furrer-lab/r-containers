@@ -8,7 +8,7 @@ ARG SSH_PRIV_KEY
 # # sets the date for the CRAN snapshot (e.g. BUILD_DATE=2023-12-20)
 # ARG BUILD_DATE
 
-FROM rhub/${TARGET_OS}-${COMPILER}-devel
+FROM rhub/${TARGET_OS}-${COMPILER}-${R_VERSION}
 
 # Unsure why this is needed as openssl seems to be installed already
 RUN apt-get update && apt-get install -y --no-install-recommends \
