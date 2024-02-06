@@ -36,7 +36,8 @@ jobs:
           - compiler: 'clang'
             r-version: 'release'
           - target-os: 'fedora'
-          - r-version: 'release'
+          - r-version: 'devel'
+          - r-version: 'patched'
     
     steps:
       - name: Checkout
