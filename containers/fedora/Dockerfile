@@ -31,7 +31,7 @@ ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
 RUN if [ "$R_VERSION" = "release" ]; then RPATH=""; else RPATH=/opt/R-$R_VERSION; fi \
-    && $echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${RPATH}/lib64/R/library/base/R/Rprofile
+    && echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${RPATH}/lib64/R/library/base/R/Rprofile
 
 # rjags:
 RUN dnf -y install \
@@ -42,12 +42,13 @@ RUN ls /tmp/
 RUN tar -xf jags.tar.gz
 WORKDIR /tmp/$JAGS
 # Building JAGS requires the same environment that is then used to build rjags.
-# To achieve this we follow the approach for building JAGS with Clang/Gcc
-# outlined in the JAGS installation guide
+# To achieve this we follow the approach for building JAGS with Clang outlined
+# in the JAGS installation guide
 # (https://usermanual.wiki/Document/jagsinstallationmanual.880863585.pdf)
 # and substitute the compilers with the specifics from the R installation that
 # we can get by using the `R CMD config CC/CXX/BLAS_LIBS/LAPACK_LIBS' commands:
-RUN LD="llvm-ld" CC="usr/bin/gcc" CXX="/usr/bin/g++ -std=gnu++17" ./configure --with-blas="-L/opt/R-devel/lib64/R/lib -lRblas" --with-lapack="-L/opt/R-devel/lib64/R/lib -lRlapack" --libdir=/usr/local/lib64 && make && make install
+RUN if [ "$COMPILER" = "clang" ]; then RCC=/usr/bin/clang RCXX="/usr/bin/clang++ -std=gnu++17 -stdlib=libc++"; else RRCC=/usr/bin/gcc RCXX="/usr/bin/g++"; fi \
+    && LD="llvm-ld" CC="${RCC}" CXX="${RCXX}" ./configure --with-blas="-L/opt/R-devel/lib64/R/lib -lRblas" --with-lapack="-L/opt/R-devel/lib64/R/lib -lRlapack" --libdir=/usr/local/lib64 && make && make install
 RUN ls /tmp/$JAGS
 # ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 # RUN R -e "install.packages('rjags')"
