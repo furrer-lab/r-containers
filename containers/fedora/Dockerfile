@@ -17,8 +17,6 @@ ARG JAGS
 # # sets the date for the CRAN snapshot (e.g. BUILD_DATE=2023-12-20)
 # ARG BUILD_DATE
 
-FROM rhub/${TARGET_OS}-${COMPILER}-${R_VERSION}
-
 # Update package repositories
 RUN dnf check-update && dnf -y install \
   openssl-devel \
