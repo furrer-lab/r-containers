@@ -22,12 +22,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   libcurl4-openssl-dev
 
 # add R to PATH
+# NOTE: For R-release this is not needed
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
-RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
-    >> /opt/R-$R_VERSION/lib/R/library/base/R/Rprofile
+RUN if [ "$R_VERSION" == "release" ]; then RPATH=/lib/R; else RPATH=/opt/R-$R_VERSION; fi \
+    && $echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
+    >> $RPATH/lib/R/library/base/R/Rprofile
 
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \

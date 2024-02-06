@@ -27,11 +27,12 @@ RUN dnf check-update && dnf -y install \
 # add R to PATH
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 
+# diff to debian: /lib/ > /lib64/
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
-# diff to debian: /lib/ > /lib64/
-RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
-    >> /opt/R-$R_VERSION/lib64/R/library/base/R/Rprofile
+RUN if [ "$R_VERSION" == "release" ]; then RPATH=/lib/R; else RPATH=/opt/R-$R_VERSION; fi \
+    && $echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
+    >> $RPATH/lib64/R/library/base/R/Rprofile
 
 # rjags:
 RUN dnf -y install \
