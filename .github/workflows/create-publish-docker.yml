@@ -35,9 +35,6 @@ jobs:
             r-version: 'patched'
           - compiler: 'clang'
             r-version: 'release'
-          - target-os: 'fedora'
-          - r-version: 'devel'
-          - r-version: 'patched'
     
     steps:
       - name: Checkout
