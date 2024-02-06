@@ -1,7 +1,14 @@
-FROM rhub/debian-clang-devel
+# Before the build stage
+ARG TARGET_OS
+ARG COMPILER
+ARG R_VERSION
 
-# defines the flavour (e.g. FLAVOUR=)
-ARG FLAVOUR
+FROM rhub/${TARGET_OS}-${COMPILER}-${R_VERSION}
+
+# Build stage: ARGs need to be redeclared
+ARG TARGET_OS
+ARG COMPILER
+ARG R_VERSION
 # ARG PACKAGE
 ARG DESCRIPTION_FILE
 ARG REPO_PATH
@@ -15,12 +22,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   libcurl4-openssl-dev
 
 # add R to PATH
-ENV PATH="/opt/$FLAVOUR/bin:${PATH}"
+# NOTE: For R-release this is not needed
+ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
-RUN echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
-    >> /opt/$FLAVOUR/lib/R/library/base/R/Rprofile
+RUN if [ "$R_VERSION" = "release" ]; then RPATH=""; else RPATH=/opt/R-$R_VERSION; fi \
+    && echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${RPATH}/lib/R/library/base/R/Rprofile
 
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
@@ -63,9 +71,6 @@ RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.
 ###
 # install all package dependencies
 ###
-RUN dnf -y install \
-      git \
-      openssh-clients
 WORKDIR /root/
 # get a shallow copy of the target repository
 # Note: If the repository is private you must use a deploy token here (ssh key) 

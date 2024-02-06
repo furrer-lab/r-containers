@@ -11,7 +11,6 @@ env:
   # Set the path to the DESCRIPTION file in the R package you want to target
   DESCRIPTION_FILE: ${{ vars.DESCRIPTION_FILE || './DESCRIPTION' }}
   JAGS: JAGS-4.3.2
-  R_VERSION: R-devel
 
 jobs:
   build-and-push:
@@ -22,10 +21,23 @@ jobs:
       packages: write
 
     strategy:
+      fail-fast: false
       matrix:
-        target-os: ['fedora', ]  # 'debian']
-        compiler: ['clang', ]  # , 'gcc']
-        r-version: ['R-devel', ]
+        target-os: ['debian', 'fedora']
+        compiler: ['gcc', 'clang']
+        r-version: ['devel', 'release', 'patched']
+        exclude:
+          - target-os: 'fedora'
+            r-version: 'release'
+          - target-os: 'fedora'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'release'
+          - target-os: 'fedora'
+          - r-version: 'devel'
+          - r-version: 'patched'
     
     steps:
       - name: Checkout
@@ -58,12 +70,14 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
-          context: ${{ format('./containers/{0}/{1}/{2}/', matrix.target-os, matrix.compiler, matrix.r-version ) }}
+          context: ${{ format('./containers/{0}/', matrix.target-os ) }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            FLAVOUR=${{ matrix.r-version }}
+            TARGET_OS=${{ matrix.target-os }}
+            COMPILER=${{ matrix.compiler }}
+            R_VERSION=${{ matrix.r-version }}
             DESCRIPTION_FILE=${{ env.DESCRIPTION_FILE }}
             REPO_PATH=${{ env.REPO_PATH }}
             JAGS=${{ env.JAGS}}
