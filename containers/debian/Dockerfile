@@ -27,9 +27,9 @@ ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
-RUN if [ "$R_VERSION" = "release" ]; then RLIBPATH=/lib/R; else RLIBPATH=/opt/R-$R_VERSION/lib/R; fi \
+RUN if [ "$R_VERSION" = "release" ]; then RPATH=""; else RPATH=/opt/R-$R_VERSION; fi \
     && $echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' \
-    >> $RLIBPATH/library/base/R/Rprofile
+    >> $RPATH/lib/R/library/base/R/Rprofile
 
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
