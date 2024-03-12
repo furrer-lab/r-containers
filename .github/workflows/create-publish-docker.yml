@@ -2,8 +2,9 @@ name: Create Docker image and publish to GH Packages
 
 on:
   push:
-    tags:
-      - "*"                            # only when a new tag is pushed ("v*"?)
+    branches: [ main ]    # create a new version whenever we push to main
+  schedule:
+    - cron: "12 2 2 * *"  # run at 2:12 of the 2nd of every month
 
 env:
   DOCKER_REGISTRY: ghcr.io             # where to register the image
@@ -13,8 +14,39 @@ env:
   JAGS: JAGS-4.3.2
 
 jobs:
+
+  increment-and-publish-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      VERSION: ${{ steps.version.outputs.version }}
+    steps:
+
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
+
+    - name: Auto increment calver version
+      uses: reecetech/version-increment@2023.10.1
+      id: version
+      with:
+        scheme: calver
+
+    - name: Push tag
+      uses: anothrNick/github-tag-action@1.64.0 # Don't use @master or @v1 unless you're happy to test the latest version
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # if you don't want to set write permissions use a PAT token
+        WITH_V: false
+        CUSTOM_TAG: "${{ steps.version.outputs.version }}"
+      
+
   build-and-push:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    needs: increment-and-publish-tag
+    env:
+      CUSTOM_TAG: "${{ needs.increment-and-publish-tag.outputs.VERSION }}"
+
 
     permissions:                       # for `GITHUB_TOKEN`
       contents: read
@@ -57,7 +89,9 @@ jobs:
           # TODO: set a proper name of the image (same as in context below)
           images: ${{ env.DOCKER_REGISTRY}}/${{ format('{0}/{1}/{2}/{3}/abn', github.repository, matrix.target-os, matrix.compiler, matrix.r-version ) }}
           tags: |                     # set Docker tags to git tags
-            type=semver,pattern={{version}}
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            #type=semver,pattern={{version}}
 
       - name: Write the ssh key file
         run: |
