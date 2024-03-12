@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      VERSION: ${{ steps.version.outputs.version }}
     steps:
 
     - uses: actions/checkout@v4
@@ -38,10 +40,14 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # if you don't want to set write permissions use a PAT token
         WITH_V: false
         CUSTOM_TAG: "${{ steps.version.outputs.version }}"
+      
 
   build-and-push:
     runs-on: ubuntu-latest
     needs: increment-and-publish-tag
+    env:
+      CUSTOM_TAG: "${{ needs.increment-and-publish-tag.outputs.VERSION }}"
+
 
     permissions:                       # for `GITHUB_TOKEN`
       contents: read
