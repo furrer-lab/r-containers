@@ -84,7 +84,8 @@ jobs:
           # TODO: set a proper name of the image (same as in context below)
           images: ${{ env.DOCKER_REGISTRY}}/${{ format('{0}/{1}/{2}/{3}/abn', github.repository, matrix.target-os, matrix.compiler, matrix.r-version ) }}
           tags: |                     # set Docker tags to git tags
-            type=semver,pattern={{version}}
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            #type=semver,pattern={{version}}
 
       - name: Write the ssh key file
         run: |
