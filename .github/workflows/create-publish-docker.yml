@@ -17,10 +17,10 @@ env:
 jobs:
   auto-increment:
     runs-on: ubuntu-latest
-    id: version
     steps:
       - name: Auto increment calver version
         uses: reecetech/version-increment@2023.10.1
+        id: version
         with:
           scheme: calver
           use_api: true
