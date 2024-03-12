@@ -90,6 +90,7 @@ jobs:
           images: ${{ env.DOCKER_REGISTRY}}/${{ format('{0}/{1}/{2}/{3}/abn', github.repository, matrix.target-os, matrix.compiler, matrix.r-version ) }}
           tags: |                     # set Docker tags to git tags
             type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             #type=semver,pattern={{version}}
 
       - name: Write the ssh key file
