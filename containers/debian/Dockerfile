@@ -33,7 +33,8 @@ RUN if [ "$R_VERSION" = "release" ]; then RPATH=""; else RPATH=/opt/R-$R_VERSION
 RUN R -e "install.packages('devtools')" \
  && R -e "install.packages('remotes')" \
  && R -e "install.packages('R.rsp')" \
- && R -e "install.packages('renv')"
+ && R -e "install.packages('renv')" \
+ && R -e "install.packages('desc')"
 
 # Install dependencies not managed by CRAN
 # lme4:
@@ -76,6 +77,8 @@ WORKDIR /root/
 # RUN --mount=type=secret,id=key,dst=/root/.ssh/key GIT_SSH_COMMAND="ssh -i /root/.ssh/key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone --depth=1 git@$REPO_PATH target
 RUN git clone --depth=1 https://$REPO_PATH target
 WORKDIR target/
+# make sure to deactivate the renv
+RUN R -e "renv::deactivate()"
 # get a list of all dependencies; install remaining packages
 # escape=\
 RUN R -e "package<-desc::desc(file='$DESCRIPTION_FILE')\$get_field('Package');pckgs<-unique(renv::dependencies(package)[,'Package']);pres_pckgs<-installed.packages()[,'Package'];install.packages(pckgs[!(pckgs %in% pres_pckgs)])"
