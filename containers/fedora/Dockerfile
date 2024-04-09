@@ -57,6 +57,9 @@ RUN R -e "install.packages('devtools')" \
  && R -e "install.packages('R.rsp')" \
  && R -e "install.packages('renv')"
 
+# Prepare for potential check to be run
+RUN R -e "install.packages('urlchecker')"
+
 # Install dependencies not managed by CRAN
 # - lme4 and gsl:
 RUN dnf -y install \
