@@ -8,7 +8,8 @@ on:
 
 env:
   DOCKER_REGISTRY: ghcr.io             # where to register the image
-  REPO_PATH: github.com:furrer-lab/devel-abn.git
+  REPO_PATH: github.com/furrer-lab/abn.git
+  # REPO_PATH: github.com:furrer-lab/abn.git  # for private repo cloned via ssh
   # Set the path to the DESCRIPTION file in the R package you want to target
   DESCRIPTION_FILE: ${{ vars.DESCRIPTION_FILE || './DESCRIPTION' }}
   JAGS: JAGS-4.3.2
@@ -93,10 +94,11 @@ jobs:
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             #type=semver,pattern={{version}}
 
-      - name: Write the ssh key file
-        run: |
-          echo "${{  secrets.DEVEL_ABN_DEPLOY }}" >> ssh_key
-        shell: bash
+      # For private repo cloned via ssh we need a deploy key
+      # - name: Write the ssh key file
+      #   run: |
+      #     echo "${{  secrets.DEVEL_ABN_DEPLOY }}" >> ssh_key
+      #   shell: bash
 
       - name: Build and push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
@@ -112,5 +114,6 @@ jobs:
             DESCRIPTION_FILE=${{ env.DESCRIPTION_FILE }}
             REPO_PATH=${{ env.REPO_PATH }}
             JAGS=${{ env.JAGS}}
-          secret-files: |
-            key=./ssh_key
+          # For private repo cloned via ssh
+          # secret-files: |
+          #   key=./ssh_key
