@@ -33,7 +33,7 @@ RUN if [ "$R_VERSION" = "release" ]; then RPATH=""; else RPATH=/opt/R-$R_VERSION
 RUN R -e "install.packages('devtools')" \
  && R -e "install.packages('remotes')" \
  && R -e "install.packages('R.rsp')" \
- && R -e "install.packages('renv')" \
+ && R -e "install.packages('renv')"
 
 # Prepare for potential check to be run
 RUN R -e "install.packages('urlchecker')"
