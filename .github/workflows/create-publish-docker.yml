@@ -8,8 +8,8 @@ on:
 
 env:
   DOCKER_REGISTRY: ghcr.io             # where to register the image
-  REPO_PATH: github.com:furrer-lab/abn.git
-  # REPO_PATH: github.com/furrer-lab/abn.git  # for private repo cloned via ssh
+  REPO_PATH: github.com/furrer-lab/abn.git
+  # REPO_PATH: github.com:furrer-lab/abn.git  # for private repo cloned via ssh
   # Set the path to the DESCRIPTION file in the R package you want to target
   DESCRIPTION_FILE: ${{ vars.DESCRIPTION_FILE || './DESCRIPTION' }}
   JAGS: JAGS-4.3.2
