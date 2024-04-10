@@ -36,6 +36,9 @@ RUN R -e "install.packages('devtools')" \
  && R -e "install.packages('renv')" \
  && R -e "install.packages('desc')"
 
+# Prepare for potential check to be run
+RUN R -e "install.packages('urlchecker')"
+
 # Install dependencies not managed by CRAN
 # lme4:
 RUN apt-get update && apt-get install -y --no-install-recommends \
