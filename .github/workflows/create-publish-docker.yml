@@ -39,7 +39,7 @@ jobs:
     - name: Get git-chglog and update CHANGELOG
       run: |
         wget ${{ env.CHANGELOG_RELEASE }}  # get the binary for the chglog
-        tar --extract --file=${{ enf.CHANGELOG_RELEASE}}.tar.gz git-chglog
+        tar --extract --file=${{ env.CHANGELOG_RELEASE}}.tar.gz git-chglog
         git tag -a ${{ steps.version.outputs.version }} -m 'interim tag for changelog'
         ./git-chglog -o CHANGELOG.md  # update the changelog file
         git tag -d ${{ steps.version.outputs.version }}  # remove the tag again
