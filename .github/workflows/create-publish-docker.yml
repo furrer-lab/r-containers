@@ -116,7 +116,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [ 'increment-tag', 'build-and-push']
     container:
-      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ needs.increment-tag.outputs.VERSION }}
+      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ needs.increment-tag.outputs.VERSION }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -138,16 +138,16 @@ jobs:
     steps:
     - name: Write out configuration
       run: |
-        Rscirpt -e "sessionInfo()" > docs/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md
-        Rscirpt -e "ip=as.data.frame(installed.packages()[,c(1,3:4)]);ip[is.na(ip$Priority),1:2,drop=FALSE]" >> docs/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md
+        Rscirpt -e "sessionInfo()" > docs/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md
+        Rscirpt -e "ip=as.data.frame(installed.packages()[,c(1,3:4)]);ip[is.na(ip$Priority),1:2,drop=FALSE]" >> docs/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md
     - name: Commit config for container
       uses: EndBug/add-and-commit@v9
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         default_author: github_actions
-        message: "auto-update: container docs for ${{ matrix.os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn"
-        add: "docs/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md"
+        message: "auto-update: container docs for ${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn"
+        add: "docs/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md"
 
   auto-update-and-publish-tag:
     runs-on: ubuntu-latest
