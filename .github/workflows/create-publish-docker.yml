@@ -2,7 +2,7 @@ name: Create Docker image and publish to GH Packages
 
 on:
   push:
-    branches: [ main, 20-create-empty-commit-on-scheduled-upgrade-of-containers  ]    # create a new version whenever we push to main
+    branches: [ main ]    # create a new version whenever we push to main
   schedule:
     - cron: "12 2 2 * *"  # run at 2:12 of the 2nd of every month
 
@@ -18,7 +18,7 @@ env:
 
 jobs:
 
-  increment-and-publish-tag:
+  increment-tag:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -36,32 +36,11 @@ jobs:
       with:
         scheme: calver
 
-    - name: Get git-chglog and update CHANGELOG
-      run: |
-        wget ${{ env.CHGLOG_PATH }}/${{ env.CHGLOG_RELEASE}}.tar.gz  # get the binary for the chglog
-        tar --extract --file=${{ env.CHGLOG_RELEASE}}.tar.gz git-chglog
-        git config user.email "actions@gitub.com"
-        git config user.name "github_actions"
-        git tag -a ${{ steps.version.outputs.version }} -m 'interim tag for changelog'
-        ./git-chglog -o CHANGELOG.md  # update the changelog file
-        git tag -d ${{ steps.version.outputs.version }}  # remove the tag again
-
-    - name: Commit CHANGELOG.md update
-      uses: EndBug/add-and-commit@v9
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        default_author: github_actions
-        message: "auto-update: CHANGELOG.md"
-        add: 'CHANGELOG.md'
-        tag: '${{ steps.version.outputs.version }}'
-      
-
   build-and-push:
     runs-on: ubuntu-latest
-    needs: increment-and-publish-tag
+    needs: increment-tag
     env:
-      CUSTOM_TAG: "${{ needs.increment-and-publish-tag.outputs.VERSION }}"
+      CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
 
 
     permissions:                       # for `GITHUB_TOKEN`
@@ -135,6 +114,7 @@ jobs:
 
   Check container integrity and document config:
     runs-on: ubuntu-22.04
+    needs: build-and-push
     container:
       image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ vars.CONTAINER_VERSION || 'latest' }}
       credentials:
@@ -156,8 +136,44 @@ jobs:
             r-version: 'release'
       fail-fast: false
     steps:
-      - name: Write out configuration
-        run: |
-          Rscirpt -e "sessionInfo()" > docs/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md
-          Rscirpt -e "ip=as.data.frame(installed.packages()[,c(1,3:4)]);ip[is.na(ip$Priority),1:2,drop=FALSE]" >> docs/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md
-          
+    - name: Write out configuration
+      run: |
+        Rscirpt -e "sessionInfo()" > docs/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md
+        Rscirpt -e "ip=as.data.frame(installed.packages()[,c(1,3:4)]);ip[is.na(ip$Priority),1:2,drop=FALSE]" >> docs/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md
+    - name: Commit config for container
+      uses: EndBug/add-and-commit@v9
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        default_author: github_actions
+        message: "auto-update: container docs for ${{ matrix.os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn"
+        add: "docs/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md"
+
+  auto-update-and-publish-tag:
+    runs-on: ubuntu-latest
+    needs: [ 'increment-tag', 'Check container integrity and document config' ]
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
+    - name: Get git-chglog and update CHANGELOG
+      run: |
+        wget ${{ env.CHGLOG_PATH }}/${{ env.CHGLOG_RELEASE}}.tar.gz  # get the binary for the chglog
+        tar --extract --file=${{ env.CHGLOG_RELEASE}}.tar.gz git-chglog
+        git config user.email "actions@gitub.com"
+        git config user.name "github_actions"
+        git tag -a ${{ steps.version.outputs.version }} -m 'interim tag for changelog'
+        ./git-chglog -o CHANGELOG.md  # update the changelog file
+        git tag -d ${{ steps.version.outputs.version }}  # remove the tag again
+
+    - name: Commit CHANGELOG.md update
+      uses: EndBug/add-and-commit@v9
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        default_author: github_actions
+        message: "auto-update: CHANGELOG.md"
+        add: 'CHANGELOG.md'
+        tag: "${{ needs.increment-tag.outputs.VERSION }}"
