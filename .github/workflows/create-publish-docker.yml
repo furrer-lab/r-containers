@@ -141,8 +141,8 @@ jobs:
         fetch-depth: '0'
     - name: Write out configuration
       run: |
-        Rscirpt -e "sessionInfo()" > docs/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md
-        Rscirpt -e "ip=as.data.frame(installed.packages()[,c(1,3:4)]);ip[is.na(ip$Priority),1:2,drop=FALSE]" >> docs/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md
+        Rscript -e "sessionInfo()" > docs/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md
+        Rscript -e "ip=as.data.frame(installed.packages()[,c(1,3:4)]);ip[is.na(ip$Priority),1:2,drop=FALSE]" >> docs/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md
     - name: Commit config for container
       uses: EndBug/add-and-commit@v9
       env:
