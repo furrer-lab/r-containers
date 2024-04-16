@@ -114,9 +114,9 @@ jobs:
 
   container-integrity-and-config:
     runs-on: ubuntu-22.04
-    needs: build-and-push
+    needs: [ 'increment-tag', 'build-and-push']
     container:
-      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ vars.CONTAINER_VERSION || 'latest' }}
+      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ needs.increment-tag.outputs.VERSION }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
