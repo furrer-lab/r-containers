@@ -14,7 +14,7 @@ env:
   PACKAGE_PATH: ${{ vars.PACKAGE_PATH || './' }}
   JAGS: JAGS-4.3.2
   GIT_CHGLOG_VERSION: git-chglog_0.15.4_linux_amd64
-  CHANGELOG_RELEASE: https://github.com/git-chglog/git-chglog/releases/download/v0.15.4/{{ env.GIT_CHGLOG_VERSION }}.tar.gz
+  CHANGELOG_RELEASE: https://github.com/git-chglog/git-chglog/releases/download/v0.15.4/${{ env.GIT_CHGLOG_VERSION }}.tar.gz
 
 jobs:
 
