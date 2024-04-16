@@ -1,10 +1,6 @@
 
-<a name="2024.4.4-pre.3adc7c0"></a>
-## [2024.4.4-pre.3adc7c0](https://github.com/furrer-lab/r-containers/compare/2024.4.3...2024.4.4-pre.3adc7c0) (2024-04-16)
-
-### Wip
-
-* using auto generated changelog
+<a name="2024.4.4"></a>
+## [2024.4.4](https://github.com/furrer-lab/r-containers/compare/2024.4.3...2024.4.4) (2024-04-16)
 
 
 <a name="2024.4.3"></a>
