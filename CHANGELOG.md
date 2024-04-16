@@ -1,6 +1,14 @@
 
-<a name="2024.4.4"></a>
-## [2024.4.4](https://github.com/furrer-lab/r-containers/compare/2024.4.3...2024.4.4) (2024-04-16)
+<a name="2024.4.4-pre.8f886c3"></a>
+## [2024.4.4-pre.8f886c3](https://github.com/furrer-lab/r-containers/compare/2024.4.3...2024.4.4-pre.8f886c3) (2024-04-16)
+
+### Feature
+
+* document container configs
+
+### Refactor
+
+* container build and relase workflow
 
 
 <a name="2024.4.3"></a>
