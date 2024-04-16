@@ -132,3 +132,32 @@ jobs:
           # For private repo cloned via ssh
           # secret-files: |
           #   key=./ssh_key
+
+  Check container integrity and document config:
+    runs-on: ubuntu-22.04
+    container:
+      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ vars.CONTAINER_VERSION || 'latest' }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      matrix:
+        target-os: ['debian', 'fedora']
+        compiler: ['gcc', 'clang']
+        r-version: ['devel', 'release', 'patched']
+        exclude:
+          - target-os: 'fedora'
+            r-version: 'release'
+          - target-os: 'fedora'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'release'
+      fail-fast: false
+    steps:
+      - name: Write out configuration
+        run: |
+          Rscirpt -e "sessionInfo()" > docs/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md
+          Rscirpt -e "ip=as.data.frame(installed.packages()[,c(1,3:4)]);ip[is.na(ip$Priority),1:2,drop=FALSE]" >> docs/${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md
+          
