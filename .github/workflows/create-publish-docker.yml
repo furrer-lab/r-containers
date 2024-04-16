@@ -2,7 +2,7 @@ name: Create Docker image and publish to GH Packages
 
 on:
   push:
-    branches: [ main ]    # create a new version whenever we push to main
+    branches: [ main, 20-create-empty-commit-on-scheduled-upgrade-of-containers  ]    # create a new version whenever we push to main
   schedule:
     - cron: "12 2 2 * *"  # run at 2:12 of the 2nd of every month
 
@@ -13,6 +13,8 @@ env:
   # Set the path to the package where the DESCRIPTION file can be found
   PACKAGE_PATH: ${{ vars.PACKAGE_PATH || './' }}
   JAGS: JAGS-4.3.2
+  CHGLOG_RELEASE: git-chglog_0.15.4_linux_amd64
+  CHGLOG_PATH: https://github.com/git-chglog/git-chglog/releases/download/v0.15.4
 
 jobs:
 
@@ -34,12 +36,25 @@ jobs:
       with:
         scheme: calver
 
-    - name: Push tag
-      uses: anothrNick/github-tag-action@1.64.0 # Don't use @master or @v1 unless you're happy to test the latest version
+    - name: Get git-chglog and update CHANGELOG
+      run: |
+        wget ${{ env.CHGLOG_PATH }}/${{ env.CHGLOG_RELEASE}}.tar.gz  # get the binary for the chglog
+        tar --extract --file=${{ env.CHGLOG_RELEASE}}.tar.gz git-chglog
+        git config user.email "actions@gitub.com"
+        git config user.name "github_actions"
+        git tag -a ${{ steps.version.outputs.version }} -m 'interim tag for changelog'
+        ./git-chglog -o CHANGELOG.md  # update the changelog file
+        git tag -d ${{ steps.version.outputs.version }}  # remove the tag again
+
+    - name: Commit CHANGELOG.md update
+      uses: EndBug/add-and-commit@v9
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # if you don't want to set write permissions use a PAT token
-        WITH_V: false
-        CUSTOM_TAG: "${{ steps.version.outputs.version }}"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        default_author: github_actions
+        message: "auto-update: CHANGELOG.md"
+        add: 'CHANGELOG.md'
+        tag: '${{ steps.version.outputs.version }}'
       
 
   build-and-push:
