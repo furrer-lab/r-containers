@@ -112,7 +112,7 @@ jobs:
           # secret-files: |
           #   key=./ssh_key
 
-  Check container integrity and document config:
+  container-integrity-and-config:
     runs-on: ubuntu-22.04
     needs: build-and-push
     container:
@@ -151,7 +151,7 @@ jobs:
 
   auto-update-and-publish-tag:
     runs-on: ubuntu-latest
-    needs: [ 'increment-tag', 'Check container integrity and document config' ]
+    needs: [ 'increment-tag', 'container-integrity-and-config' ]
     permissions:
       contents: write
     steps:
