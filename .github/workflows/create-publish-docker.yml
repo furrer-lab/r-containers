@@ -2,7 +2,7 @@ name: Create Docker image and publish to GH Packages
 
 on:
   push:
-    branches: [ main , 27-document-and-track-container-configuration]    # create a new version whenever we push to main
+    branches: [ main ]    # create a new version whenever we push to main
   schedule:
     - cron: "12 2 2 * *"  # run at 2:12 of the 2nd of every month
 
