@@ -151,7 +151,7 @@ jobs:
       with:
         default_author: github_actions
         message: "auto-update: container docs for ${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn"
-        add: "docs/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}.md"
+        add: "docs/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md"
 
   auto-update-and-publish-tag:
     runs-on: ubuntu-latest
