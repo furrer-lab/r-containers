@@ -115,6 +115,8 @@ jobs:
   container-integrity-and-config:
     runs-on: ubuntu-22.04
     needs: [ 'increment-tag', 'build-and-push']
+    permissions:
+      contents: write
     container:
       image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ needs.increment-tag.outputs.VERSION }}
       options: --user 1001
