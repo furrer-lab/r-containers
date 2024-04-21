@@ -151,7 +151,7 @@ jobs:
       shell: Rscript {0}
     - name: Write out configuration
       run: |
-        Rscript -e 'args<-commandArgs(TRUE);knitr::knit_hooks$set(output = function(x, options){gsub("##", "> ", x)});knitr::knit("src/release_info.tpl", sprintf("info/%s-%s-%s-%s.md", args[1], args[2], args[3], args[4]))' {{ matrix.target-os}} {{ matrix.compiler }} {{ matrix.r-version }} abn
+        Rscript -e 'args<-commandArgs(TRUE);knitr::knit_hooks$set(output = function(x, options){gsub("##", "> ", x)});knitr::knit("src/release_info.tpl", sprintf("info/%s-%s-%s-%s.md", args[1], args[2], args[3], args[4]))' ${{ matrix.target-os}} ${{ matrix.compiler }} ${{ matrix.r-version }} abn
     - name: Commit config for container
       uses: EndBug/add-and-commit@v9
       env:
@@ -159,8 +159,8 @@ jobs:
       with:
         pull: '--rebase'
         default_author: github_actions
-        message: "auto-update: container docs for ${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn"
-        add: "docs/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md"
+        message: "auto-update: container info for ${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn"
+        add: "info/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md"
 
   auto-update-and-publish-tag:
     runs-on: ubuntu-latest
