@@ -133,6 +133,14 @@ jobs:
         compiler: ['gcc', 'clang']
         r-version: ['devel', 'release', 'patched']
         exclude:
+          # to remove
+          - target-os: 'debian'
+            r-version: 'devel'
+            compiler: 'clang'
+          # to remove
+          - target-os: 'debian'
+            r-version: 'release'
+            compiler: 'gcc'
           - target-os: 'fedora'
             r-version: 'release'
           - target-os: 'fedora'
