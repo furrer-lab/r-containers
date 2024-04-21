@@ -166,11 +166,12 @@ jobs:
     needs: [ 'increment-tag' ]
     permissions:
       contents: write
+    steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: '0'
     - name: Getting artifacts
-      users: actions/download-artifact@v4
+      uses: actions/download-artifact@v4
       with:
         patter: "info-artifact-*.md"
         path: info/
