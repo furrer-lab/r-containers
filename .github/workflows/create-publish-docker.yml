@@ -145,6 +145,8 @@ jobs:
         fetch-depth: '0'
     - name: Install knitr
       run: |
+          dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE)
+          .libPaths(Sys.getenv("R_LIBS_USER"))
           install.packages("knitr")
       shell: Rscript {0}
     - name: Write out configuration
