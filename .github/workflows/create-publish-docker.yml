@@ -157,11 +157,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        pull: '--rebase'
+        pull: '--rebase --autostash'
+        push: true
         default_author: github_actions
         message: "auto-update: container info for ${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn"
         add: "info/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md"
-
   auto-update-and-publish-tag:
     runs-on: ubuntu-latest
     needs: [ 'increment-tag', 'container-integrity-and-config' ]
@@ -175,12 +175,11 @@ jobs:
       run: |
         wget ${{ env.CHGLOG_PATH }}/${{ env.CHGLOG_RELEASE}}.tar.gz  # get the binary for the chglog
         tar --extract --file=${{ env.CHGLOG_RELEASE}}.tar.gz git-chglog
-        git config user.email "actions@gitub.com"
+        git config user.email "actions@github.com"
         git config user.name "github_actions"
         git tag -a ${{ needs.increment-tag.outputs.VERSION }} -m 'interim tag for changelog'
         ./git-chglog -o CHANGELOG.md  # update the changelog file
         git tag -d ${{ needs.increment-tag.outputs.VERSION }}  # remove the tag again
-
     - name: Commit CHANGELOG.md update
       uses: EndBug/add-and-commit@v9
       env:
