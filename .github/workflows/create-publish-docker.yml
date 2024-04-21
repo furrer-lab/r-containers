@@ -114,7 +114,8 @@ jobs:
 
   container-integrity-and-config:
     runs-on: ubuntu-22.04
-    needs: [ 'increment-tag', 'build-and-push']
+    # needs: [ 'increment-tag', 'build-and-push']
+    needs: [ 'increment-tag' ]
     permissions:
       contents: write
       packages: read
@@ -162,8 +163,7 @@ jobs:
 
   update-container-info:
     runs-on: ubuntu-latest
-    # needs: [ 'increment-tag', 'container-integrity-and-config' ]
-    needs: [ 'increment-tag' ]
+    needs: [ 'increment-tag', 'container-integrity-and-config' ]
     permissions:
       contents: write
     steps:
