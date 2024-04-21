@@ -173,7 +173,7 @@ jobs:
     - name: Getting artifacts
       uses: actions/download-artifact@v4
       with:
-        patter: "info-artifact-*.md"
+        pattern: "info-artifact-*"
         path: info/
         merge-multiple: true
     - name: Update the archive
