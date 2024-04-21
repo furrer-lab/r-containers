@@ -2,7 +2,7 @@ name: Create Docker image and publish to GH Packages
 
 on:
   push:
-    branches: [ main , 27-document-and-track-container-configuration]    # create a new version whenever we push to main
+    branches: [ main ]    # create a new version whenever we push to main
   schedule:
     - cron: "12 2 2 * *"  # run at 2:12 of the 2nd of every month
 
@@ -25,11 +25,9 @@ jobs:
     outputs:
       VERSION: ${{ steps.version.outputs.version }}
     steps:
-
     - uses: actions/checkout@v4
       with:
         fetch-depth: '0'
-
     - name: Auto increment calver version
       uses: reecetech/version-increment@2023.10.1
       id: version
@@ -41,12 +39,9 @@ jobs:
     needs: increment-tag
     env:
       CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
-
-
     permissions:                       # for `GITHUB_TOKEN`
       contents: read
       packages: write
-
     strategy:
       fail-fast: false
       matrix:
@@ -62,21 +57,17 @@ jobs:
             r-version: 'patched'
           - compiler: 'clang'
             r-version: 'release'
-    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
       - name: Log in to the registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Extract tags and labels
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
@@ -86,14 +77,11 @@ jobs:
           tags: |                     # set Docker tags to git tags
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            #type=semver,pattern={{version}}
-
       # For private repo cloned via ssh we need a deploy key
       # - name: Write the ssh key file
       #   run: |
       #     echo "${{  secrets.DEVEL_ABN_DEPLOY }}" >> ssh_key
       #   shell: bash
-
       - name: Build and push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
@@ -111,18 +99,14 @@ jobs:
           # For private repo cloned via ssh
           # secret-files: |
           #   key=./ssh_key
-
   container-integrity-and-config:
     runs-on: ubuntu-22.04
-    # needs: [ 'increment-tag', 'build-and-push']
-    needs: [ 'increment-tag' ]
+    needs: [ 'increment-tag', 'build-and-push']
     permissions:
       contents: write
       packages: read
     container:
-      # debugging
-      # image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ needs.increment-tag.outputs.VERSION }}
-      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:latest
+      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ needs.increment-tag.outputs.VERSION }}
       options: --user 1001
       credentials:
         username: ${{ github.actor }}
@@ -133,14 +117,6 @@ jobs:
         compiler: ['gcc', 'clang']
         r-version: ['devel', 'release', 'patched']
         exclude:
-          # to remove
-          - target-os: 'debian'
-            r-version: 'devel'
-            compiler: 'clang'
-          # to remove
-          - target-os: 'debian'
-            r-version: 'release'
-            compiler: 'gcc'
           - target-os: 'fedora'
             r-version: 'release'
           - target-os: 'fedora'
@@ -186,10 +162,8 @@ jobs:
         merge-multiple: true
     - name: Update the archive
       run: |
-        mkdir -p info/archive/latest
-        # mkdir -p info/archive/${{ needs.increment-tag.outputs.VERSION }}
-        cp info/*.md info/archive/latest/
-        # cp info/*.md info/archive/${{ needs.increment-tag.outputs.VERSION }}/
+        mkdir -p info/archive/${{ needs.increment-tag.outputs.VERSION }}
+        cp info/*.md info/archive/${{ needs.increment-tag.outputs.VERSION }}/
     - name: Commit config for container
       uses: EndBug/add-and-commit@v9
       env:
@@ -198,8 +172,7 @@ jobs:
         pull: '--rebase --autostash'
         push: true
         default_author: github_actions
-        # message: "auto-update: container info for release ${{ needs.increment-tag.outputs.VERSION }}"
-        message: "auto-update: container info for release latest"
+        message: "auto-update: container info for release ${{ needs.increment-tag.outputs.VERSION }}"
         add: "info/"
 
   auto-update-and-publish-tag:
@@ -217,11 +190,9 @@ jobs:
         tar --extract --file=${{ env.CHGLOG_RELEASE}}.tar.gz git-chglog
         git config user.email "actions@github.com"
         git config user.name "github_actions"
-        # git tag -a ${{ needs.increment-tag.outputs.VERSION }} -m 'interim tag for changelog'
-        git tag -a 2.0.0-rc1 -m 'interim tag for changelog'
+        git tag -a ${{ needs.increment-tag.outputs.VERSION }} -m 'interim tag for changelog'
         ./git-chglog -o CHANGELOG.md  # update the changelog file
-        #git tag -d ${{ needs.increment-tag.outputs.VERSION }}  # remove the tag again
-        git tag -d 2.0.0-rc1  # remove the tag again
+        git tag -d ${{ needs.increment-tag.outputs.VERSION }}  # remove the tag again
     - name: Commit CHANGELOG.md update
       uses: EndBug/add-and-commit@v9
       env:
@@ -231,5 +202,4 @@ jobs:
         default_author: github_actions
         message: "auto-update: CHANGELOG.md"
         add: 'CHANGELOG.md'
-        # tag: "${{ needs.increment-tag.outputs.VERSION }}"
-        tag: "2.0.0-rc1 "
+        tag: "${{ needs.increment-tag.outputs.VERSION }}"

@@ -1,6 +1,6 @@
 # r-containers
 
-This is a selection of Docker container that provide r-environments for testing purposes.
+A selection of Docker container that provide r-environments for testing purposes.
 
 ## Configuration
 
