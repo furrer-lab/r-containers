@@ -155,6 +155,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
+        pull: '--rebase'
         default_author: github_actions
         message: "auto-update: container docs for ${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn"
         add: "docs/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md"
