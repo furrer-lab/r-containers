@@ -18,56 +18,30 @@ env:
 
 jobs:
 
-  increment-and-publish-tag:
+  increment-tag:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     outputs:
       VERSION: ${{ steps.version.outputs.version }}
     steps:
-
     - uses: actions/checkout@v4
       with:
         fetch-depth: '0'
-
     - name: Auto increment calver version
       uses: reecetech/version-increment@2023.10.1
       id: version
       with:
         scheme: calver
 
-    - name: Get git-chglog and update CHANGELOG
-      run: |
-        wget ${{ env.CHGLOG_PATH }}/${{ env.CHGLOG_RELEASE}}.tar.gz  # get the binary for the chglog
-        tar --extract --file=${{ env.CHGLOG_RELEASE}}.tar.gz git-chglog
-        git config user.email "actions@gitub.com"
-        git config user.name "github_actions"
-        git tag -a ${{ steps.version.outputs.version }} -m 'interim tag for changelog'
-        ./git-chglog -o CHANGELOG.md  # update the changelog file
-        git tag -d ${{ steps.version.outputs.version }}  # remove the tag again
-
-    - name: Commit CHANGELOG.md update
-      uses: EndBug/add-and-commit@v9
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        default_author: github_actions
-        message: "auto-update: CHANGELOG.md"
-        add: 'CHANGELOG.md'
-        tag: '${{ steps.version.outputs.version }}'
-      
-
   build-and-push:
     runs-on: ubuntu-latest
-    needs: increment-and-publish-tag
+    needs: increment-tag
     env:
-      CUSTOM_TAG: "${{ needs.increment-and-publish-tag.outputs.VERSION }}"
-
-
+      CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
     permissions:                       # for `GITHUB_TOKEN`
       contents: read
       packages: write
-
     strategy:
       fail-fast: false
       matrix:
@@ -83,21 +57,17 @@ jobs:
             r-version: 'patched'
           - compiler: 'clang'
             r-version: 'release'
-    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
       - name: Log in to the registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Extract tags and labels
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
@@ -107,14 +77,11 @@ jobs:
           tags: |                     # set Docker tags to git tags
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            #type=semver,pattern={{version}}
-
       # For private repo cloned via ssh we need a deploy key
       # - name: Write the ssh key file
       #   run: |
       #     echo "${{  secrets.DEVEL_ABN_DEPLOY }}" >> ssh_key
       #   shell: bash
-
       - name: Build and push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
@@ -132,3 +99,107 @@ jobs:
           # For private repo cloned via ssh
           # secret-files: |
           #   key=./ssh_key
+  container-integrity-and-config:
+    runs-on: ubuntu-22.04
+    needs: [ 'increment-tag', 'build-and-push']
+    permissions:
+      contents: write
+      packages: read
+    container:
+      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ needs.increment-tag.outputs.VERSION }}
+      options: --user 1001
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      matrix:
+        target-os: ['debian', 'fedora']
+        compiler: ['gcc', 'clang']
+        r-version: ['devel', 'release', 'patched']
+        exclude:
+          - target-os: 'fedora'
+            r-version: 'release'
+          - target-os: 'fedora'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'release'
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
+    - name: Install knitr
+      run: |
+          dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE)
+          .libPaths(Sys.getenv("R_LIBS_USER"))
+          install.packages("knitr")
+      shell: Rscript {0}
+    - name: Write out configuration
+      run: |
+        Rscript -e 'args<-commandArgs(TRUE);knitr::knit_hooks$set(output = function(x, options){gsub("##", ">\n> ", x)});knitr::knit("src/release_info.tpl", sprintf("info/%s-%s-%s-%s.md", args[1], args[2], args[3], args[4]))' ${{ matrix.target-os}} ${{ matrix.compiler }} ${{ matrix.r-version }} abn
+    - name: Save config as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: info-artifact-${{ matrix.target-os }}_${{ matrix.compiler }}_${{ matrix.r-version }}
+        path: info/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md
+
+  update-container-info:
+    runs-on: ubuntu-latest
+    needs: [ 'increment-tag', 'container-integrity-and-config' ]
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
+    - name: Getting artifacts
+      uses: actions/download-artifact@v4
+      with:
+        pattern: "info-artifact-*"
+        path: info/
+        merge-multiple: true
+    - name: Update the archive
+      run: |
+        mkdir -p info/archive/${{ needs.increment-tag.outputs.VERSION }}
+        cp info/*.md info/archive/${{ needs.increment-tag.outputs.VERSION }}/
+    - name: Commit config for container
+      uses: EndBug/add-and-commit@v9
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        pull: '--rebase --autostash'
+        push: true
+        default_author: github_actions
+        message: "auto-update: container info for release ${{ needs.increment-tag.outputs.VERSION }}"
+        add: "info/"
+
+  auto-update-and-publish-tag:
+    runs-on: ubuntu-latest
+    needs: [ 'increment-tag', 'update-container-info']
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
+    - name: Get git-chglog and update CHANGELOG
+      run: |
+        wget ${{ env.CHGLOG_PATH }}/${{ env.CHGLOG_RELEASE}}.tar.gz  # get the binary for the chglog
+        tar --extract --file=${{ env.CHGLOG_RELEASE}}.tar.gz git-chglog
+        git config user.email "actions@github.com"
+        git config user.name "github_actions"
+        git tag -a ${{ needs.increment-tag.outputs.VERSION }} -m 'interim tag for changelog'
+        ./git-chglog -o CHANGELOG.md  # update the changelog file
+        git tag -d ${{ needs.increment-tag.outputs.VERSION }}  # remove the tag again
+    - name: Commit CHANGELOG.md update
+      uses: EndBug/add-and-commit@v9
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        pull: '--rebase --autostash'
+        default_author: github_actions
+        message: "auto-update: CHANGELOG.md"
+        add: 'CHANGELOG.md'
+        tag: "${{ needs.increment-tag.outputs.VERSION }}"
