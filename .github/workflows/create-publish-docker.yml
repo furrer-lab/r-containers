@@ -119,7 +119,9 @@ jobs:
       contents: write
       packages: read
     container:
-      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ needs.increment-tag.outputs.VERSION }}
+      # debugging
+      # image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ needs.increment-tag.outputs.VERSION }}
+      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:latest
       options: --user 1001
       credentials:
         username: ${{ github.actor }}
@@ -151,7 +153,34 @@ jobs:
       shell: Rscript {0}
     - name: Write out configuration
       run: |
-        Rscript -e 'args<-commandArgs(TRUE);knitr::knit_hooks$set(output = function(x, options){gsub("##", "> ", x)});knitr::knit("src/release_info.tpl", sprintf("info/%s-%s-%s-%s.md", args[1], args[2], args[3], args[4]))' ${{ matrix.target-os}} ${{ matrix.compiler }} ${{ matrix.r-version }} abn
+        Rscript -e 'args<-commandArgs(TRUE);knitr::knit_hooks$set(output = function(x, options){gsub("##|", ">\n> ", x)});knitr::knit("src/release_info.tpl", sprintf("info/%s-%s-%s-%s.md", args[1], args[2], args[3], args[4]))' ${{ matrix.target-os}} ${{ matrix.compiler }} ${{ matrix.r-version }} abn
+    - name: Save config as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: info-artifact-${{ matrix.target-os }}_${{ matrix.compiler }}_${{ matrix.r-version }}
+        path: info/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md
+
+  update-container-info:
+    runs-on: ubuntu-latest
+    # needs: [ 'increment-tag', 'container-integrity-and-config' ]
+    needs: [ 'increment-tag' ]
+    permissions:
+      contents: write
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
+    - name: Getting artifacts
+      users: actions/download-artifact@v4
+      with:
+        patter: "info-artifact-*.md"
+        path: info/
+        merge-multiple: true
+    - name: Update the archive
+      run: |
+        mkdir -p info/archive/latest
+        # mkdir -p info/archive/${{ needs.increment-tag.outputs.VERSION }}
+        cp info/*.md info/archive/latest/
+        # cp info/*.md info/archive/${{ needs.increment-tag.outputs.VERSION }}/
     - name: Commit config for container
       uses: EndBug/add-and-commit@v9
       env:
@@ -160,11 +189,13 @@ jobs:
         pull: '--rebase --autostash'
         push: true
         default_author: github_actions
-        message: "auto-update: container info for ${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn"
-        add: "info/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md"
+        # message: "auto-update: container info for release ${{ needs.increment-tag.outputs.VERSION }}"
+        message: "auto-update: container info for release latest"
+        add: "info/"
+
   auto-update-and-publish-tag:
     runs-on: ubuntu-latest
-    needs: [ 'increment-tag', 'container-integrity-and-config' ]
+    needs: [ 'increment-tag', 'update-container-info']
     permissions:
       contents: write
     steps:
@@ -177,9 +208,11 @@ jobs:
         tar --extract --file=${{ env.CHGLOG_RELEASE}}.tar.gz git-chglog
         git config user.email "actions@github.com"
         git config user.name "github_actions"
-        git tag -a ${{ needs.increment-tag.outputs.VERSION }} -m 'interim tag for changelog'
+        # git tag -a ${{ needs.increment-tag.outputs.VERSION }} -m 'interim tag for changelog'
+        git tag -a 2.0.0-rc1 -m 'interim tag for changelog'
         ./git-chglog -o CHANGELOG.md  # update the changelog file
-        git tag -d ${{ needs.increment-tag.outputs.VERSION }}  # remove the tag again
+        #git tag -d ${{ needs.increment-tag.outputs.VERSION }}  # remove the tag again
+        git tag -d 2.0.0-rc1  # remove the tag again
     - name: Commit CHANGELOG.md update
       uses: EndBug/add-and-commit@v9
       env:
@@ -188,4 +221,5 @@ jobs:
         default_author: github_actions
         message: "auto-update: CHANGELOG.md"
         add: 'CHANGELOG.md'
-        tag: "${{ needs.increment-tag.outputs.VERSION }}"
+        # tag: "${{ needs.increment-tag.outputs.VERSION }}"
+        tag: "2.0.0-rc1 "
