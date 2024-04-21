@@ -10,6 +10,10 @@
 
 * container build and relase workflow
 
+### Feature
+
+* automated changelogs
+
 
 <a name="2024.4.3"></a>
 ## [2024.4.3](https://github.com/furrer-lab/r-containers/compare/2024.4.2...2024.4.3) (2024-04-10)
