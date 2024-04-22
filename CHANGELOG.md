@@ -4,7 +4,17 @@
 
 ### Feature
 
+* document container configs
 * automated changelogs
+
+### Refactor
+
+* container build and release workflow
+
+### Reverts
+
+* to revert - checkout branch for pull requests
+* only run on main
 
 
 <a name="2024.4.3"></a>
