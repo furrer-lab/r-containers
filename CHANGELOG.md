@@ -1,6 +1,10 @@
 
-<a name="2024.4.4"></a>
-## [2024.4.4](https://github.com/furrer-lab/r-containers/compare/2024.4.3...2024.4.4) (2024-04-22)
+<a name="2024.4.5"></a>
+## [2024.4.5](https://github.com/furrer-lab/r-containers/compare/2024.4.3...2024.4.5) (2024-04-22)
+
+### Feature
+
+* automated documentation of container configurations
 
 ### Feature
 
