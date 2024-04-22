@@ -1,20 +1,10 @@
 
-<a name="2.0.0-rc1"></a>
-## [2.0.0-rc1](https://github.com/furrer-lab/r-containers/compare/2024.4.3...2.0.0-rc1) (2024-04-21)
+<a name="2024.4.4"></a>
+## [2024.4.4](https://github.com/furrer-lab/r-containers/compare/2024.4.3...2024.4.4) (2024-04-22)
 
 ### Feature
 
-* document container configs
 * automated changelogs
-
-### Refactor
-
-* container build and release workflow
-
-### Reverts
-
-* to revert - checkout branch for pull requests
-* only run on main
 
 
 <a name="2024.4.3"></a>
