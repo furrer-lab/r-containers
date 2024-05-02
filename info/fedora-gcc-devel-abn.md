@@ -61,7 +61,7 @@
 |ash            |1.0-15     |
 |askpass        |1.2.0      |
 |base64enc      |0.1-3      |
-|BiocGenerics   |0.49.1     |
+|BiocGenerics   |0.50.0     |
 |BiocManager    |1.30.22    |
 |BiocVersion    |3.19.1     |
 |bitops         |1.0-7      |
@@ -70,7 +70,7 @@
 |bookdown       |0.39       |
 |brew           |1.0-10     |
 |brglm          |0.7.2      |
-|brio           |1.1.4      |
+|brio           |1.1.5      |
 |bslib          |0.7.0      |
 |cachem         |1.0.8      |
 |callr          |3.7.6      |
@@ -105,7 +105,7 @@
 |ellipsis       |0.3.2      |
 |entropy        |1.3.1      |
 |evaluate       |0.23       |
-|evd            |2.3-6.1    |
+|evd            |2.3-7      |
 |fansi          |1.0.6      |
 |farver         |2.1.1      |
 |fastmap        |1.1.1      |
@@ -117,20 +117,20 @@
 |fontawesome    |0.5.2      |
 |foreach        |1.5.2      |
 |Formula        |1.2-5      |
-|fs             |1.6.3      |
+|fs             |1.6.4      |
 |generics       |0.1.3      |
 |gert           |2.0.1      |
 |ggfun          |0.1.4      |
-|ggplot2        |3.5.0      |
+|ggplot2        |3.5.1      |
 |ggplotify      |0.1.2      |
 |gh             |1.4.1      |
 |gitcreds       |0.1.2      |
 |glue           |1.7.0      |
-|graph          |1.81.1     |
+|graph          |1.82.0     |
 |gridExtra      |2.3        |
 |gridGraphics   |0.5-1      |
 |gsl            |2.1-8      |
-|gtable         |0.3.4      |
+|gtable         |0.3.5      |
 |gtools         |3.9.5      |
 |hdrcde         |3.4        |
 |hexbin         |1.28.3     |
@@ -167,7 +167,7 @@
 |MatrixModels   |0.5-3      |
 |matrixStats    |1.3.0      |
 |mclogit        |0.9.6      |
-|mclust         |6.1        |
+|mclust         |6.1.1      |
 |mcmc           |0.9-8      |
 |MCMCpack       |1.7-0      |
 |memisc         |0.99.31.7  |
@@ -226,7 +226,7 @@
 |renv           |1.0.7      |
 |reshape2       |1.4.4      |
 |rgl            |1.3.1      |
-|Rgraphviz      |2.47.0     |
+|Rgraphviz      |2.48.0     |
 |RhpcBLASctl    |0.23-42    |
 |rjags          |4-15       |
 |rlang          |1.1.3      |
@@ -249,7 +249,7 @@
 |showtextdb     |3.0        |
 |sn             |2.1.1      |
 |sourcetools    |0.1.7-1    |
-|sp             |2.1-3      |
+|sp             |2.1-4      |
 |spam           |2.10-0     |
 |SparseM        |1.81       |
 |spData         |2.3.0      |
@@ -269,7 +269,7 @@
 |tibble         |3.2.1      |
 |tidyr          |1.3.1      |
 |tidyselect     |1.2.1      |
-|tidyterra      |0.5.2      |
+|tidyterra      |0.6.0      |
 |tinytex        |0.50       |
 |tis            |1.39       |
 |units          |0.8-5      |
@@ -284,7 +284,7 @@
 |wk             |0.9.1      |
 |xfun           |0.43       |
 |xml2           |1.3.6      |
-|xopen          |1.0.0      |
+|xopen          |1.0.1      |
 |xtable         |1.8-4      |
 |yaml           |2.3.8      |
 |yulab.utils    |0.1.4      |
