@@ -51,6 +51,8 @@ jobs:
         exclude:
           - target-os: 'valgrind'
             r-version: ['release', 'patched']
+          - target-os: 'valgrind'
+            r-version: 'devel'
             compiler: 'clang'
           - target-os: 'fedora'
             r-version: 'release'
