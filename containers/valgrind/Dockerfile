@@ -16,6 +16,7 @@ ARG R_VERSION
 ARG PACKAGE_PATH
 ARG REPO_PATH
 ARG JAGS
+ARG DRMEMORY
 # # sets the date for the CRAN snapshot (e.g. BUILD_DATE=2023-12-20)
 # ARG BUILD_DATE
 
@@ -23,6 +24,17 @@ ARG JAGS
 RUN dnf check-update && dnf -y install \
   openssl-devel \
   libcurl-devel
+
+# Install dependencies for DrMemory
+RUN dnf -y install libunwind
+# Install DrMemory
+ADD https://github.com/DynamoRIO/drmemory/releases/download/release_$DRMEMORY/DrMemory-Linux-$DRMEMORY.tar.gz /tmp/drmemory.tar.gz
+WORKDIR /tmp/
+RUN mkdir -p /opt/DrMemory
+RUN tar -xf drmemory.tar.gz --directory /opt/DrMemory
+RUN rm drmemory.tar.gz
+# add DrMemory to PATH
+ENV PATH="/opt/drMemory/bin:${PATH}"
 
 # add R to PATH
 ENV PATH="/opt/R/devel-valgrind/bin:${PATH}"
