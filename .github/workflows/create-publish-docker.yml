@@ -45,18 +45,20 @@ jobs:
       matrix:
         # NOTE: valgrind container is fedora, gcc, devel
         #       see https://r-hub.github.io/containers/containers.html#valgrind
-        target-os: ['debian', 'fedora']
+        # target-os: ['debian', 'fedora']
+        target-os: ['debian']
         compiler: ['gcc', 'clang']
         r-version: ['devel', 'release', 'patched']
         exclude:
-          - target-os: 'fedora'
-            r-version: 'release'
-          - target-os: 'fedora'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'release'
+          - target-os: 'debian'
+          # - target-os: 'fedora'
+          #   r-version: 'release'
+          # - target-os: 'fedora'
+          #   r-version: 'patched'
+          # - compiler: 'clang'
+          #   r-version: 'patched'
+          # - compiler: 'clang'
+          #   r-version: 'release'
         include:
           - target-os: 'valgrind'
             compiler: 'gcc'
@@ -117,18 +119,20 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
-        target-os: ['debian', 'fedora']
+        # target-os: ['debian', 'fedora']
+        target-os: ['debian']
         compiler: ['gcc', 'clang']
         r-version: ['devel', 'release', 'patched']
         exclude:
-          - target-os: 'fedora'
-            r-version: 'release'
-          - target-os: 'fedora'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'release'
+          - target-os: 'debian'
+          # - target-os: 'fedora'
+          #   r-version: 'release'
+          # - target-os: 'fedora'
+          #   r-version: 'patched'
+          # - compiler: 'clang'
+          #   r-version: 'patched'
+          # - compiler: 'clang'
+          #   r-version: 'release'
         include:
           - target-os: 'valgrind'
             compiler: 'gcc'
