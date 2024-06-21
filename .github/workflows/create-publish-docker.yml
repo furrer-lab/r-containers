@@ -1,10 +1,8 @@
 name: Create Docker image and publish to GH Packages
 
 on:
-  push:
+  pull_request:
     branches: [ main ]    # create a new version whenever we push to main
-  schedule:
-    - cron: "12 2 2 * *"  # run at 2:12 of the 2nd of every month
 
 env:
   DOCKER_REGISTRY: ghcr.io             # where to register the image
@@ -47,7 +45,7 @@ jobs:
       matrix:
         # NOTE: valgrind container is fedora, gcc, devel
         #       see https://r-hub.github.io/containers/containers.html#valgrind
-        target-os: ['debian', 'fedora', 'valgrind']
+        target-os: ['valgrind']
         compiler: ['gcc', 'clang']
         r-version: ['devel', 'release', 'patched']
         exclude:
