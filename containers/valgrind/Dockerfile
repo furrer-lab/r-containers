@@ -30,8 +30,8 @@ ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 # diff to debian: /lib/ > /lib64/
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
-RUN if [ "$R_VERSION" = "release" ]; then RPATH=""; else RPATH=/opt/R-$R_VERSION; fi \
-    && echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${RPATH}/lib64/R/library/base/R/Rprofile
+RUN RPATH=/opt/R/devel-valgrind \
+    && echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${RPATH}/lib/R/library/base/R/Rprofile
 
 # rjags:
 RUN dnf -y install \
@@ -48,7 +48,7 @@ WORKDIR /tmp/$JAGS
 # and substitute the compilers with the specifics from the R installation that
 # we can get by using the `R CMD config CC/CXX/BLAS_LIBS/LAPACK_LIBS' commands:
 RUN if [ "$COMPILER" = "clang" ]; then RCC=/usr/bin/clang RCXX="/usr/bin/clang++ -std=gnu++17 -stdlib=libc++"; else RRCC=/usr/bin/gcc RCXX="/usr/bin/g++"; fi \
-    && LD="llvm-ld" CC="${RCC}" CXX="${RCXX}" ./configure --with-blas="-L/opt/R-devel/lib64/R/lib -lRblas" --with-lapack="-L/opt/R-devel/lib64/R/lib -lRlapack" --libdir=/usr/local/lib64 && make && make install
+    && LD="llvm-ld" CC="${RCC}" CXX="${RCXX}" ./configure --with-blas="-L/opt/R/devel-valgrind/lib/R/lib -lRblas" --with-lapack="-L/opt/R/devel-valgrind/lib/R/lib -lRlapack" --libdir=/usr/local/lib && make && make install
 RUN ls /tmp/$JAGS
 # ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 # RUN R -e "install.packages('rjags')"
