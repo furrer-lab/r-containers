@@ -25,7 +25,7 @@ RUN dnf check-update && dnf -y install \
   libcurl-devel
 
 # add R to PATH
-ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
+ENV PATH="/opt/R/devel-valgrind/bin:${PATH}"
 
 # diff to debian: /lib/ > /lib64/
 # ENV PATH "$PATH:/opt/R-devel/bin/"
