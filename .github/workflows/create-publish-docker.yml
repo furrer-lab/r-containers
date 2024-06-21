@@ -45,23 +45,22 @@ jobs:
       matrix:
         # NOTE: valgrind container is fedora, gcc, devel
         #       see https://r-hub.github.io/containers/containers.html#valgrind
-        target-os: ['valgrind']
+        target-os: ['debian', 'fedora']
         compiler: ['gcc', 'clang']
         r-version: ['devel', 'release', 'patched']
         exclude:
+          - target-os: 'fedora'
+            r-version: 'release'
+          - target-os: 'fedora'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'release'
+        include:
           - target-os: 'valgrind'
-            r-version: ['release', 'patched']
-          - target-os: 'valgrind'
+            compiler: 'gcc'
             r-version: 'devel'
-            compiler: 'clang'
-          - target-os: 'fedora'
-            r-version: 'release'
-          - target-os: 'fedora'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'release'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -130,6 +129,10 @@ jobs:
             r-version: 'patched'
           - compiler: 'clang'
             r-version: 'release'
+        include:
+          - target-os: 'valgrind'
+            compiler: 'gcc'
+            r-version: 'devel'
       fail-fast: false
     steps:
     - uses: actions/checkout@v4
