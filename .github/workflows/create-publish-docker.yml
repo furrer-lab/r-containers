@@ -45,10 +45,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target-os: ['debian', 'fedora']
+        # NOTE: valgrind container is fedora, gcc, devel
+        #       see https://r-hub.github.io/containers/containers.html#valgrind
+        target-os: ['debian', 'fedora', 'valgrind']
         compiler: ['gcc', 'clang']
         r-version: ['devel', 'release', 'patched']
         exclude:
+          - target-os: 'valgrind'
+            r-version: ['release', 'patched']
+            compiler: 'clang'
           - target-os: 'fedora'
             r-version: 'release'
           - target-os: 'fedora'
