@@ -34,7 +34,7 @@ RUN mkdir -p /opt/DrMemory
 RUN tar -xf drmemory.tar.gz --directory /opt/DrMemory
 RUN rm drmemory.tar.gz
 # add DrMemory to PATH
-ENV PATH="/opt/drMemory/DrMemory-Linux-$DRMEMORY/bin:${PATH}"
+ENV PATH="/opt/DrMemory/DrMemory-Linux-$DRMEMORY/bin:${PATH}"
 
 # add R to PATH
 ENV PATH="/opt/R/devel-valgrind/bin:${PATH}"
@@ -50,8 +50,8 @@ RUN dnf -y install \
   lapack* blas* atlas* 
 ADD https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/$JAGS.tar.gz/download /tmp/jags.tar.gz
 WORKDIR /tmp/
-RUN ls /tmp/
 RUN tar -xf jags.tar.gz
+RUN rm jags.tar.gz
 WORKDIR /tmp/$JAGS
 # Building JAGS requires the same environment that is then used to build rjags.
 # To achieve this we follow the approach for building JAGS with Clang outlined
