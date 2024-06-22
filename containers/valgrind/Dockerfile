@@ -34,7 +34,7 @@ RUN mkdir -p /opt/DrMemory
 RUN tar -xf drmemory.tar.gz --directory /opt/DrMemory
 RUN rm drmemory.tar.gz
 # add DrMemory to PATH
-ENV PATH="/opt/drMemory/bin:${PATH}"
+ENV PATH="/opt/drMemory/DrMemory-Linux-$DRMEMORY/bin:${PATH}"
 
 # add R to PATH
 ENV PATH="/opt/R/devel-valgrind/bin:${PATH}"
