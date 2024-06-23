@@ -1,4 +1,12 @@
 
+<a name="2024.6.3"></a>
+## [2024.6.3](https://github.com/furrer-lab/r-containers/compare/2024.6.2...2024.6.3) (2024-06-23)
+
+### Feature
+
+* adding covr ([#42](https://github.com/furrer-lab/r-containers/issues/42))
+
+
 <a name="2024.6.2"></a>
 ## [2024.6.2](https://github.com/furrer-lab/r-containers/compare/2024.6.1...2024.6.2) (2024-06-23)
 
