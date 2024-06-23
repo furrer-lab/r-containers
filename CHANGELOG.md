@@ -1,4 +1,12 @@
 
+<a name="2024.6.2"></a>
+## [2024.6.2](https://github.com/furrer-lab/r-containers/compare/2024.6.1...2024.6.2) (2024-06-23)
+
+### Fix
+
+* corrected workflow running conditions
+
+
 <a name="2024.6.1"></a>
 ## [2024.6.1](https://github.com/furrer-lab/r-containers/compare/2024.5.1...2024.6.1) (2024-06-02)
 
