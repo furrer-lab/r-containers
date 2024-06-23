@@ -34,6 +34,7 @@ RUN mkdir -p /opt/DrMemory
 RUN tar -xf drmemory.tar.gz --directory /opt/DrMemory
 RUN rm drmemory.tar.gz
 # add DrMemory to PATH
+RUN chmod 755 /opt/DrMemory/DrMemory-Linux-$DRMEMORY/bin/drmemory
 ENV PATH="/opt/DrMemory/DrMemory-Linux-$DRMEMORY/bin:${PATH}"
 
 # add R to PATH
