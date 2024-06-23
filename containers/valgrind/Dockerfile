@@ -73,6 +73,10 @@ RUN R -e "install.packages('devtools')" \
  && R -e "install.packages('R.rsp')" \
  && R -e "install.packages('renv')" \
  && R -e "install.packages('desc')"
+# For code coverage
+RUN R -e "install.packages('DT')" \
+ && R -e "install.packages('htmltools')" \
+ && R -e "install.packages('covr')"
 
 # Prepare for potential check to be run
 RUN R -e "install.packages('urlchecker')"
