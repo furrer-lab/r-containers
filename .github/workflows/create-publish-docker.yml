@@ -1,10 +1,8 @@
 name: Create Docker image and publish to GH Packages
 
 on:
-  push:
+  pull_request:
     branches: [ main ]    # create a new version whenever we push to main
-  schedule:
-    - cron: "12 2 2 * *"  # run at 2:12 of the 2nd of every month
 
 env:
   DOCKER_REGISTRY: ghcr.io             # where to register the image
@@ -13,6 +11,8 @@ env:
   # Set the path to the package where the DESCRIPTION file can be found
   PACKAGE_PATH: ${{ vars.PACKAGE_PATH || './' }}
   JAGS: JAGS-4.3.2
+  # this if for the valgrind container only
+  DRMEMORY: "2.6.0"
   CHGLOG_RELEASE: git-chglog_0.15.4_linux_amd64
   CHGLOG_PATH: https://github.com/git-chglog/git-chglog/releases/download/v0.15.4
 
@@ -45,18 +45,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target-os: ['debian', 'fedora']
+        # NOTE: valgrind container is fedora, gcc, devel
+        #       see https://r-hub.github.io/containers/containers.html#valgrind
+        # target-os: ['debian', 'fedora']
+        target-os: ['debian']
         compiler: ['gcc', 'clang']
         r-version: ['devel', 'release', 'patched']
         exclude:
-          - target-os: 'fedora'
-            r-version: 'release'
-          - target-os: 'fedora'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'release'
+          - target-os: 'debian'
+          # - target-os: 'fedora'
+          #   r-version: 'release'
+          # - target-os: 'fedora'
+          #   r-version: 'patched'
+          # - compiler: 'clang'
+          #   r-version: 'patched'
+          # - compiler: 'clang'
+          #   r-version: 'release'
+        include:
+          - target-os: 'valgrind'
+            compiler: 'gcc'
+            r-version: 'devel'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -95,7 +103,8 @@ jobs:
             R_VERSION=${{ matrix.r-version }}
             PACKAGE_PATH=${{ env.PACKAGE_PATH}}
             REPO_PATH=${{ env.REPO_PATH }}
-            JAGS=${{ env.JAGS}}
+            JAGS=${{ env.JAGS }}
+            DRMEMORY=${{ env.DRMEMORY }}
           # For private repo cloned via ssh
           # secret-files: |
           #   key=./ssh_key
@@ -113,18 +122,24 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
-        target-os: ['debian', 'fedora']
+        # target-os: ['debian', 'fedora']
+        target-os: ['debian']
         compiler: ['gcc', 'clang']
         r-version: ['devel', 'release', 'patched']
         exclude:
-          - target-os: 'fedora'
-            r-version: 'release'
-          - target-os: 'fedora'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'release'
+          - target-os: 'debian'
+          # - target-os: 'fedora'
+          #   r-version: 'release'
+          # - target-os: 'fedora'
+          #   r-version: 'patched'
+          # - compiler: 'clang'
+          #   r-version: 'patched'
+          # - compiler: 'clang'
+          #   r-version: 'release'
+        include:
+          - target-os: 'valgrind'
+            compiler: 'gcc'
+            r-version: 'devel'
       fail-fast: false
     steps:
     - uses: actions/checkout@v4
