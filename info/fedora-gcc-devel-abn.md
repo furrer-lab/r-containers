@@ -82,9 +82,11 @@
 |coda          |0.19-4.1   |
 |colorspace    |2.1-0      |
 |commonmark    |1.9.1      |
+|covr          |3.6.4      |
 |cpp11         |0.4.7      |
 |crayon        |1.5.3      |
 |credentials   |2.0.1      |
+|crosstalk     |1.2.1      |
 |curl          |5.2.1      |
 |data.table    |1.15.4     |
 |DBI           |1.2.3      |
@@ -101,6 +103,7 @@
 |dotCall64     |1.1-1      |
 |downlit       |0.4.4      |
 |dplyr         |1.1.4      |
+|DT            |0.33       |
 |e1071         |1.7-14     |
 |Ecdat         |0.4-2      |
 |Ecfun         |0.3-2      |
@@ -158,6 +161,7 @@
 |ks            |1.14.2     |
 |labeling      |0.4.3      |
 |later         |1.3.2      |
+|lazyeval      |0.2.2      |
 |leaps         |3.2        |
 |lifecycle     |1.0.4      |
 |lme4          |1.1-35.4   |
@@ -226,6 +230,7 @@
 |remotes       |2.5.0      |
 |renv          |1.0.7      |
 |reshape2      |1.4.4      |
+|rex           |1.2.1      |
 |rgl           |1.3.1      |
 |Rgraphviz     |2.48.0     |
 |RhpcBLASctl   |0.23-42    |
