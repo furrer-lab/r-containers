@@ -47,7 +47,9 @@
 >
 >  loaded via a namespace (and not attached):
 >
->  [1] compiler_4.4.0 tools_4.4.0    knitr_1.47     xfun_0.44      evaluate_0.23
+>  [1] compiler_4.4.0  tools_4.4.0     knitr_1.47      xfun_0.45      
+>
+>  [5] evaluate_0.24.0
 
 
 # Installed packages
@@ -75,17 +77,17 @@
 |cachem        |1.1.0      |
 |callr         |3.7.6      |
 |classInt      |0.4-10     |
-|cli           |3.6.2      |
+|cli           |3.6.3      |
 |clipr         |0.8.0      |
 |coda          |0.19-4.1   |
 |colorspace    |2.1-0      |
 |commonmark    |1.9.1      |
 |cpp11         |0.4.7      |
-|crayon        |1.5.2      |
+|crayon        |1.5.3      |
 |credentials   |2.0.1      |
 |curl          |5.2.1      |
 |data.table    |1.15.4     |
-|DBI           |1.2.2      |
+|DBI           |1.2.3      |
 |deldir        |2.0-4      |
 |DEoptimR      |1.1-3      |
 |Deriv         |4.1.3      |
@@ -97,14 +99,14 @@
 |digest        |0.6.35     |
 |doParallel    |1.0.17     |
 |dotCall64     |1.1-1      |
-|downlit       |0.4.3      |
+|downlit       |0.4.4      |
 |dplyr         |1.1.4      |
 |e1071         |1.7-14     |
 |Ecdat         |0.4-2      |
 |Ecfun         |0.3-2      |
 |ellipsis      |0.3.2      |
 |entropy       |1.3.1      |
-|evaluate      |0.23       |
+|evaluate      |0.24.0     |
 |evd           |2.3-7      |
 |fansi         |1.0.6      |
 |farver        |2.1.2      |
@@ -112,7 +114,7 @@
 |fda           |6.1.8      |
 |fds           |1.8        |
 |fields        |15.2       |
-|fmesher       |0.1.5      |
+|fmesher       |0.1.6      |
 |FNN           |1.1.4      |
 |fontawesome   |0.5.2      |
 |foreach       |1.5.2      |
@@ -156,14 +158,14 @@
 |ks            |1.14.2     |
 |labeling      |0.4.3      |
 |later         |1.3.2      |
-|leaps         |3.1        |
+|leaps         |3.2        |
 |lifecycle     |1.0.4      |
-|lme4          |1.1-35.3   |
+|lme4          |1.1-35.4   |
 |lmtest        |0.9-40     |
 |locfit        |1.5-9.9    |
 |magrittr      |2.0.3      |
 |maps          |3.4.2      |
-|markdown      |1.12       |
+|markdown      |1.13       |
 |MatrixModels  |0.5-3      |
 |matrixStats   |1.3.0      |
 |mclogit       |0.9.6      |
@@ -181,7 +183,7 @@
 |multicool     |1.0.1      |
 |munsell       |0.5.1      |
 |mvtnorm       |1.2-5      |
-|nloptr        |2.0.3      |
+|nloptr        |2.1.0      |
 |numDeriv      |2016.8-1.1 |
 |openssl       |2.2.0      |
 |pcaPP         |2.0-4      |
@@ -228,7 +230,7 @@
 |Rgraphviz     |2.48.0     |
 |RhpcBLASctl   |0.23-42    |
 |rjags         |4-15       |
-|rlang         |1.1.3      |
+|rlang         |1.1.4      |
 |rmarkdown     |2.27       |
 |robustbase    |0.99-2     |
 |roxygen2      |7.3.1      |
@@ -252,7 +254,7 @@
 |spam          |2.10-0     |
 |SparseM       |1.83       |
 |spData        |2.3.1      |
-|spdep         |1.3-4      |
+|spdep         |1.3-5      |
 |splancs       |2.01-45    |
 |statmod       |1.5.0      |
 |stringi       |1.8.4      |
@@ -268,7 +270,7 @@
 |tibble        |3.2.1      |
 |tidyr         |1.3.1      |
 |tidyselect    |1.2.1      |
-|tidyterra     |0.6.0      |
+|tidyterra     |0.6.1      |
 |tinytex       |0.51       |
 |tis           |1.39       |
 |units         |0.8-5      |
@@ -281,7 +283,7 @@
 |whisker       |0.4.1      |
 |withr         |3.0.0      |
 |wk            |0.9.1      |
-|xfun          |0.44       |
+|xfun          |0.45       |
 |xml2          |1.3.6      |
 |xopen         |1.0.1      |
 |xtable        |1.8-4      |
