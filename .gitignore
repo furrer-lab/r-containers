@@ -7,3 +7,4 @@
 .Rprofile
 renv.lock
 renv/
+*.code-workspace
