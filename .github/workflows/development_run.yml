@@ -1,0 +1,141 @@
+name: Runs on pull requests
+
+on:
+  pull_request:
+    branches:
+      - "*"  # run for any pull request
+
+env:
+  DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}  # where to register the image
+  REPO_PATH: ${{ vars.REPO_PATH }}
+  # REPO_PATH: github.com:furrer-lab/abn.git  # for private repo cloned via ssh
+  # Set the path to the package where the DESCRIPTION file can be found
+  PACKAGE_PATH: ${{ vars.PACKAGE_PATH || './' }}
+  JAGS: ${{ vars.JAGS }}
+  # this if for the valgrind container only
+  DRMEMORY: ${{ vars.DRMEMORY }}
+  CHGLOG_RELEASE: ${{ vars.CHGLOG_RELEASE }}
+  CHGLOG_PATH: ${{ vars.CHGLOG_PATH }}
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    env:
+      CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
+    permissions:                       # for `GITHUB_TOKEN`
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        # NOTE: valgrind container is fedora, gcc, devel
+        #       see https://r-hub.github.io/containers/containers.html#valgrind
+        target-os: ['debian', 'fedora']
+        compiler: ['gcc', 'clang']
+        r-version: ['devel', 'release', 'patched']
+        exclude:
+          - target-os: 'fedora'
+            r-version: 'release'
+          - target-os: 'fedora'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'release'
+        include:
+          - target-os: 'valgrind'
+            compiler: 'gcc'
+            r-version: 'devel'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Log in to the registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract tags and labels
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          # TODO: set a proper name of the image (same as in context below)
+          images: ${{ env.DOCKER_REGISTRY}}/${{ format('{0}/{1}/{2}/{3}/abn', github.repository, matrix.target-os, matrix.compiler, matrix.r-version ) }}
+          tags: |                     # set Docker tags to git tags
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      # For private repo cloned via ssh we need a deploy key
+      # - name: Write the ssh key file
+      #   run: |
+      #     echo "${{  secrets.DEVEL_ABN_DEPLOY }}" >> ssh_key
+      #   shell: bash
+      - name: Build and push
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ${{ format('./containers/{0}/', matrix.target-os ) }}
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            TARGET_OS=${{ matrix.target-os }}
+            COMPILER=${{ matrix.compiler }}
+            R_VERSION=${{ matrix.r-version }}
+            PACKAGE_PATH=${{ env.PACKAGE_PATH}}
+            REPO_PATH=${{ env.REPO_PATH }}
+            JAGS=${{ env.JAGS }}
+            DRMEMORY=${{ env.DRMEMORY }}
+          # For private repo cloned via ssh
+          # secret-files: |
+          #   key=./ssh_key
+  container-integrity-and-config:
+    runs-on: ubuntu-22.04
+    needs: [ 'build' ]
+    permissions:
+      contents: write
+      packages: read
+    container:
+      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ needs.increment-tag.outputs.VERSION }}
+      options: --user 1001
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      matrix:
+        target-os: ['debian', 'fedora']
+        compiler: ['gcc', 'clang']
+        r-version: ['devel', 'release', 'patched']
+        exclude:
+          - target-os: 'fedora'
+            r-version: 'release'
+          - target-os: 'fedora'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'patched'
+          - compiler: 'clang'
+            r-version: 'release'
+        include:
+          - target-os: 'valgrind'
+            compiler: 'gcc'
+            r-version: 'devel'
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
+    - name: Install knitr
+      run: |
+          dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE)
+          .libPaths(Sys.getenv("R_LIBS_USER"))
+          install.packages("knitr")
+      shell: Rscript {0}
+    - name: Write out configuration
+      run: |
+        Rscript -e 'args<-commandArgs(TRUE);knitr::knit_hooks$set(output = function(x, options){gsub("##", ">\n> ", x)});knitr::knit("src/release_info.tpl", sprintf("info/%s-%s-%s-%s.md", args[1], args[2], args[3], args[4]))' ${{ matrix.target-os}} ${{ matrix.compiler }} ${{ matrix.r-version }} abn
+    - name: Save config as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: info-artifact-${{ matrix.target-os }}_${{ matrix.compiler }}_${{ matrix.r-version }}
+        path: info/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md
