@@ -1,11 +1,16 @@
-name: Runs on pull requests
+# Workflow triggered when labeling a pull request with `build::check`
+# This action is adapted from https://github.com/t4d-gmbh/stubbed_versioning
+name: On Label memory checking
 
 on:
   pull_request:
-    branches:
-      - "*"  # run for any pull request
+    types: [ labeled ]
 
 env:
+  LABEL_CHECK: 'build::check'
+  LABEL_SUCCESS: 'build::passed'
+  LABEL_FAILURE: 'build::failed'
+
   DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}  # where to register the image
   REPO_PATH: ${{ vars.REPO_PATH }}
   # REPO_PATH: github.com:furrer-lab/abn.git  # for private repo cloned via ssh
@@ -139,3 +144,45 @@ jobs:
       with:
         name: info-artifact-${{ matrix.target-os }}_${{ matrix.compiler }}_${{ matrix.r-version }}
         path: info/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md
+
+  record_passed_label:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      OWNER: ${{ github.repository_owner }}
+      REPO: ${{ github.event.repository.name }}
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
+    outputs:
+      passed: ${{ steps.passed.outputs.PASSED}}
+    steps:
+      - name: Check if the pull request is labeled with ${{ env.LABEL_SUCCESS }}  # 2
+        id: passed
+        run: |
+          if $( gh pr view ${{ env.EVENT }} --repo ${{ env.OWNER }}/${{ env.REPO }} --json "labels" --jq ".[].[].name" | grep --quiet ${{ env.LABEL_SUCCESS }}); then
+            echo "PASSED=true" >> $GITHUB_OUTPUT
+          else
+            echo "PASSED=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT: ${{ github.event.number }}  # This is either the issue or pr
+
+  build_check_passed:
+    if: ${{ always() }}
+    needs:
+      - build
+      - record_passed_label
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      OWNER: ${{ github.repository_owner }}
+      REPO: ${{ github.event.repository.name }}
+    steps:
+      - name: Assert that either checks passed on the label is present
+        run: |
+          if [[ ${{ needs.build.result }} == 'success' || ${{ needs.record_passed_label.outputs.passed }} == 'true' ]]; then
+            echo 'memory checks status ok';
+          else exit 1; fi
