@@ -210,8 +210,8 @@ jobs:
   build_check_passed:
     if: ${{ always() }}
     needs:
-      - build
       - record_existing_label
+      - container-integrity-and-config:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
