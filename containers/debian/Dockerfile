@@ -86,8 +86,6 @@ RUN git clone --depth=1 https://$REPO_PATH target
 WORKDIR target/
 # get a list of all dependencies; install remaining packages
 # escape=\
-# Get the package name based on the repository from the Description file
-RUN PACKAGE_NAME=$(R -s -e "package<-desc::desc(file=file.path('${PACKAGE_PATH}','DESCRIPTION'))\$get_field('Package');writeLines(package)")
 # Install all dependencies of PACKAGE_NAME but not the package it self
 RUN R -e "renv::deactivate()"
 RUN R -e "package<-desc::desc(package='$PACKAGE_PATH')\$get_field('Package');pckgs<-unique(renv::dependencies('$PACKAGE_PATH')[,'Package']);pres_pckgs<-installed.packages()[,'Package'];install.packages(pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)])"
