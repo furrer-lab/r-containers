@@ -1,6 +1,6 @@
 # Workflow triggered when labeling a pull request with `build::check`
 # This action is adapted from https://github.com/t4d-gmbh/stubbed_versioning
-name: On Label memory checking
+name: Check Container Builds
 
 on:
   pull_request:
@@ -181,8 +181,8 @@ jobs:
       OWNER: ${{ github.repository_owner }}
       REPO: ${{ github.event.repository.name }}
     steps:
-      - name: Assert that either checks passed on the label is present
+      - name: Assert that either checks passed or the label is present
         run: |
           if [[ ${{ needs.build.result }} == 'success' || ${{ needs.record_passed_label.outputs.passed }} == 'true' ]]; then
-            echo 'memory checks status ok';
+            echo 'The images were built successfully!';
           else exit 1; fi
