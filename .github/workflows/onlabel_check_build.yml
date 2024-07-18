@@ -95,7 +95,9 @@ jobs:
           # For private repo cloned via ssh
           # secret-files: |
           #   key=./ssh_key
+
   container-integrity-and-config:
+    if: ${{ (success() || failure()) }}
     runs-on: ubuntu-22.04
     needs: [ 'build' ]
     permissions:
@@ -211,7 +213,7 @@ jobs:
     if: ${{ always() }}
     needs:
       - record_existing_label
-      - container-integrity-and-config:
+      - container-integrity-and-config
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
