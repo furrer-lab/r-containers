@@ -106,4 +106,8 @@ WORKDIR target/
 # escape=\
 # Install all dependencies of PACKAGE_NAME but not the package it self
 RUN R -e "renv::deactivate()"
+RUN R -e "package<-desc::desc(package='$PACKAGE_PATH')\$get_field('Package')"
+RUN R -e "pckgs<-unique(renv::dependencies('$PACKAGE_PATH')[,'Package'])"
+RUN R -e "pres_pckgs<-installed.packages()[,'Package']"
+RUN R -e "package<-'abn';install.packages(pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)])"
 RUN R -e "package<-desc::desc(package='$PACKAGE_PATH')\$get_field('Package');pckgs<-unique(renv::dependencies('$PACKAGE_PATH')[,'Package']);pres_pckgs<-installed.packages()[,'Package'];install.packages(pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)])"
