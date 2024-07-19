@@ -47,7 +47,7 @@
 >
 >  loaded via a namespace (and not attached):
 >
->  [1] compiler_4.4.0  tools_4.4.0     knitr_1.47      xfun_0.45      
+>  [1] compiler_4.4.0  tools_4.4.0     knitr_1.48      xfun_0.46      
 >
 >  [5] evaluate_0.24.0
 
@@ -58,8 +58,7 @@
 
 |              |Version    |
 |:-------------|:----------|
-|knitr         |1.47       |
-|abn           |3.1.1      |
+|knitr         |1.48       |
 |akima         |0.6-3.4    |
 |ash           |1.0-15     |
 |askpass       |1.2.0      |
@@ -98,7 +97,7 @@
 |devtools      |2.4.5      |
 |dfidx         |0.0-5      |
 |diffobj       |0.3.5      |
-|digest        |0.6.35     |
+|digest        |0.6.36     |
 |doParallel    |1.0.17     |
 |dotCall64     |1.1-1      |
 |downlit       |0.4.4      |
@@ -116,15 +115,15 @@
 |fastmap       |1.2.0      |
 |fda           |6.1.8      |
 |fds           |1.8        |
-|fields        |15.2       |
-|fmesher       |0.1.6      |
+|fields        |16.2       |
+|fmesher       |0.1.7      |
 |FNN           |1.1.4      |
 |fontawesome   |0.5.2      |
 |foreach       |1.5.2      |
 |Formula       |1.2-5      |
 |fs            |1.6.4      |
 |generics      |0.1.3      |
-|gert          |2.0.1      |
+|gert          |2.1.0      |
 |ggfun         |0.1.5      |
 |ggplot2       |3.5.1      |
 |ggplotify     |0.1.2      |
@@ -145,9 +144,9 @@
 |htmlwidgets   |1.6.4      |
 |httpuv        |1.6.15     |
 |httr          |1.4.7      |
-|httr2         |1.0.1      |
+|httr2         |1.0.2      |
 |ini           |0.3.1      |
-|INLA          |24.05.10   |
+|INLA          |24.06.27   |
 |INLAspacetime |0.1.8      |
 |inline        |0.3.19     |
 |isoband       |0.2.7      |
@@ -157,16 +156,16 @@
 |jsonlite      |1.8.8      |
 |kableExtra    |1.4.0      |
 |kernlab       |0.9-32     |
-|knitr.1       |1.47       |
+|knitr.1       |1.48       |
 |ks            |1.14.2     |
 |labeling      |0.4.3      |
 |later         |1.3.2      |
 |lazyeval      |0.2.2      |
 |leaps         |3.2        |
 |lifecycle     |1.0.4      |
-|lme4          |1.1-35.4   |
+|lme4          |1.1-35.5   |
 |lmtest        |0.9-40     |
-|locfit        |1.5-9.9    |
+|locfit        |1.5-9.10   |
 |magrittr      |2.0.3      |
 |maps          |3.4.2      |
 |markdown      |1.13       |
@@ -187,7 +186,7 @@
 |multicool     |1.0.1      |
 |munsell       |0.5.1      |
 |mvtnorm       |1.2-5      |
-|nloptr        |2.1.0      |
+|nloptr        |2.1.1      |
 |numDeriv      |2016.8-1.1 |
 |openssl       |2.2.0      |
 |pcaPP         |2.0-4      |
@@ -195,8 +194,8 @@
 |pixmap        |0.4-13     |
 |pkgbuild      |1.4.4      |
 |pkgconfig     |2.0.3      |
-|pkgdown       |2.0.9      |
-|pkgload       |1.3.4      |
+|pkgdown       |2.1.0      |
+|pkgload       |1.4.0      |
 |plyr          |1.8.9      |
 |pracma        |2.4.4      |
 |praise        |1.0.0      |
@@ -206,7 +205,7 @@
 |profvis       |0.3.8      |
 |promises      |1.3.0      |
 |proxy         |0.4-27     |
-|ps            |1.7.6      |
+|ps            |1.7.7      |
 |purrr         |1.0.2      |
 |quantreg      |5.98       |
 |R.cache       |0.16.0     |
@@ -221,10 +220,10 @@
 |rbibutils     |2.2.16     |
 |rcmdcheck     |1.4.0      |
 |RColorBrewer  |1.1-3      |
-|Rcpp          |1.0.12     |
-|RcppArmadillo |0.12.8.4.0 |
+|Rcpp          |1.0.13     |
+|RcppArmadillo |14.0.0-1   |
 |RcppEigen     |0.3.4.0.0  |
-|RCurl         |1.98-1.14  |
+|RCurl         |1.98-1.16  |
 |Rdpack        |2.6        |
 |rematch2      |2.1.2      |
 |remotes       |2.5.0      |
@@ -237,14 +236,14 @@
 |rjags         |4-15       |
 |rlang         |1.1.4      |
 |rmarkdown     |2.27       |
-|robustbase    |0.99-2     |
-|roxygen2      |7.3.1      |
+|robustbase    |0.99-3     |
+|roxygen2      |7.3.2      |
 |rprojroot     |2.0.4      |
 |rrcov         |1.7-5      |
 |rstudioapi    |0.16.0     |
 |rversions     |2.1.2      |
 |rvest         |1.0.4      |
-|s2            |1.1.6      |
+|s2            |1.1.7      |
 |sass          |0.4.9      |
 |scales        |1.3.0      |
 |selectr       |0.4-2      |
@@ -257,7 +256,7 @@
 |sourcetools   |0.1.7-1    |
 |sp            |2.1-4      |
 |spam          |2.10-0     |
-|SparseM       |1.83       |
+|SparseM       |1.84-2     |
 |spData        |2.3.1      |
 |spdep         |1.3-5      |
 |splancs       |2.01-45    |
@@ -276,7 +275,7 @@
 |tidyr         |1.3.1      |
 |tidyselect    |1.2.1      |
 |tidyterra     |0.6.1      |
-|tinytex       |0.51       |
+|tinytex       |0.52       |
 |tis           |1.39       |
 |units         |0.8-5      |
 |urlchecker    |1.0.1      |
@@ -287,12 +286,12 @@
 |waldo         |0.5.2      |
 |whisker       |0.4.1      |
 |withr         |3.0.0      |
-|wk            |0.9.1      |
-|xfun          |0.45       |
+|wk            |0.9.2      |
+|xfun          |0.46       |
 |xml2          |1.3.6      |
 |xopen         |1.0.1      |
 |xtable        |1.8-4      |
-|yaml          |2.3.8      |
+|yaml          |2.3.9      |
 |yulab.utils   |0.1.4      |
 |zip           |2.3.1      |
 |zoo           |1.8-12     |
