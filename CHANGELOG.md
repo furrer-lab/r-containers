@@ -1,4 +1,16 @@
 
+<a name="2024.7.1"></a>
+## [2024.7.1](https://github.com/furrer-lab/r-containers/compare/2024.6.3...2024.7.1) (2024-07-19)
+
+### Feature
+
+* adding development workflow ([#44](https://github.com/furrer-lab/r-containers/issues/44))
+
+### Pull Requests
+
+* Merge pull request [#39](https://github.com/furrer-lab/r-containers/issues/39) from furrer-lab/33-remove-abn-from-the-installed-packages
+
+
 <a name="2024.6.3"></a>
 ## [2024.6.3](https://github.com/furrer-lab/r-containers/compare/2024.6.2...2024.6.3) (2024-06-23)
 
