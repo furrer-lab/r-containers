@@ -47,9 +47,7 @@
 >
 >  loaded via a namespace (and not attached):
 >
->  [1] compiler_4.4.0  tools_4.4.0     knitr_1.48      xfun_0.47      
->
->  [5] evaluate_0.24.0
+>  [1] compiler_4.4.0 tools_4.4.0    knitr_1.48     xfun_0.47      evaluate_1.0.0
 
 
 # Installed packages
@@ -85,12 +83,12 @@
 |crayon        |1.5.3      |
 |credentials   |2.0.1      |
 |crosstalk     |1.2.1      |
-|curl          |5.2.2      |
+|curl          |5.2.3      |
 |data.table    |1.16.0     |
 |DBI           |1.2.3      |
 |deldir        |2.0-4      |
 |DEoptimR      |1.1-3      |
-|Deriv         |4.1.3      |
+|Deriv         |4.1.6      |
 |desc          |1.4.3      |
 |deSolve       |1.40       |
 |devtools      |2.4.5      |
@@ -102,48 +100,46 @@
 |downlit       |0.4.4      |
 |dplyr         |1.1.4      |
 |DT            |0.33       |
-|e1071         |1.7-14     |
+|e1071         |1.7-16     |
 |Ecdat         |0.4-2      |
 |Ecfun         |0.3-2      |
 |ellipsis      |0.3.2      |
 |entropy       |1.3.1      |
-|evaluate      |0.24.0     |
-|evd           |2.3-7      |
+|evaluate      |1.0.0      |
+|evd           |2.3-7.1    |
 |fansi         |1.0.6      |
 |farver        |2.1.2      |
 |fastmap       |1.2.0      |
-|fda           |6.1.8      |
+|fda           |6.2.0      |
 |fds           |1.8        |
-|fields        |16.2       |
+|fields        |16.3       |
 |fmesher       |0.1.7      |
-|FNN           |1.1.4      |
+|FNN           |1.1.4.1    |
 |fontawesome   |0.5.2      |
 |foreach       |1.5.2      |
 |Formula       |1.2-5      |
 |fs            |1.6.4      |
 |generics      |0.1.3      |
-|gert          |2.1.1      |
+|gert          |2.1.2      |
 |ggfun         |0.1.6      |
 |ggplot2       |3.5.1      |
 |ggplotify     |0.1.2      |
 |gh            |1.4.1      |
 |gitcreds      |0.1.2      |
-|glue          |1.7.0      |
+|glue          |1.8.0      |
 |graph         |1.82.0     |
 |gridExtra     |2.3        |
 |gridGraphics  |0.5-1      |
 |gsl           |2.1-8      |
 |gtable        |0.3.5      |
-|gtools        |3.9.5      |
 |hdrcde        |3.4        |
-|hexbin        |1.28.3     |
+|hexbin        |1.28.4     |
 |highr         |0.11       |
-|HKprocess     |0.1-1      |
 |htmltools     |0.5.8.1    |
 |htmlwidgets   |1.6.4      |
 |httpuv        |1.6.15     |
 |httr          |1.4.7      |
-|httr2         |1.0.3      |
+|httr2         |1.0.5      |
 |ini           |0.3.1      |
 |INLA          |24.06.27   |
 |INLAspacetime |0.1.9      |
@@ -152,11 +148,11 @@
 |iterators     |1.0.14     |
 |jpeg          |0.1-10     |
 |jquerylib     |0.1.4      |
-|jsonlite      |1.8.8      |
+|jsonlite      |1.8.9      |
 |kableExtra    |1.4.0      |
 |kernlab       |0.9-33     |
 |knitr.1       |1.48       |
-|ks            |1.14.2     |
+|ks            |1.14.3     |
 |labeling      |0.4.3      |
 |later         |1.3.2      |
 |lazyeval      |0.2.2      |
@@ -169,12 +165,10 @@
 |maps          |3.4.2      |
 |markdown      |1.13       |
 |MatrixModels  |0.5-3      |
-|matrixStats   |1.3.0      |
+|matrixStats   |1.4.1      |
 |mclogit       |0.9.6      |
 |mclust        |6.1.1      |
-|mcmc          |0.9-8      |
-|MCMCpack      |1.7-1      |
-|memisc        |0.99.31.7  |
+|memisc        |0.99.31.8  |
 |memoise       |2.0.1      |
 |mime          |0.12       |
 |miniUI        |0.1.1.1    |
@@ -184,16 +178,16 @@
 |moments       |0.14.1     |
 |multicool     |1.0.1      |
 |munsell       |0.5.1      |
-|mvtnorm       |1.3-0      |
+|mvtnorm       |1.3-1      |
 |nloptr        |2.1.1      |
 |numDeriv      |2016.8-1.1 |
-|openssl       |2.2.1      |
+|openssl       |2.2.2      |
 |pcaPP         |2.0-5      |
 |pillar        |1.9.0      |
 |pixmap        |0.4-13     |
 |pkgbuild      |1.4.4      |
 |pkgconfig     |2.0.3      |
-|pkgdown       |2.1.0      |
+|pkgdown       |2.1.1      |
 |pkgload       |1.4.0      |
 |plyr          |1.8.9      |
 |pracma        |2.4.4      |
@@ -201,10 +195,10 @@
 |prettyunits   |1.2.0      |
 |processx      |3.8.4      |
 |profileModel  |0.6.1      |
-|profvis       |0.3.8      |
+|profvis       |0.4.0      |
 |promises      |1.3.0      |
 |proxy         |0.4-27     |
-|ps            |1.7.7      |
+|ps            |1.8.0      |
 |purrr         |1.0.2      |
 |quantreg      |5.98       |
 |R.cache       |0.16.0     |
@@ -213,20 +207,20 @@
 |R.rsp         |0.46.0     |
 |R.utils       |2.12.3     |
 |R6            |2.5.1      |
-|ragg          |1.3.2      |
+|ragg          |1.3.3      |
 |rainbow       |3.8        |
 |rappdirs      |0.3.3      |
 |rbibutils     |2.2.16     |
 |rcmdcheck     |1.4.0      |
 |RColorBrewer  |1.1-3      |
 |Rcpp          |1.0.13     |
-|RcppArmadillo |14.0.0-1   |
+|RcppArmadillo |14.0.2-1   |
 |RcppEigen     |0.3.4.0.2  |
 |RCurl         |1.98-1.16  |
 |Rdpack        |2.6.1      |
 |rematch2      |2.1.2      |
 |remotes       |2.5.0      |
-|renv          |1.0.7      |
+|renv          |1.0.9      |
 |reshape2      |1.4.4      |
 |rex           |1.2.1      |
 |rgl           |1.3.1      |
@@ -235,7 +229,7 @@
 |rjags         |4-16       |
 |rlang         |1.1.4      |
 |rmarkdown     |2.28       |
-|robustbase    |0.99-4     |
+|robustbase    |0.99-4-1   |
 |roxygen2      |7.3.2      |
 |rprojroot     |2.0.4      |
 |rrcov         |1.7-6      |
@@ -247,7 +241,7 @@
 |scales        |1.3.0      |
 |selectr       |0.4-2      |
 |sessioninfo   |1.2.2      |
-|sf            |1.0-16     |
+|sf            |1.0-17     |
 |shiny         |1.9.1      |
 |showtext      |0.9-7      |
 |showtextdb    |3.0        |
@@ -256,8 +250,8 @@
 |sp            |2.1-4      |
 |spam          |2.10-0     |
 |SparseM       |1.84-2     |
-|spData        |2.3.1      |
-|spdep         |1.3-5      |
+|spData        |2.3.3      |
+|spdep         |1.3-6      |
 |splancs       |2.01-45    |
 |statmod       |1.5.0      |
 |stringi       |1.8.4      |
@@ -274,7 +268,7 @@
 |tidyr         |1.3.1      |
 |tidyselect    |1.2.1      |
 |tidyterra     |0.6.1      |
-|tinytex       |0.52       |
+|tinytex       |0.53       |
 |tis           |1.39       |
 |units         |0.8-5      |
 |urlchecker    |1.0.1      |
@@ -285,7 +279,7 @@
 |waldo         |0.5.3      |
 |whisker       |0.4.1      |
 |withr         |3.0.1      |
-|wk            |0.9.2      |
+|wk            |0.9.3      |
 |xfun          |0.47       |
 |xml2          |1.3.6      |
 |xopen         |1.0.1      |
