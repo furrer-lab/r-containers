@@ -64,7 +64,7 @@
 |BiocGenerics  |0.52.0      |
 |BiocManager   |1.30.25     |
 |BiocVersion   |3.20.0      |
-|bit           |4.5.0       |
+|bit           |4.5.0.1     |
 |bit64         |4.5.2       |
 |bitops        |1.0-9       |
 |BMA           |3.18.19     |
@@ -81,12 +81,12 @@
 |colorspace    |2.1-1       |
 |commonmark    |1.9.2       |
 |covr          |3.6.4       |
-|cpp11         |0.5.0       |
+|cpp11         |0.5.1       |
 |crayon        |1.5.3       |
 |credentials   |2.0.2       |
 |crosstalk     |1.2.1       |
 |curl          |6.0.1       |
-|data.table    |1.16.2      |
+|data.table    |1.16.4      |
 |DBI           |1.2.3       |
 |deldir        |2.0-4       |
 |DEoptimR      |1.1-3-1     |
@@ -123,7 +123,7 @@
 |fs            |1.6.5       |
 |generics      |0.1.3       |
 |gert          |2.1.4       |
-|ggfun         |0.1.7       |
+|ggfun         |0.1.8       |
 |ggplot2       |3.5.1       |
 |ggplotify     |0.1.2       |
 |gh            |1.4.1       |
@@ -184,9 +184,9 @@
 |mvtnorm       |1.3-2       |
 |nloptr        |2.1.1       |
 |numDeriv      |2016.8-1.1  |
-|openssl       |2.2.2       |
+|openssl       |2.3.0       |
 |pcaPP         |2.0-5       |
-|pillar        |1.9.0       |
+|pillar        |1.10.0      |
 |pixmap        |0.4-13      |
 |pkgbuild      |1.4.5       |
 |pkgconfig     |2.0.3       |
@@ -219,7 +219,7 @@
 |rcmdcheck     |1.4.0       |
 |RColorBrewer  |1.1-3       |
 |Rcpp          |1.0.13-1    |
-|RcppArmadillo |14.2.0-1    |
+|RcppArmadillo |14.2.2-1    |
 |RcppEigen     |0.3.4.0.2   |
 |RCurl         |1.98-1.16   |
 |Rdpack        |2.6.2       |
@@ -248,7 +248,7 @@
 |selectr       |0.4-2       |
 |sessioninfo   |1.2.2       |
 |sf            |1.0-19      |
-|shiny         |1.9.1       |
+|shiny         |1.10.0      |
 |showtext      |0.9-7       |
 |showtextdb    |3.0         |
 |sn            |2.1.1       |
@@ -257,7 +257,7 @@
 |spam          |2.11-0      |
 |SparseM       |1.84-2      |
 |spData        |2.3.3       |
-|spdep         |1.3-7       |
+|spdep         |1.3-8       |
 |splancs       |2.01-45     |
 |statmod       |1.5.0       |
 |stringi       |1.8.4       |
@@ -266,9 +266,9 @@
 |sys           |3.4.3       |
 |sysfonts      |0.8.9       |
 |systemfonts   |1.1.0       |
-|terra         |1.7-83      |
-|testthat      |3.2.1.1     |
-|textshaping   |0.4.0       |
+|terra         |1.8-5       |
+|testthat      |3.2.2       |
+|textshaping   |0.4.1       |
 |tibble        |3.2.1       |
 |tidyr         |1.3.1       |
 |tidyselect    |1.2.1       |
