@@ -1,4 +1,8 @@
 
+<a name="2025.1.1"></a>
+## [2025.1.1](https://github.com/furrer-lab/r-containers/compare/2024.12.1...2025.1.1) (2025-01-02)
+
+
 <a name="2024.12.1"></a>
 ## [2024.12.1](https://github.com/furrer-lab/r-containers/compare/2024.11.1...2024.12.1) (2024-12-02)
 
