@@ -47,7 +47,7 @@
 >
 >  loaded via a namespace (and not attached):
 >
->  [1] compiler_4.4.0 tools_4.4.0    knitr_1.49     xfun_0.50      evaluate_1.0.3
+>  [1] compiler_4.4.0 tools_4.4.0    knitr_1.49     xfun_0.51      evaluate_1.0.3
 
 
 # Installed packages
@@ -76,7 +76,7 @@
 |cachem        |1.1.0       |
 |callr         |3.7.6       |
 |classInt      |0.4-11      |
-|cli           |3.6.3       |
+|cli           |3.6.4       |
 |clipr         |0.8.0       |
 |coda          |0.19-4.1    |
 |colorspace    |2.1-1       |
@@ -87,8 +87,8 @@
 |crayon        |1.5.3       |
 |credentials   |2.0.2       |
 |crosstalk     |1.2.1       |
-|curl          |6.2.0       |
-|data.table    |1.16.4      |
+|curl          |6.2.1       |
+|data.table    |1.17.0      |
 |DBI           |1.2.3       |
 |deldir        |2.0-4       |
 |DEoptimR      |1.1-3-1     |
@@ -148,13 +148,13 @@
 |httr2         |1.1.0       |
 |ini           |0.3.1       |
 |INLA          |24.12.11    |
-|INLAspacetime |0.1.10      |
+|INLAspacetime |0.1.11      |
 |inline        |0.3.21      |
 |isoband       |0.2.7       |
 |iterators     |1.0.14      |
 |jpeg          |0.1-10      |
 |jquerylib     |0.1.4       |
-|jsonlite      |1.8.9       |
+|jsonlite      |1.9.0       |
 |kableExtra    |1.4.0       |
 |kernlab       |0.9-33      |
 |knitr.1       |1.49        |
@@ -166,7 +166,7 @@
 |lifecycle     |1.0.4       |
 |lme4          |1.1-36      |
 |lmtest        |0.9-40      |
-|locfit        |1.5-9.10    |
+|locfit        |1.5-9.11    |
 |magrittr      |2.0.3       |
 |maps          |3.4.2.1     |
 |markdown      |1.13        |
@@ -174,7 +174,7 @@
 |matrixStats   |1.5.0       |
 |mclogit       |0.9.6       |
 |mclust        |6.1.1       |
-|memisc        |0.99.31.8.1 |
+|memisc        |0.99.31.8.2 |
 |memoise       |2.0.1       |
 |mime          |0.12        |
 |miniUI        |0.1.1.1     |
@@ -187,7 +187,7 @@
 |mvtnorm       |1.3-3       |
 |nloptr        |2.1.1       |
 |numDeriv      |2016.8-1.1  |
-|openssl       |2.3.1       |
+|openssl       |2.3.2       |
 |pcaPP         |2.0-5       |
 |pillar        |1.10.1      |
 |pixmap        |0.4-13      |
@@ -199,21 +199,21 @@
 |pracma        |2.4.4       |
 |praise        |1.0.0       |
 |prettyunits   |1.2.0       |
-|processx      |3.8.5       |
+|processx      |3.8.6       |
 |profileModel  |0.6.1       |
 |profvis       |0.4.0       |
 |progress      |1.2.3       |
 |promises      |1.3.2       |
 |proxy         |0.4-27      |
-|ps            |1.8.1       |
-|purrr         |1.0.2       |
+|ps            |1.9.0       |
+|purrr         |1.0.4       |
 |quantreg      |6.00        |
 |R.cache       |0.16.0      |
 |R.methodsS3   |1.8.2       |
 |R.oo          |1.27.0      |
 |R.rsp         |0.46.0      |
-|R.utils       |2.12.3      |
-|R6            |2.5.1       |
+|R.utils       |2.13.0      |
+|R6            |2.6.1       |
 |ragg          |1.3.3       |
 |rainbow       |3.8         |
 |rappdirs      |0.3.3       |
@@ -222,14 +222,14 @@
 |rcmdcheck     |1.4.0       |
 |RColorBrewer  |1.1-3       |
 |Rcpp          |1.0.14      |
-|RcppArmadillo |14.2.2-1    |
+|RcppArmadillo |14.2.3-1    |
 |RcppEigen     |0.3.4.0.2   |
 |RCurl         |1.98-1.16   |
 |Rdpack        |2.6.2       |
 |readr         |2.1.5       |
 |reformulas    |0.4.0       |
 |remotes       |2.5.0       |
-|renv          |1.1.0       |
+|renv          |1.1.1       |
 |reshape2      |1.4.4       |
 |rex           |1.2.1       |
 |rgl           |1.3.17      |
@@ -251,7 +251,7 @@
 |sass          |0.4.9       |
 |scales        |1.3.0       |
 |selectr       |0.4-2       |
-|sessioninfo   |1.2.2       |
+|sessioninfo   |1.2.3       |
 |sf            |1.0-19      |
 |shiny         |1.10.0      |
 |showtext      |0.9-7       |
@@ -272,14 +272,14 @@
 |sysfonts      |0.8.9       |
 |systemfonts   |1.2.1       |
 |tensorA       |0.36.2.1    |
-|terra         |1.8-15      |
+|terra         |1.8-29      |
 |testthat      |3.2.3       |
 |textshaping   |1.0.0       |
 |tibble        |3.2.1       |
 |tidyr         |1.3.1       |
 |tidyselect    |1.2.1       |
-|tidyterra     |0.6.2       |
-|tinytex       |0.54        |
+|tidyterra     |0.7.0       |
+|tinytex       |0.56        |
 |tis           |1.39        |
 |tzdb          |0.4.0       |
 |units         |0.8-5       |
@@ -293,13 +293,13 @@
 |whisker       |0.4.1       |
 |withr         |3.0.2       |
 |wk            |0.9.4       |
-|xfun          |0.50        |
-|xml2          |1.3.6       |
+|xfun          |0.51        |
+|xml2          |1.3.7       |
 |xopen         |1.0.1       |
 |xtable        |1.8-4       |
 |yaml          |2.3.10      |
 |yulab.utils   |0.2.0       |
 |zip           |2.3.2       |
-|zoo           |1.8-12      |
+|zoo           |1.8-13      |
 
 
