@@ -78,6 +78,9 @@ RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.
 # - Magick++
 RUN apt-get update && apt-get install -y --no-install-recommends \
       libmagick++-dev
+# - libxml-2.0
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libxml2-dev
 
 ###
 # install all package dependencies

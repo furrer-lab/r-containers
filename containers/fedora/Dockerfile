@@ -92,6 +92,9 @@ RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.
 # - Magick++
 RUN dnf -y install \
       libmagick++-devel
+# - libxml-2.0
+RUN dnf -y install \
+      libxml2-devel
 
 ###
 # install all package dependencies
