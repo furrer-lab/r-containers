@@ -75,6 +75,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # RUN R -e "install.packages('fmesher')"
 # - INLA
 RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
+# - Magick++
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libmagick++-dev
 
 ###
 # install all package dependencies

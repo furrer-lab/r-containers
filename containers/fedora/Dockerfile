@@ -89,6 +89,9 @@ RUN dnf -y install \
 # RUN R -e "install.packages('fmesher')"
 # - INLA
 RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
+# - Magick++
+RUN dnf -y install \
+      libmagick++-devel
 
 ###
 # install all package dependencies
