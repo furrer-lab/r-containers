@@ -18,7 +18,8 @@ ARG REPO_PATH
 # Unsure why this is needed as openssl seems to be installed already
 RUN apt-get update && apt-get install -y --no-install-recommends \
   libssl-dev \
-  libcurl4-openssl-dev
+  libcurl4-openssl-dev \
+  gfortran
 
 # add R to PATH
 # NOTE: For R-release this is not needed
