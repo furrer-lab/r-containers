@@ -18,7 +18,8 @@ ARG REPO_PATH
 # Unsure why this is needed as openssl seems to be installed already
 RUN apt-get update && apt-get install -y --no-install-recommends \
   libssl-dev \
-  libcurl4-openssl-dev
+  libcurl4-openssl-dev \
+  gfortran
 
 # add R to PATH
 # NOTE: For R-release this is not needed
@@ -74,6 +75,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # RUN R -e "install.packages('fmesher')"
 # - INLA
 RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
+# - Magick++
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libmagick++-dev
+# - libxml-2.0
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libxml2-dev
 
 ###
 # install all package dependencies
