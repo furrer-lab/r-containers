@@ -91,7 +91,7 @@ RUN dnf -y install \
 RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
 # - Magick++
 RUN dnf -y install \
-      libmagick++-devel
+      ImageMagick-c++-devel
 # - libxml-2.0
 RUN dnf -y install \
       libxml2-devel
