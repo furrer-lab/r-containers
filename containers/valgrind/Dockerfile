@@ -6,7 +6,8 @@ ARG R_VERSION
 # For the valgrind container, target_os, compiler and r_vresion are not specified
 # Hovever, the valgrind container is fedora, gcc, devel
 # see https://r-hub.github.io/containers/containers.html#valgrind
-FROM rhub/${TARGET_OS}
+# FROM rhub/${TARGET_OS}
+FROM ghcr.io/r-hub/containers/valgrind:latest
 
 # Build stage: ARGs need to be redeclared
 ARG TARGET_OS
