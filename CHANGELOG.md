@@ -1,4 +1,13 @@
 
+<a name="2025.3.2"></a>
+## [2025.3.2](https://github.com/furrer-lab/r-containers/compare/2025.3.1...2025.3.2) (2025-03-10)
+
+### Pull Requests
+
+* Merge pull request [#50](https://github.com/furrer-lab/r-containers/issues/50) from furrer-lab/49-rgraphviz-installation-fails-in-valgrindgccdevel
+* Merge pull request [#48](https://github.com/furrer-lab/r-containers/issues/48) from furrer-lab/47-some-dependencies-fail-to-install
+
+
 <a name="2025.3.1"></a>
 ## [2025.3.1](https://github.com/furrer-lab/r-containers/compare/2025.2.1...2025.3.1) (2025-03-02)
 
