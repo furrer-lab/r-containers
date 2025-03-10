@@ -6,7 +6,8 @@ ARG R_VERSION
 # For the valgrind container, target_os, compiler and r_vresion are not specified
 # Hovever, the valgrind container is fedora, gcc, devel
 # see https://r-hub.github.io/containers/containers.html#valgrind
-FROM rhub/${TARGET_OS}
+# FROM rhub/${TARGET_OS}
+FROM ghcr.io/r-hub/containers/valgrind:latest
 
 # Build stage: ARGs need to be redeclared
 ARG TARGET_OS
@@ -60,10 +61,13 @@ WORKDIR /tmp/$JAGS
 # (https://usermanual.wiki/Document/jagsinstallationmanual.880863585.pdf)
 # and substitute the compilers with the specifics from the R installation that
 # we can get by using the `R CMD config CC/CXX/BLAS_LIBS/LAPACK_LIBS' commands:
-RUN if [ "$COMPILER" = "clang" ]; then RCC=/usr/bin/clang RCXX="/usr/bin/clang++ -std=gnu++17 -stdlib=libc++"; else RRCC=/usr/bin/gcc RCXX="/usr/bin/g++"; fi \
+RUN if [ "$COMPILER" = "clang" ]; then RCC=/usr/bin/clang RCXX="/usr/bin/clang++ -std=gnu++17 -stdlib=libc++"; else RCC=/usr/bin/gcc RCXX="/usr/bin/g++"; fi \
     && LD="llvm-ld" CC="${RCC}" CXX="${RCXX}" ./configure --with-blas="-L/opt/R/devel-valgrind/lib/R/lib -lRblas" --with-lapack="-L/opt/R/devel-valgrind/lib/R/lib -lRlapack" --libdir=/usr/local/lib && make && make install
 RUN ls /tmp/$JAGS
+# Add JAGS library path to LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 # ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+
 # RUN R -e "install.packages('rjags')"
 RUN R -e "install.packages('rjags', configure.args = '--enable-rpath')"
 
@@ -105,6 +109,12 @@ RUN dnf -y install \
 # RUN R -e "install.packages('fmesher')"
 # - INLA
 RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
+# - Magick++
+RUN dnf -y install \
+      ImageMagick-c++-devel
+# - libxml-2.0
+RUN dnf -y install \
+      libxml2-devel
 
 ###
 # install all package dependencies
