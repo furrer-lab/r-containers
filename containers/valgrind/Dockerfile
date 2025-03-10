@@ -65,14 +65,6 @@ RUN if [ "$COMPILER" = "clang" ]; then RCC=/usr/bin/clang RCXX="/usr/bin/clang++
 RUN ls /tmp/$JAGS
 # ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
-# Set R .libPaths
-ENV R_LIBS="/opt/R/devel-valgrind/lib/R/library"
-ENV R_LIBS_USER="/opt/R/devel-valgrind/lib/R/library"
-
-# Debug R paths
-RUN R -e "print(.libPaths())"
-RUN R -e "print(La_library())"
-
 # RUN R -e "install.packages('rjags')"
 RUN R -e "install.packages('rjags', configure.args = '--enable-rpath')"
 
