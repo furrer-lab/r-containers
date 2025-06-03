@@ -177,7 +177,7 @@ jobs:
             exit 1
           else
             gh pr edit ${{ env.EVENT }} --add-label ${{ env.LABEL_CHECK }} --repo ${{ env.OWNER }}/${{ env.REPO }}
-            echo "Container build task outcome was: ${{ steps.container-integrity-and-config.outcome }}"
+            echo "Container build task outcome was: ${{ needs.container-integrity-and-config.result }}"
           fi
         shell: bash
         env:
@@ -222,6 +222,6 @@ jobs:
     steps:
       - name: Assert that either checks passed or the label is present
         run: |
-          if [[ ${{ needs.build.result }} == 'success' || ${{ needs.record_passed_label.outputs.passed }} == 'true' ]]; then
+          if [[ ${{ needs.container-integrity-and-config.result }} == 'success' || ${{ needs.record_existing_label.outputs.passed }} == 'true' ]]; then
             echo 'The images were built successfully!';
           else exit 1; fi
