@@ -27,7 +27,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
+      CUSTOM_TAG: "onlabel-check-build-${{ github.run_number }}"
     permissions:                       # for `GITHUB_TOKEN`
       contents: read
       packages: write
@@ -81,7 +81,7 @@ jobs:
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ${{ format('./containers/{0}/', matrix.target-os ) }}
-          push: false
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
@@ -104,7 +104,7 @@ jobs:
       contents: write
       packages: read
     container:
-      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ needs.increment-tag.outputs.VERSION }}
+      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:onlabel-check-build-${{ github.run_number }}
       options: --user 1001
       credentials:
         username: ${{ github.actor }}
