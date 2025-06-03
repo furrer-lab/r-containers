@@ -99,6 +99,9 @@ RUN R -e "install.packages('BiocManager')" \
  && R -e "BiocManager::install('Rgraphviz')"
 
 # INLA
+# - s2
+RUN dnf -y install \
+      abseil-cpp-devel
 # - sf
 RUN dnf -y install \
   udunits2-devel gdal-devel geos-devel proj-devel

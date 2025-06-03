@@ -61,6 +61,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN R -e "install.packages('BiocManager')" \
  && R -e "BiocManager::install('Rgraphviz')"
 # INLA
+# - s2
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libabsl-dev
 # - sf
 RUN apt-get -y update && apt-get install -y \
   libudunits2-dev libgdal-dev libgeos-dev libproj-dev
