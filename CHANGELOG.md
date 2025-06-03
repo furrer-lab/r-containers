@@ -1,4 +1,12 @@
 
+<a name="2025.6.2"></a>
+## [2025.6.2](https://github.com/furrer-lab/r-containers/compare/2025.6.1...2025.6.2) (2025-06-03)
+
+### Pull Requests
+
+* Merge pull request [#53](https://github.com/furrer-lab/r-containers/issues/53) from furrer-lab/52-missing-dependency-abseil-for-s2
+
+
 <a name="2025.6.1"></a>
 ## [2025.6.1](https://github.com/furrer-lab/r-containers/compare/2025.5.1...2025.6.1) (2025-06-02)
 
