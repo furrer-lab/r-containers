@@ -50,6 +50,9 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
       libgsl-dev \
       libnlopt-dev
 # RUN R -e "install.packages('lme4')"
+# glmmTMB:
+RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends
+RUN R -e "install.packages('glmmTMB', dep=TRUE)"
 # rjags:
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
       jags \
