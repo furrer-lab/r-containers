@@ -50,9 +50,6 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
       libgsl-dev \
       libnlopt-dev
 # RUN R -e "install.packages('lme4')"
-# glmmTMB:
-RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends
-RUN R -e "install.packages('glmmTMB', dep=TRUE)"
 # rjags:
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
       jags \
@@ -87,7 +84,8 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
 # - libxml-2.0
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
       libxml2-dev
-
+# glmmTMB:
+RUN R -e "install.packages('glmmTMB')" # Workaround for glmmTMB installation issue. Should be installed automatically below in the future.
 ###
 # install all package dependencies
 ###
