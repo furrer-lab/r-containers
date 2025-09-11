@@ -16,7 +16,7 @@ ARG REPO_PATH
 # ARG BUILD_DATE
 
 # Unsure why this is needed as openssl seems to be installed already
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
   libssl-dev \
   libcurl4-openssl-dev \
   gfortran
@@ -46,12 +46,12 @@ RUN R -e "install.packages('urlchecker')"
 
 # Install dependencies not managed by CRAN
 # lme4:
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
       libgsl-dev \
       libnlopt-dev
 # RUN R -e "install.packages('lme4')"
 # rjags:
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
       jags \
       git \
       openssh-client
@@ -62,29 +62,30 @@ RUN R -e "install.packages('BiocManager')" \
  && R -e "BiocManager::install('Rgraphviz')"
 # INLA
 # - s2
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
       libabsl-dev
 # - sf
-RUN apt-get -y update && apt-get install -y \
+RUN apt-get -y update --allow-releaseinfo-change && apt-get install -y \
   libudunits2-dev libgdal-dev libgeos-dev libproj-dev
 # RUN R -e "install.packages('sf')"
 # - gsl
-RUN apt-get -y update && apt-get install -y \
+RUN apt-get -y update --allow-releaseinfo-change && apt-get install -y \
   libgsl-dev
 # RUN R -e "install.packages('gsl')"
 # - fmesher
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
       libudunits2-dev
 # RUN R -e "install.packages('fmesher')"
 # - INLA
 RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
 # - Magick++
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
       libmagick++-dev
 # - libxml-2.0
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
       libxml2-dev
-
+# glmmTMB:
+RUN R -e "install.packages('glmmTMB')" # Workaround for glmmTMB installation issue. Should be installed automatically below in the future.
 ###
 # install all package dependencies
 ###
