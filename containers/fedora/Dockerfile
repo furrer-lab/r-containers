@@ -23,7 +23,9 @@ RUN dnf check-update && dnf -y install \
   openssl-devel \
   libcurl-devel \
   fontconfig-devel \
-  libxml2-devel 
+  libxml2-devel \
+  harfbuzz-devel \
+  fribidi-devel
 
 # add R to PATH
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
