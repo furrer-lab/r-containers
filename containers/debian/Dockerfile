@@ -21,9 +21,7 @@ ARG REPO_PATH
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
   libssl-dev \
   libcurl4-openssl-dev \
-  gfortran \
-  libstdc++-13-dev \
-  libc6-dev
+  gfortran 
 
 # add R to PATH
 # NOTE: For R-release this is not needed
