@@ -22,7 +22,8 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   libssl-dev \
   libcurl4-openssl-dev \
   gfortran \
-  libfontconfig1-dev
+  libfontconfig1-dev \
+  libxml2-dev
 
 # add R to PATH
 # NOTE: For R-release this is not needed
@@ -95,9 +96,6 @@ RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.
 # - Magick++
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
       libmagick++-dev
-# - libxml-2.0
-RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
-      libxml2-dev
 # glmmTMB:
 RUN R -e "install.packages('glmmTMB')" # Workaround for glmmTMB installation issue. Should be installed automatically below in the future.
 ###

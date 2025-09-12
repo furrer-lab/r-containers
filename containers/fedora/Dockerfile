@@ -22,7 +22,8 @@ ARG JAGS
 RUN dnf check-update && dnf -y install \
   openssl-devel \
   libcurl-devel \
-  fontconfig-devel
+  fontconfig-devel \
+  libxml2-devel \
 
 # add R to PATH
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
@@ -104,9 +105,6 @@ RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.
 # - Magick++
 RUN dnf -y install \
       ImageMagick-c++-devel
-# - libxml-2.0
-RUN dnf -y install \
-      libxml2-devel
 
 ###
 # install all package dependencies
