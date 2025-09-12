@@ -2,8 +2,10 @@
 ARG TARGET_OS
 ARG COMPILER
 ARG R_VERSION
+ARG RHUB_IMAGE=ubuntu-gcc12
 
-FROM rhub/${TARGET_OS}-${COMPILER}-${R_VERSION}
+# Use the mapped R-hub image name from the workflow
+FROM rhub/${RHUB_IMAGE}
 
 # Build stage: ARGs need to be redeclared
 ARG TARGET_OS
