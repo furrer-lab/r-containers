@@ -21,11 +21,15 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   libcurl4-openssl-dev \
   gfortran \
   libstdc++-dev \
-  libc++-dev
+  libc6-dev
 
 # add R to PATH
 # NOTE: For R-release this is not needed
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
+
+# Configure clang C++ compilation environment
+ENV CPLUS_INCLUDE_PATH="/usr/include/c++/13:/usr/include/x86_64-linux-gnu/c++/13"
+ENV C_INCLUDE_PATH="/usr/include"
 
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
