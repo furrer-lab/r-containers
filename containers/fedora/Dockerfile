@@ -21,7 +21,8 @@ ARG JAGS
 # Update package repositories
 RUN dnf check-update && dnf -y install \
   openssl-devel \
-  libcurl-devel
+  libcurl-devel \
+  fontconfig-devel
 
 # add R to PATH
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
@@ -37,7 +38,7 @@ RUN R_HOME=$(R RHOME) && \
     else \
       echo "Warning: Could not find R profile location, skipping CRAN mirror setup"; \
     fi
-    
+
 # rjags:
 RUN dnf -y install \
   lapack* blas* atlas* 
