@@ -94,7 +94,7 @@ jobs:
         id: rhub-mapping
         run: |
           # Map CRAN-style naming to R-hub container names
-          # Based on https://r-hub.github.io/containers/
+          # Based on https://r-hub.github.io/containers/ and https://cran.r-project.org/web/checks/check_flavors.html#r-devel-linux-x86_64-fedora-clang 
           
           TARGET_OS="${{ matrix.target-os }}"
           COMPILER="${{ matrix.compiler }}"
@@ -118,10 +118,12 @@ jobs:
             fi
           # Map fedora combinations  
           elif [[ "$TARGET_OS" == "fedora" ]]; then
+            # Note: R-hub doesn't have direct fedora equivalents for primary CRAN containers
+            # Map to closest Ubuntu equivalents or specific Fedora containers
             if [[ "$COMPILER" == "gcc" && "$R_VERSION" == "devel" ]]; then
-              RHUB_IMAGE="ubuntu-gcc12"  # Note: R-hub uses ubuntu even for "fedora" matrix
+              RHUB_IMAGE="gcc15"  # Use Fedora-based gcc15 container
             elif [[ "$COMPILER" == "clang" && "$R_VERSION" == "devel" ]]; then
-              RHUB_IMAGE="ubuntu-clang"
+              RHUB_IMAGE="ubuntu-clang"  # No Fedora clang equivalent, use Ubuntu
             fi
           # Map valgrind
           elif [[ "$TARGET_OS" == "valgrind" ]]; then
