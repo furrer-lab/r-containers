@@ -20,7 +20,7 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   libssl-dev \
   libcurl4-openssl-dev \
   gfortran \
-  libstdc++-dev \
+  libstdc++-13-dev \
   libc6-dev
 
 # add R to PATH
@@ -106,3 +106,7 @@ WORKDIR target/
 # Install all dependencies of PACKAGE_NAME but not the package it self
 RUN R -e "renv::deactivate()"
 RUN R -e "package<-desc::desc()\$get_field('Package');pckgs<-unique(renv::dependencies('$PACKAGE_PATH')[,'Package']);pres_pckgs<-installed.packages()[,'Package'];install.packages(pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)])"
+
+# Check if the dependencies were installed correctly
+RUN R -e "renv::deactivate()"
+RUN R -e "package<-desc::desc()\$get_field('Package');pckgs<-unique(renv::dependencies('$PACKAGE_PATH')[,'Package']);pres_pckgs<-installed.packages()[,'Package'];if(any(!(pckgs %in% pres_pckgs) & !(pckgs == package))) { stop(paste0('Some dependencies were not installed correctly. Missing: ', paste(pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)], collapse=', '))) } else { cat('All dependencies were installed correctly.\n') }"
