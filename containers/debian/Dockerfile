@@ -33,8 +33,15 @@ ENV C_INCLUDE_PATH="/usr/include"
 
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
-RUN if [ "$R_VERSION" = "release" ]; then RPATH=""; else RPATH=/opt/R-$R_VERSION; fi \
-    && echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${RPATH}/lib/R/library/base/R/Rprofile
+# Find where R is installed and set the CRAN repository
+RUN R_HOME=$(R RHOME) && \
+    if [ -d "${R_HOME}/library/base/R" ]; then \
+      echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/library/base/R/Rprofile; \
+    elif [ -d "${R_HOME}/etc" ]; then \
+      echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/etc/Rprofile.site; \
+    else \
+      echo "Warning: Could not find R profile location, skipping CRAN mirror setup"; \
+    fi
 
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
