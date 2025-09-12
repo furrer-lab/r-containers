@@ -111,6 +111,8 @@ jobs:
               RHUB_IMAGE="gcc15"  # Use Fedora-based gcc15 container
             elif [[ "$COMPILER" == "clang" && "$R_VERSION" == "devel" ]]; then
               RHUB_IMAGE="gcc15"  # No Fedora clang equivalent, use Fedora gcc15
+              COMPILER="gcc"
+              TARGET_OS="fedora"
               echo "Warning: No direct Fedora clang equivalent on r-hub, using gcc15"
             fi
           # Map valgrind
