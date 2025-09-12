@@ -25,7 +25,12 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   libfontconfig1-dev \
   libxml2-dev \
   libharfbuzz-dev \
-  libfribidi-dev
+  libfribidi-dev \
+  libfreetype6-dev \
+  libpng-dev \
+  libtiff5-dev \
+  libjpeg-dev \
+  libwebp-dev
 
 # add R to PATH
 # NOTE: For R-release this is not needed

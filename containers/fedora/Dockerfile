@@ -25,7 +25,12 @@ RUN dnf check-update && dnf -y install \
   fontconfig-devel \
   libxml2-devel \
   harfbuzz-devel \
-  fribidi-devel
+  fribidi-devel \
+  freetype-devel \
+  libpng-devel \
+  libtiff-devel \
+  libjpeg-devel \
+  libwebp-devel
 
 # add R to PATH
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
