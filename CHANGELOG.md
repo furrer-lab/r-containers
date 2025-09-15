@@ -1,4 +1,12 @@
 
+<a name="2025.9.2"></a>
+## [2025.9.2](https://github.com/furrer-lab/r-containers/compare/2025.9.1...2025.9.2) (2025-09-15)
+
+### Pull Requests
+
+* Merge pull request [#57](https://github.com/furrer-lab/r-containers/issues/57) from furrer-lab/55-install-glmmtbm-package
+
+
 <a name="2025.9.1"></a>
 ## [2025.9.1](https://github.com/furrer-lab/r-containers/compare/2025.8.1...2025.9.1) (2025-09-11)
 
