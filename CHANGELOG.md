@@ -1,4 +1,12 @@
 
+<a name="2025.9.3"></a>
+## [2025.9.3](https://github.com/furrer-lab/r-containers/compare/2025.9.2...2025.9.3) (2025-09-15)
+
+### Pull Requests
+
+* Merge pull request [#59](https://github.com/furrer-lab/r-containers/issues/59) from furrer-lab/58-not-all-dependencies-installed-successfully
+
+
 <a name="2025.9.2"></a>
 ## [2025.9.2](https://github.com/furrer-lab/r-containers/compare/2025.9.1...2025.9.2) (2025-09-15)
 
