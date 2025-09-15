@@ -44,6 +44,8 @@ jobs:
             r-version: 'release'
           - target-os: 'fedora'
             r-version: 'patched'
+          - target-os: 'fedora'
+            compiler: 'clang' # no clang on fedora (see build map to r-hub images)
           - compiler: 'clang'
             r-version: 'patched'
           - compiler: 'clang'
