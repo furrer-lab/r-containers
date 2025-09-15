@@ -100,7 +100,8 @@ RUN R -e "install.packages('BiocManager')" \
 RUN dnf -y install \
       abseil-cpp-devel \
       cmake \
-      pkgconf-devel
+      libpkgconf-devel \
+      pkgconf
 # - sf
 RUN dnf -y install \
   udunits2-devel gdal-devel geos-devel proj-devel
