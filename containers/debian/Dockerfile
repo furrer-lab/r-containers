@@ -85,7 +85,9 @@ RUN R -e "install.packages('BiocManager')" \
 # INLA
 # - s2
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
-      libabsl-dev
+      libabsl-dev \
+      cmake \
+      pkg-config
 # - sf
 RUN apt-get -y update --allow-releaseinfo-change && apt-get install -y \
   libudunits2-dev libgdal-dev libgeos-dev libproj-dev
