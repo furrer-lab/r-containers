@@ -98,7 +98,10 @@ RUN R -e "install.packages('BiocManager')" \
 # INLA
 # - s2
 RUN dnf -y install \
-      abseil-cpp-devel
+      abseil-cpp-devel \
+      cmake \
+      libpkgconf-devel \
+      pkgconf
 # - sf
 RUN dnf -y install \
   udunits2-devel gdal-devel geos-devel proj-devel
