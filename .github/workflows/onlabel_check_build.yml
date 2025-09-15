@@ -44,6 +44,8 @@ jobs:
             r-version: 'release'
           - target-os: 'fedora'
             r-version: 'patched'
+          - target-os: 'fedora'
+            compiler: 'clang' # no clang on fedora (see build map to r-hub images)
           - compiler: 'clang'
             r-version: 'patched'
           - compiler: 'clang'
@@ -77,6 +79,49 @@ jobs:
       #   run: |
       #     echo "${{  secrets.DEVEL_ABN_DEPLOY }}" >> ssh_key
       #   shell: bash
+      - name: Map to R-hub container names
+        id: rhub-mapping
+        run: |
+          # Map CRAN-style naming to R-hub container names
+          # Based on https://r-hub.github.io/containers/ and https://cran.r-project.org/web/checks/check_flavors.html#r-devel-linux-x86_64-fedora-clang
+          
+          TARGET_OS="${{ matrix.target-os }}"
+          COMPILER="${{ matrix.compiler }}"
+          R_VERSION="${{ matrix.r-version }}"
+          
+          echo "Input: ${TARGET_OS}/${COMPILER}/${R_VERSION}"
+          
+          # Default fallback
+          RHUB_IMAGE="ubuntu-clang"
+          
+          # Map debian combinations
+          if [[ "$TARGET_OS" == "debian" ]]; then
+            if [[ "$COMPILER" == "clang" && "$R_VERSION" == "devel" ]]; then
+              RHUB_IMAGE="ubuntu-clang"
+            elif [[ "$COMPILER" == "gcc" && "$R_VERSION" == "devel" ]]; then
+              RHUB_IMAGE="ubuntu-gcc12"
+            elif [[ "$R_VERSION" == "release" ]]; then
+              RHUB_IMAGE="ubuntu-release"
+            elif [[ "$R_VERSION" == "patched" ]]; then
+              RHUB_IMAGE="ubuntu-next"
+            fi
+          # Map fedora combinations  
+          elif [[ "$TARGET_OS" == "fedora" ]]; then
+            # Note: R-hub doesn't have direct fedora equivalents for primary CRAN containers
+            # Map to closest Ubuntu equivalents or specific Fedora containers
+            if [[ "$COMPILER" == "gcc" && "$R_VERSION" == "devel" ]]; then
+              RHUB_IMAGE="gcc15"  # Use Fedora-based gcc15 container
+            elif [[ "$COMPILER" == "clang" && "$R_VERSION" == "devel" ]]; then
+              RHUB_IMAGE="gcc15"  # No Fedora clang equivalent, use Fedora gcc15
+              echo "Warning: No direct Fedora clang equivalent on r-hub, using gcc15"
+            fi
+          # Map valgrind
+          elif [[ "$TARGET_OS" == "valgrind" ]]; then
+            RHUB_IMAGE="valgrind"
+          fi
+          
+          echo "Mapped to R-hub image: rhub/${RHUB_IMAGE}"
+          echo "rhub-image=${RHUB_IMAGE}" >> $GITHUB_OUTPUT
       - name: Build and push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
@@ -88,6 +133,7 @@ jobs:
             TARGET_OS=${{ matrix.target-os }}
             COMPILER=${{ matrix.compiler }}
             R_VERSION=${{ matrix.r-version }}
+            RHUB_IMAGE=${{ steps.rhub-mapping.outputs.rhub-image }}
             PACKAGE_PATH=${{ env.PACKAGE_PATH}}
             REPO_PATH=${{ env.REPO_PATH }}
             JAGS=${{ env.JAGS }}
@@ -119,6 +165,8 @@ jobs:
             r-version: 'release'
           - target-os: 'fedora'
             r-version: 'patched'
+          - target-os: 'fedora'
+            compiler: 'clang' # no clang on fedora (see build map to r-hub images))
           - compiler: 'clang'
             r-version: 'patched'
           - compiler: 'clang'

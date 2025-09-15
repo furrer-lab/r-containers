@@ -2,8 +2,10 @@
 ARG TARGET_OS
 ARG COMPILER
 ARG R_VERSION
+ARG RHUB_IMAGE=ubuntu-clang
 
-FROM rhub/${TARGET_OS}-${COMPILER}-${R_VERSION}
+# Use the mapped R-hub image name from the workflow
+FROM rhub/${RHUB_IMAGE}
 
 # Build stage: ARGs need to be redeclared
 ARG TARGET_OS
@@ -19,16 +21,36 @@ ARG REPO_PATH
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
   libssl-dev \
   libcurl4-openssl-dev \
-  gfortran
+  gfortran \
+  libfontconfig1-dev \
+  libxml2-dev \
+  libharfbuzz-dev \
+  libfribidi-dev \
+  libfreetype6-dev \
+  libpng-dev \
+  libtiff5-dev \
+  libjpeg-dev \
+  libwebp-dev
 
 # add R to PATH
 # NOTE: For R-release this is not needed
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 
+# Configure clang C++ compilation environment
+ENV CPLUS_INCLUDE_PATH="/usr/include/c++/13:/usr/include/x86_64-linux-gnu/c++/13"
+ENV C_INCLUDE_PATH="/usr/include"
+
 # ENV PATH "$PATH:/opt/R-devel/bin/"
 # Set a mirror for CRAN
-RUN if [ "$R_VERSION" = "release" ]; then RPATH=""; else RPATH=/opt/R-$R_VERSION; fi \
-    && echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${RPATH}/lib/R/library/base/R/Rprofile
+# Find where R is installed and set the CRAN repository
+RUN R_HOME=$(R RHOME) && \
+    if [ -d "${R_HOME}/library/base/R" ]; then \
+      echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/library/base/R/Rprofile; \
+    elif [ -d "${R_HOME}/etc" ]; then \
+      echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/etc/Rprofile.site; \
+    else \
+      echo "Warning: Could not find R profile location, skipping CRAN mirror setup"; \
+    fi
 
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
@@ -81,9 +103,6 @@ RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.
 # - Magick++
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
       libmagick++-dev
-# - libxml-2.0
-RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
-      libxml2-dev
 # glmmTMB:
 RUN R -e "install.packages('glmmTMB')" # Workaround for glmmTMB installation issue. Should be installed automatically below in the future.
 ###
@@ -100,3 +119,7 @@ WORKDIR target/
 # Install all dependencies of PACKAGE_NAME but not the package it self
 RUN R -e "renv::deactivate()"
 RUN R -e "package<-desc::desc()\$get_field('Package');pckgs<-unique(renv::dependencies('$PACKAGE_PATH')[,'Package']);pres_pckgs<-installed.packages()[,'Package'];install.packages(pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)])"
+
+# Check if the dependencies were installed correctly
+RUN R -e "renv::deactivate()"
+RUN R -e "package<-desc::desc()\$get_field('Package');pckgs<-unique(renv::dependencies('$PACKAGE_PATH')[,'Package']);pres_pckgs<-installed.packages()[,'Package'];if(any(!(pckgs %in% pres_pckgs) & !(pckgs == package))) { stop(paste0('Some dependencies were not installed correctly. Missing: ', paste(pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)], collapse=', '))) } else { cat('All dependencies were installed correctly.\n') }"
