@@ -1,7 +1,7 @@
 # Configuration
 
 >
->  R Under development (unstable) (2025-10-31 r88977)
+>  R Under development (unstable) (2025-11-30 r89082)
 >
 >  Platform: x86_64-pc-linux-gnu
 >
@@ -56,7 +56,7 @@
 |highr    |0.11       |
 |knitr    |1.50       |
 |xfun     |0.54       |
-|yaml     |2.3.10     |
+|yaml     |2.3.11     |
 |pak      |0.9.0.9000 |
 
 
