@@ -1,7 +1,7 @@
 name: Create Docker image and publish to GH Packages
 
 on:
-  push:
+ push:
     branches: [ main ]    # create a new version whenever we push to main
   schedule:
     - cron: "12 2 2 * *"  # run at 2:12 of the 2nd of every month
@@ -47,26 +47,31 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # NOTE: valgrind container is fedora, gcc, devel
-        #       see https://r-hub.github.io/containers/containers.html#valgrind
-        target-os: ['debian', 'fedora']
-        compiler: ['gcc', 'clang']
-        r-version: ['devel', 'release', 'patched']
-        exclude:
-          - target-os: 'fedora'
-            r-version: 'release'
-          - target-os: 'fedora'
-            r-version: 'patched'
-          - target-os: 'fedora'
-            compiler: 'clang' # no clang on fedora (see build map to r-hub images)
-          - compiler: 'clang'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'release'
-        include:
-          - target-os: 'valgrind'
-            compiler: 'gcc'
-            r-version: 'devel'
+        rhub-container:
+          - os: "ubuntu"
+            compiler: "clang"
+            r-version: "devel"
+            name: "clang20"
+        # # NOTE: valgrind container is fedora, gcc, devel
+        # #       see https://r-hub.github.io/containers/containers.html#valgrind
+        # target-os: ['debian', 'fedora']
+        # compiler: ['gcc', 'clang']
+        # r-version: ['devel', 'release', 'patched']
+        # exclude:
+        #   - target-os: 'fedora'
+        #     r-version: 'release'
+        #   - target-os: 'fedora'
+        #     r-version: 'patched'
+        #   - target-os: 'fedora'
+        #     compiler: 'clang' # no clang on fedora (see build map to r-hub images)
+        #   - compiler: 'clang'
+        #     r-version: 'patched'
+        #   - compiler: 'clang'
+        #     r-version: 'release'
+        # include:
+        #   - target-os: 'valgrind'
+        #     compiler: 'gcc'
+        #     r-version: 'devel'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -83,70 +88,30 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           # TODO: set a proper name of the image (same as in context below)
-          images: ${{ env.DOCKER_REGISTRY}}/${{ format('{0}/{1}/{2}/{3}/abn', github.repository, matrix.target-os, matrix.compiler, matrix.r-version ) }}
+          # images: ${{ env.DOCKER_REGISTRY}}/${{ format('{0}/{1}/{2}/{3}/abn', github.repository, matrix.target-os, matrix.compiler, matrix.r-version ) }}
+          images: ${{ env.DOCKER_REGISTRY}}/${{ format('{0}/{1}/abn', github.repository, matrix.rhub-container.name) }}
           tags: |                     # set Docker tags to git tags
             type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=${{ matrix.rhub-container.os }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
       # For private repo cloned via ssh we need a deploy key
       # - name: Write the ssh key file
       #   run: |
       #     echo "${{  secrets.DEVEL_ABN_DEPLOY }}" >> ssh_key
       #   shell: bash
-      - name: Map to R-hub container names
-        id: rhub-mapping
-        run: |
-          # Map CRAN-style naming to R-hub container names
-          # Based on https://r-hub.github.io/containers/ and https://cran.r-project.org/web/checks/check_flavors.html#r-devel-linux-x86_64-fedora-clang 
-          
-          TARGET_OS="${{ matrix.target-os }}"
-          COMPILER="${{ matrix.compiler }}"
-          R_VERSION="${{ matrix.r-version }}"
-          
-          echo "Input: ${TARGET_OS}/${COMPILER}/${R_VERSION}"
-          
-          # Default fallback
-          RHUB_IMAGE="ubuntu-clang"
-          
-          # Map debian combinations
-          if [[ "$TARGET_OS" == "debian" ]]; then
-            if [[ "$COMPILER" == "clang" && "$R_VERSION" == "devel" ]]; then
-              RHUB_IMAGE="ubuntu-clang"
-            elif [[ "$COMPILER" == "gcc" && "$R_VERSION" == "devel" ]]; then
-              RHUB_IMAGE="ubuntu-gcc12"
-            elif [[ "$R_VERSION" == "release" ]]; then
-              RHUB_IMAGE="ubuntu-release"
-            elif [[ "$R_VERSION" == "patched" ]]; then
-              RHUB_IMAGE="ubuntu-next"
-            fi
-          # Map fedora combinations  
-          elif [[ "$TARGET_OS" == "fedora" ]]; then
-            # Note: R-hub doesn't have direct fedora equivalents for primary CRAN containers
-            # Map to closest Ubuntu equivalents or specific Fedora containers
-            if [[ "$COMPILER" == "gcc" && "$R_VERSION" == "devel" ]]; then
-              RHUB_IMAGE="gcc15"  # Use Fedora-based gcc15 container
-            elif [[ "$COMPILER" == "clang" && "$R_VERSION" == "devel" ]]; then
-              RHUB_IMAGE="gcc15"  # No Fedora clang equivalent, use Fedora gcc15
-              echo "Warning: No direct Fedora clang equivalent on r-hub, using gcc15"
-            fi
-          # Map valgrind
-          elif [[ "$TARGET_OS" == "valgrind" ]]; then
-            RHUB_IMAGE="valgrind"
-          fi
-          
-          echo "Mapped to R-hub image: rhub/${RHUB_IMAGE}"
-          echo "rhub-image=${RHUB_IMAGE}" >> $GITHUB_OUTPUT
+
       - name: Build and push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
-          context: ${{ format('./containers/{0}/', matrix.target-os ) }}
+          context: ${{ format('./containers/{0}/', matrix.rhub-container.os }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            TARGET_OS=${{ matrix.target-os }}
-            COMPILER=${{ matrix.compiler }}
-            R_VERSION=${{ matrix.r-version }}
-            RHUB_IMAGE=${{ steps.rhub-mapping.outputs.rhub-image }}
+            TARGET_OS=${{ matrix.rhub-container.os }}
+            COMPILER=${{ matrix.rhub-container.compiler }}
+            R_VERSION=${{ matrix.rhub-container.r-version }}
+            RHUB_IMAGE=${{ matrix.rhub-container.name }}
             PACKAGE_PATH=${{ env.PACKAGE_PATH}}
             REPO_PATH=${{ env.REPO_PATH }}
             JAGS=${{ env.JAGS }}
@@ -154,6 +119,7 @@ jobs:
           # For private repo cloned via ssh
           # secret-files: |
           #   key=./ssh_key
+
   container-integrity-and-config:
     runs-on: ubuntu-22.04
     needs: [ 'increment-tag', 'build-and-push']
@@ -161,32 +127,38 @@ jobs:
       contents: write
       packages: read
     container:
-      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:${{ needs.increment-tag.outputs.VERSION }}
+      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.rhub-container.name }}/abn:${{ needs.increment-tag.outputs.VERSION }}
       options: --user 1001
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     strategy:
-      matrix:
-        target-os: ['debian', 'fedora']
-        compiler: ['gcc', 'clang']
-        r-version: ['devel', 'release', 'patched']
-        exclude:
-          - target-os: 'fedora'
-            r-version: 'release'
-          - target-os: 'fedora'
-            r-version: 'patched'
-          - target-os: 'fedora'
-            compiler: 'clang' # no clang on fedora (see build map to r-hub images))
-          - compiler: 'clang'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'release'
-        include:
-          - target-os: 'valgrind'
-            compiler: 'gcc'
-            r-version: 'devel'
       fail-fast: false
+      matrix:
+        rhub-container:
+          - os: "ubuntu"
+            compiler: "clang"
+            r-version: "devel"
+            name: "clang20"
+      # matrix:
+      #   target-os: ['debian', 'fedora']
+      #   compiler: ['gcc', 'clang']
+      #   r-version: ['devel', 'release', 'patched']
+      #   exclude:
+      #     - target-os: 'fedora'
+      #       r-version: 'release'
+      #     - target-os: 'fedora'
+      #       r-version: 'patched'
+      #     - target-os: 'fedora'
+      #       compiler: 'clang' # no clang on fedora (see build map to r-hub images))
+      #     - compiler: 'clang'
+      #       r-version: 'patched'
+      #     - compiler: 'clang'
+      #       r-version: 'release'
+      #   include:
+      #     - target-os: 'valgrind'
+      #       compiler: 'gcc'
+      #       r-version: 'devel'
     steps:
     - uses: actions/checkout@v4
       with:
@@ -199,12 +171,12 @@ jobs:
       shell: Rscript {0}
     - name: Write out configuration
       run: |
-        Rscript -e 'args<-commandArgs(TRUE);knitr::knit_hooks$set(output = function(x, options){gsub("##", ">\n> ", x)});knitr::knit("src/release_info.tpl", sprintf("info/%s-%s-%s-%s.md", args[1], args[2], args[3], args[4]))' ${{ matrix.target-os}} ${{ matrix.compiler }} ${{ matrix.r-version }} abn
+        Rscript -e 'args<-commandArgs(TRUE);knitr::knit_hooks$set(output = function(x, options){gsub("##", ">\n> ", x)});knitr::knit("src/release_info.tpl", sprintf("info/%s-%s.md", args[1], args[2]))' ${{ matrix.rhub-container.name }} abn
     - name: Save config as artifact
       uses: actions/upload-artifact@v4
       with:
-        name: info-artifact-${{ matrix.target-os }}_${{ matrix.compiler }}_${{ matrix.r-version }}
-        path: info/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md
+        name: info-artifact-${{ matrix.rhub-container.name }}
+        path: info/${{ matrix.rhub-container.name }}-abn.md
 
   update-container-info:
     runs-on: ubuntu-latest

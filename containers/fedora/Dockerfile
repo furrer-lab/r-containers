@@ -21,31 +21,16 @@ ARG JAGS
 # Update package repositories
 RUN dnf check-update && dnf -y install \
   openssl-devel \
-  libcurl-devel \
-  fontconfig-devel \
-  libxml2-devel \
-  harfbuzz-devel \
-  fribidi-devel \
-  freetype-devel \
-  libpng-devel \
-  libtiff-devel \
-  libjpeg-devel \
-  libwebp-devel
+  libcurl-devel
 
 # add R to PATH
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 
 # diff to debian: /lib/ > /lib64/
 # ENV PATH "$PATH:/opt/R-devel/bin/"
-# Find where R is installed and set the CRAN repository
-RUN R_HOME=$(R RHOME) && \
-    if [ -d "${R_HOME}/library/base/R" ]; then \
-      echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/library/base/R/Rprofile; \
-    elif [ -d "${R_HOME}/etc" ]; then \
-      echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/etc/Rprofile.site; \
-    else \
-      echo "Warning: Could not find R profile location, skipping CRAN mirror setup"; \
-    fi
+# Set a mirror for CRAN
+RUN if [ "$R_VERSION" = "release" ]; then RPATH=""; else RPATH=/opt/R-$R_VERSION; fi \
+    && echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${RPATH}/lib64/R/library/base/R/Rprofile
 
 # rjags:
 RUN dnf -y install \
@@ -98,10 +83,7 @@ RUN R -e "install.packages('BiocManager')" \
 # INLA
 # - s2
 RUN dnf -y install \
-      abseil-cpp-devel \
-      cmake \
-      libpkgconf-devel \
-      pkgconf
+      abseil-cpp-devel
 # - sf
 RUN dnf -y install \
   udunits2-devel gdal-devel geos-devel proj-devel
@@ -115,6 +97,9 @@ RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.
 # - Magick++
 RUN dnf -y install \
       ImageMagick-c++-devel
+# - libxml-2.0
+RUN dnf -y install \
+      libxml2-devel
 
 ###
 # install all package dependencies
