@@ -1,11 +1,11 @@
 name: Create Docker image and publish to GH Packages
 
 on:
- push:
+  push:
     branches: [ main ]    # create a new version whenever we push to main
   schedule:
     - cron: "12 2 2 * *"  # run at 2:12 of the 2nd of every month
-
+ 
 env:
   DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}  # where to register the image
   REPO_PATH: ${{ vars.REPO_PATH }}
