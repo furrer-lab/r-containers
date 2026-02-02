@@ -1,7 +1,7 @@
 # Configuration
 
 >
->  R Under development (unstable) (2025-12-31 r89265)
+>  R Under development (unstable) (2026-01-31 r89365)
 >
 >  Platform: x86_64-pc-linux-gnu
 >
@@ -43,7 +43,7 @@
 >
 >  loaded via a namespace (and not attached):
 >
->  [1] compiler_4.6.0 tools_4.6.0    knitr_1.51     xfun_0.55      evaluate_1.0.5
+>  [1] compiler_4.6.0 tools_4.6.0    knitr_1.51     xfun_0.56      evaluate_1.0.5
 
 
 # Installed packages
@@ -55,7 +55,7 @@
 |evaluate |1.0.5      |
 |highr    |0.11       |
 |knitr    |1.51       |
-|xfun     |0.55       |
+|xfun     |0.56       |
 |yaml     |2.3.12     |
 |pak      |0.9.2.9000 |
 
