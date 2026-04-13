@@ -1,7 +1,7 @@
 # Before the build stage
 ARG COMPILER
 ARG R_VERSION
-ARG RHUB_IMAGE=ubuntu-gcc12
+ARG RHUB_IMAGE=gcc15
 
 # Use the mapped R-hub image name from the workflow
 FROM rhub/${RHUB_IMAGE}
@@ -30,6 +30,7 @@ RUN dnf -y install \
   libtiff-devel \
   libjpeg-devel \
   libwebp-devel \
+  libuv-devel \
   cmake
 
 # add R to PATH
@@ -61,7 +62,7 @@ WORKDIR /tmp/$JAGS
 # (https://usermanual.wiki/Document/jagsinstallationmanual.880863585.pdf)
 # and substitute the compilers with the specifics from the R installation that
 # we can get by using the `R CMD config CC/CXX/BLAS_LIBS/LAPACK_LIBS' commands:
-RUN if [ "$COMPILER" = "clang" ]; then RCC=/usr/bin/clang RCXX="/usr/bin/clang++ -std=gnu++17 -stdlib=libc++"; else RRCC=/usr/bin/gcc RCXX="/usr/bin/g++"; fi \
+RUN if [ "$COMPILER" = "clang" ]; then RCC=/usr/bin/clang RCXX="/usr/bin/clang++ -std=gnu++17 -stdlib=libc++"; else RCC=/usr/bin/gcc RCXX="/usr/bin/g++"; fi \
     && LD="llvm-ld" CC="${RCC}" CXX="${RCXX}" ./configure --with-blas="-L/opt/R-devel/lib64/R/lib -lRblas" --with-lapack="-L/opt/R-devel/lib64/R/lib -lRlapack" --libdir=/usr/local/lib64 && make && make install
 RUN ls /tmp/$JAGS
 # ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
@@ -132,9 +133,6 @@ WORKDIR target/
 # escape=\
 # Install all dependencies of PACKAGE_NAME but not the package it self
 RUN R -e "renv::deactivate()"
-RUN R -e "desc::desc()\$get_field('Package')"
-RUN R -e "unique(renv::dependencies('$PACKAGE_PATH')[,'Package'])"
-RUN R -e "installed.packages()[,'Package']"
 RUN R -e "package<-desc::desc()\$get_field('Package');pckgs<-unique(renv::dependencies('$PACKAGE_PATH')[,'Package']);pres_pckgs<-installed.packages()[,'Package'];install.packages(pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)])"
 
 # Check if the dependencies were installed correctly
