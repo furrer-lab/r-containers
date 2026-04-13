@@ -19,7 +19,8 @@ ARG JAGS
 # ARG BUILD_DATE
 
 # Update package repositories
-RUN dnf check-update && dnf -y install \
+RUN dnf check-update
+RUN dnf -y install \
   openssl-devel \
   libcurl-devel \
   fontconfig-devel \
