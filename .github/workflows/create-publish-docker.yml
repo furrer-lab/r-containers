@@ -41,6 +41,7 @@ jobs:
     needs: increment-tag
     env:
       CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
+      BUILDKIT_PROGRESS: plain
     permissions:                       # for `GITHUB_TOKEN`
       contents: read
       packages: write

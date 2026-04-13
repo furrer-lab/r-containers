@@ -22,7 +22,8 @@ ARG DRMEMORY
 # Update package repositories
 RUN dnf check-update && dnf -y install \
   openssl-devel \
-  libcurl-devel
+  libcurl-devel \
+  libuv-devel
 
 # Install dependencies for DrMemory
 RUN dnf -y install libunwind

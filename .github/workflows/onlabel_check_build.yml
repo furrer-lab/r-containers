@@ -28,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CUSTOM_TAG: "onlabel-check-build-${{ github.run_number }}"
+      BUILDKIT_PROGRESS: plain
     permissions:                       # for `GITHUB_TOKEN`
       contents: read
       packages: write

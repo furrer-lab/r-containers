@@ -29,7 +29,8 @@ RUN dnf -y install \
   libpng-devel \
   libtiff-devel \
   libjpeg-devel \
-  libwebp-devel
+  libwebp-devel \
+  libuv-devel
 
 # add R to PATH
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
