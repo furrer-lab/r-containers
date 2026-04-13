@@ -51,7 +51,8 @@ RUN R_HOME=$(R RHOME) && \
     fi
 
 # Get and install packages for local debugging
-RUN R -e "install.packages('devtools'); if (!requireNamespace('devtools', quietly=TRUE)) stop('Failed to install: devtools')"
+RUN R -e "install.packages('fs'); if (!requireNamespace('fs', quietly=TRUE)) stop('Failed to install: fs')"
+RUN R -e "install.packages('devtools'); warnings(); if (!requireNamespace('devtools', quietly=TRUE)) stop('Failed to install: devtools')"
 RUN R -e "install.packages('remotes'); if (!requireNamespace('remotes', quietly=TRUE)) stop('Failed to install: remotes')"
 RUN R -e "install.packages('R.rsp'); if (!requireNamespace('R.rsp', quietly=TRUE)) stop('Failed to install: R.rsp')"
 RUN R -e "install.packages('renv'); if (!requireNamespace('renv', quietly=TRUE)) stop('Failed to install: renv')"
