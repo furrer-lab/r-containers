@@ -1,5 +1,4 @@
 # Before the build stage
-ARG TARGET_OS
 ARG COMPILER
 ARG R_VERSION
 ARG RHUB_IMAGE=ubuntu-gcc12
@@ -8,7 +7,6 @@ ARG RHUB_IMAGE=ubuntu-gcc12
 FROM rhub/${RHUB_IMAGE}
 
 # Build stage: ARGs need to be redeclared
-ARG TARGET_OS
 ARG COMPILER
 ARG R_VERSION
 # ARG PACKAGE
@@ -67,25 +65,21 @@ RUN if [ "$COMPILER" = "clang" ]; then RCC=/usr/bin/clang RCXX="/usr/bin/clang++
 RUN ls /tmp/$JAGS
 # ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 # RUN R -e "install.packages('rjags')"
-RUN R -e "install.packages('rjags', configure.args = '--enable-rpath')"
-RUN R -e "if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
+RUN R -e "install.packages('rjags', configure.args = '--enable-rpath'); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
 
 # Get and install packages for local debugging
-RUN R -e "install.packages('devtools')" \
- && R -e "install.packages('remotes')" \
- && R -e "install.packages('R.rsp')" \
- && R -e "install.packages('renv')" \
- && R -e "install.packages('desc')"
-RUN R -e "pkgs <- c('devtools','remotes','R.rsp','renv','desc'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing) > 0) stop('Failed to install: ', paste(missing, collapse=', '))"
+RUN R -e "install.packages('devtools'); if (!requireNamespace('devtools', quietly=TRUE)) stop('Failed to install: devtools')"
+RUN R -e "install.packages('remotes'); if (!requireNamespace('remotes', quietly=TRUE)) stop('Failed to install: remotes')"
+RUN R -e "install.packages('R.rsp'); if (!requireNamespace('R.rsp', quietly=TRUE)) stop('Failed to install: R.rsp')"
+RUN R -e "install.packages('renv'); if (!requireNamespace('renv', quietly=TRUE)) stop('Failed to install: renv')"
+RUN R -e "install.packages('desc'); if (!requireNamespace('desc', quietly=TRUE)) stop('Failed to install: desc')"
 # For code coverage
-RUN R -e "install.packages('DT')" \
- && R -e "install.packages('htmltools')" \
- && R -e "install.packages('covr')"
-RUN R -e "pkgs <- c('DT','htmltools','covr'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing) > 0) stop('Failed to install: ', paste(missing, collapse=', '))"
+RUN R -e "install.packages('DT'); if (!requireNamespace('DT', quietly=TRUE)) stop('Failed to install: DT')"
+RUN R -e "install.packages('htmltools'); if (!requireNamespace('htmltools', quietly=TRUE)) stop('Failed to install: htmltools')"
+RUN R -e "install.packages('covr'); if (!requireNamespace('covr', quietly=TRUE)) stop('Failed to install: covr')"
 
 # Prepare for potential check to be run
-RUN R -e "install.packages('urlchecker')"
-RUN R -e "if (!requireNamespace('urlchecker', quietly=TRUE)) stop('Failed to install: urlchecker')"
+RUN R -e "install.packages('urlchecker'); if (!requireNamespace('urlchecker', quietly=TRUE)) stop('Failed to install: urlchecker')"
 
 # Install dependencies not managed by CRAN
 # - lme4 and gsl:
@@ -97,9 +91,8 @@ RUN dnf -y install \
 # RUN R -e "install.packages('gsl')"
 
 # Graphviz
-RUN R -e "install.packages('BiocManager')" \
- && R -e "BiocManager::install('Rgraphviz')"
-RUN R -e "pkgs <- c('BiocManager','Rgraphviz'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing) > 0) stop('Failed to install: ', paste(missing, collapse=', '))"
+RUN R -e "install.packages('BiocManager'); if (!requireNamespace('BiocManager', quietly=TRUE)) stop('Failed to install: BiocManager')"
+RUN R -e "BiocManager::install('Rgraphviz'); if (!requireNamespace('Rgraphviz', quietly=TRUE)) stop('Failed to install: Rgraphviz')"
 
 # INLA
 # - s2
@@ -117,8 +110,7 @@ RUN dnf -y install \
       udunits2-devel
 # RUN R -e "install.packages('fmesher')"
 # - INLA
-RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
-RUN R -e "if (!requireNamespace('INLA', quietly=TRUE)) stop('Failed to install: INLA')"
+RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE); if (!requireNamespace('INLA', quietly=TRUE)) stop('Failed to install: INLA')"
 # - Magick++
 RUN dnf -y install \
       ImageMagick-c++-devel
