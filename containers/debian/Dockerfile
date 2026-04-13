@@ -29,7 +29,7 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   libtiff5-dev \
   libjpeg-dev \
   libwebp-dev \
-  libuv1-dev
+  cmake
 
 # add R to PATH
 # NOTE: For R-release this is not needed
@@ -85,7 +85,6 @@ RUN R -e "BiocManager::install('Rgraphviz'); if (!requireNamespace('Rgraphviz', 
 # - s2
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
       libabsl-dev \
-      cmake \
       pkg-config
 # - sf
 RUN apt-get -y update --allow-releaseinfo-change && apt-get install -y \

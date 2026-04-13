@@ -30,7 +30,7 @@ RUN dnf -y install \
   libtiff-devel \
   libjpeg-devel \
   libwebp-devel \
-  libuv-devel
+  cmake
 
 # add R to PATH
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
@@ -99,7 +99,6 @@ RUN R -e "BiocManager::install('Rgraphviz'); if (!requireNamespace('Rgraphviz', 
 # - s2
 RUN dnf -y install \
       abseil-cpp-devel \
-      cmake \
       libpkgconf-devel \
       pkgconf
 # - sf
