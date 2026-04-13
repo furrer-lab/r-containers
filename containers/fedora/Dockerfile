@@ -48,7 +48,7 @@ RUN R_HOME=$(R RHOME) && \
 
 # rjags:
 RUN dnf -y install \
-  lapack* blas* atlas* 
+  lapack* blas* atlas* flexiblas-devel
 ADD https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/$JAGS.tar.gz/download /tmp/jags.tar.gz
 WORKDIR /tmp/
 RUN ls /tmp/
