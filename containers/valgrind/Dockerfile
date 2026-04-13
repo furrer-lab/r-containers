@@ -70,6 +70,7 @@ ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 
 # RUN R -e "install.packages('rjags')"
 RUN R -e "install.packages('rjags', configure.args = '--enable-rpath')"
+RUN R -e "if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
 
 # Get and install packages for local debugging
 RUN R -e "install.packages('devtools')" \
@@ -77,13 +78,16 @@ RUN R -e "install.packages('devtools')" \
  && R -e "install.packages('R.rsp')" \
  && R -e "install.packages('renv')" \
  && R -e "install.packages('desc')"
+RUN R -e "pkgs <- c('devtools','remotes','R.rsp','renv','desc'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing) > 0) stop('Failed to install: ', paste(missing, collapse=', '))"
 # For code coverage
 RUN R -e "install.packages('DT')" \
  && R -e "install.packages('htmltools')" \
  && R -e "install.packages('covr')"
+RUN R -e "pkgs <- c('DT','htmltools','covr'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing) > 0) stop('Failed to install: ', paste(missing, collapse=', '))"
 
 # Prepare for potential check to be run
 RUN R -e "install.packages('urlchecker')"
+RUN R -e "if (!requireNamespace('urlchecker', quietly=TRUE)) stop('Failed to install: urlchecker')"
 
 # Install dependencies not managed by CRAN
 # - lme4 and gsl:
@@ -97,6 +101,7 @@ RUN dnf -y install \
 # Graphviz
 RUN R -e "install.packages('BiocManager')" \
  && R -e "BiocManager::install('Rgraphviz')"
+RUN R -e "pkgs <- c('BiocManager','Rgraphviz'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing) > 0) stop('Failed to install: ', paste(missing, collapse=', '))"
 
 # INLA
 # - s2
@@ -112,6 +117,7 @@ RUN dnf -y install \
 # RUN R -e "install.packages('fmesher')"
 # - INLA
 RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
+RUN R -e "if (!requireNamespace('INLA', quietly=TRUE)) stop('Failed to install: INLA')"
 # - Magick++
 RUN dnf -y install \
       ImageMagick-c++-devel
@@ -135,3 +141,7 @@ WORKDIR target/
 # escape=\
 RUN R -e "renv::deactivate()"
 RUN R -e "package<-desc::desc()\$get_field('Package');pckgs<-unique(renv::dependencies('$PACKAGE_PATH')[,'Package']);pres_pckgs<-installed.packages()[,'Package'];install.packages(pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)])"
+
+# Check if the dependencies were installed correctly
+RUN R -e "renv::deactivate()"
+RUN R -e "package<-desc::desc()\$get_field('Package');pckgs<-unique(renv::dependencies('$PACKAGE_PATH')[,'Package']);pres_pckgs<-installed.packages()[,'Package'];if(any(!(pckgs %in% pres_pckgs) & !(pckgs == package))) { stop(paste0('Some dependencies were not installed correctly. Missing: ', paste(pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)], collapse=', '))) } else { cat('All dependencies were installed correctly.\n') }"

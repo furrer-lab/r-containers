@@ -58,13 +58,16 @@ RUN R -e "install.packages('devtools')" \
  && R -e "install.packages('R.rsp')" \
  && R -e "install.packages('renv')" \
  && R -e "install.packages('desc')"
+RUN R -e "pkgs <- c('devtools','remotes','R.rsp','renv','desc'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing) > 0) stop('Failed to install: ', paste(missing, collapse=', '))"
 # For code coverage
 RUN R -e "install.packages('DT')" \
  && R -e "install.packages('htmltools')" \
  && R -e "install.packages('covr')"
+RUN R -e "pkgs <- c('DT','htmltools','covr'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing) > 0) stop('Failed to install: ', paste(missing, collapse=', '))"
 
 # Prepare for potential check to be run
 RUN R -e "install.packages('urlchecker')"
+RUN R -e "if (!requireNamespace('urlchecker', quietly=TRUE)) stop('Failed to install: urlchecker')"
 
 # Install dependencies not managed by CRAN
 # lme4:
@@ -82,6 +85,7 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
 # Graphviz
 RUN R -e "install.packages('BiocManager')" \
  && R -e "BiocManager::install('Rgraphviz')"
+RUN R -e "pkgs <- c('BiocManager','Rgraphviz'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing) > 0) stop('Failed to install: ', paste(missing, collapse=', '))"
 # INLA
 # - s2
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
@@ -102,11 +106,13 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
 # RUN R -e "install.packages('fmesher')"
 # - INLA
 RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
+RUN R -e "if (!requireNamespace('INLA', quietly=TRUE)) stop('Failed to install: INLA')"
 # - Magick++
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
       libmagick++-dev
 # glmmTMB:
 RUN R -e "install.packages('glmmTMB')" # Workaround for glmmTMB installation issue. Should be installed automatically below in the future.
+RUN R -e "if (!requireNamespace('glmmTMB', quietly=TRUE)) stop('Failed to install: glmmTMB')"
 ###
 # install all package dependencies
 ###
