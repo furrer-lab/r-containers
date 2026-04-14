@@ -60,6 +60,16 @@ ENV PATH="/opt/DrMemory/DrMemory-Linux-$DRMEMORY/bin:${PATH}"
 # Add R to PATH (valgrind R is installed at a fixed path)
 ENV PATH="/opt/R/devel-valgrind/bin:${PATH}"
 
+# Set CRAN mirror (must happen before any R package installs)
+RUN R_HOME=$(R RHOME) && \
+    if [ -d "${R_HOME}/library/base/R" ]; then \
+      echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/library/base/R/Rprofile; \
+    elif [ -d "${R_HOME}/etc" ]; then \
+      echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/etc/Rprofile.site; \
+    else \
+      echo "ERROR: Could not find R profile location" >&2; exit 1; \
+    fi
+
 # Build and install JAGS from source
 # See https://usermanual.wiki/Document/jagsinstallationmanual.880863585.pdf
 ADD https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/$JAGS.tar.gz/download /tmp/jags.tar.gz

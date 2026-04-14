@@ -61,6 +61,16 @@ RUN dnf -y install \
 # Add R to PATH
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 
+# Set CRAN mirror (must happen before any R package installs)
+RUN R_HOME=$(R RHOME) && \
+    if [ -d "${R_HOME}/library/base/R" ]; then \
+      echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/library/base/R/Rprofile; \
+    elif [ -d "${R_HOME}/etc" ]; then \
+      echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/etc/Rprofile.site; \
+    else \
+      echo "ERROR: Could not find R profile location" >&2; exit 1; \
+    fi
+
 # Build and install JAGS from source
 # Fedora does not package JAGS, so we compile it matching R's compiler and BLAS/LAPACK.
 # See https://usermanual.wiki/Document/jagsinstallationmanual.880863585.pdf

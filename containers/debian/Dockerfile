@@ -58,6 +58,16 @@ ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 ENV CPLUS_INCLUDE_PATH="/usr/include/c++/13:/usr/include/x86_64-linux-gnu/c++/13"
 ENV C_INCLUDE_PATH="/usr/include"
 
+# Set CRAN mirror (must happen before any R package installs)
+RUN R_HOME=$(R RHOME) && \
+    if [ -d "${R_HOME}/library/base/R" ]; then \
+      echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/library/base/R/Rprofile; \
+    elif [ -d "${R_HOME}/etc" ]; then \
+      echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/etc/Rprofile.site; \
+    else \
+      echo "ERROR: Could not find R profile location" >&2; exit 1; \
+    fi
+
 # Install rjags (JAGS is available as system package on debian)
 RUN R -e "install.packages('rjags'); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
 

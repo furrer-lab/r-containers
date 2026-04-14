@@ -14,16 +14,8 @@ install_r_pkg() {
   R -e "install.packages('$1'); if (!requireNamespace('$1', quietly=TRUE)) stop('Failed to install: $1')"
 }
 
-# --- Set CRAN mirror (works on all R-hub base images) ---
-R_HOME=$(R RHOME)
-if [ -d "${R_HOME}/library/base/R" ]; then
-  echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' >> "${R_HOME}/library/base/R/Rprofile"
-elif [ -d "${R_HOME}/etc" ]; then
-  echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' >> "${R_HOME}/etc/Rprofile.site"
-else
-  echo "ERROR: Could not find R profile location" >&2
-  exit 1
-fi
+# --- Verify CRAN mirror is configured (must be set up in Dockerfile before this script) ---
+R -e "if (is.null(getOption('repos')['CRAN']) || getOption('repos')['CRAN'] == '@CRAN@') stop('CRAN mirror not configured. Set it up in the Dockerfile before running this script.')"
 
 # --- Development tooling ---
 install_r_pkg devtools
