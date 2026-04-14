@@ -116,10 +116,48 @@ jobs:
           # secret-files: |
           #   key=./ssh_key
 
-  container-integrity-and-config:
-    if: ${{ (success() || failure()) }}
-    runs-on: ubuntu-22.04
+  check-images:
+    # Determine which container images were successfully pushed by the build job.
+    # This produces a dynamic matrix so that container-integrity-and-config only
+    # runs for images that actually exist in the registry.
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
     needs: [ 'build' ]
+    permissions:
+      packages: read
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Log in to the registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check which images exist
+        id: set-matrix
+        run: |
+          labels=("debian-clang-devel" "debian-gcc-devel" "debian-gcc-release" "debian-gcc-patched" "fedora-gcc-devel" "valgrind-gcc-devel")
+          available="[]"
+          for label in "${labels[@]}"; do
+            image="${REGISTRY}/${REPO}/${label}/abn:${TAG}"
+            if docker manifest inspect "$image" > /dev/null 2>&1; then
+              echo "  [OK]   $label"
+              available=$(echo "$available" | jq -c ". + [{\"label\": \"$label\"}]")
+            else
+              echo "  [SKIP] $label (image not found)"
+            fi
+          done
+          echo "matrix={\"include\":$available}" >> $GITHUB_OUTPUT
+        env:
+          REGISTRY: ${{ env.DOCKER_REGISTRY }}
+          REPO: ${{ github.repository }}
+          TAG: "onlabel-check-build-${{ github.run_number }}"
+
+  container-integrity-and-config:
+    if: ${{ !cancelled() && needs.check-images.outputs.matrix != '' && fromJSON(needs.check-images.outputs.matrix).include[0] != null }}
+    runs-on: ubuntu-22.04
+    needs: [ 'build', 'check-images' ]
     permissions:
       contents: write
       packages: read
@@ -131,21 +169,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - label: debian-clang-devel
-            allow-failure: false
-          - label: debian-gcc-devel
-            allow-failure: false
-          - label: debian-gcc-release
-            allow-failure: false
-          - label: debian-gcc-patched
-            allow-failure: false
-          - label: fedora-gcc-devel
-            allow-failure: true
-          - label: valgrind-gcc-devel
-            allow-failure: false
-    continue-on-error: ${{ matrix.allow-failure }}
+      matrix: ${{ fromJSON(needs.check-images.outputs.matrix) }}
     steps:
     - uses: actions/checkout@v4
       with:
@@ -166,8 +190,9 @@ jobs:
         path: info/${{ matrix.label }}-abn.md
 
   report_build_check:
-    if: ${{ (success() || failure()) }}
+    if: ${{ !cancelled() }}
     needs:
+      - check-images
       - container-integrity-and-config
     runs-on: ubuntu-latest
     permissions:
@@ -183,12 +208,15 @@ jobs:
       - name: Check if on demand tasks succeeded
         run: |
           gh pr edit ${{ env.EVENT }} --remove-label ${{ env.LABEL_CHECK }} --repo ${{ env.OWNER }}/${{ env.REPO }}
-          if [ ${{ needs.container-integrity-and-config.result }} == "success" ]; then
+          result="${{ needs.container-integrity-and-config.result }}"
+          # 'skipped' means the dynamic matrix was empty (all allow-failure
+          # builds failed) — treat it the same as success.
+          if [ "$result" == "success" ] || [ "$result" == "skipped" ]; then
             gh pr edit ${{ env.EVENT }} --remove-label ${{ env.LABEL_FAILURE }} --repo ${{ env.OWNER }}/${{ env.REPO }}
             gh pr edit ${{ env.EVENT }} --add-label ${{ env.LABEL_SUCCESS }} --repo ${{ env.OWNER }}/${{ env.REPO }}
             echo "### ${{ github.event.label.url }} passed! :rocket:" >> $GITHUB_STEP_SUMMARY
             exit 0
-          elif [ ${{ needs.container-integrity-and-config.result }} == "failure" ]; then
+          elif [ "$result" == "failure" ]; then
             gh pr edit ${{ env.EVENT }} --remove-label ${{ env.LABEL_SUCCESS }} --repo ${{ env.OWNER }}/${{ env.REPO }}
             gh pr edit ${{ env.EVENT  }} --add-label ${{ env.LABEL_FAILURE }} --repo ${{ env.OWNER }}/${{ env.REPO }}
             echo "### ${{ github.event.label.url }} failed!" >> $GITHUB_STEP_SUMMARY
@@ -231,6 +259,7 @@ jobs:
     if: ${{ always() }}
     needs:
       - record_existing_label
+      - check-images
       - container-integrity-and-config
     runs-on: ubuntu-latest
     env:
@@ -240,6 +269,7 @@ jobs:
     steps:
       - name: Assert that either checks passed or the label is present
         run: |
-          if [[ ${{ needs.container-integrity-and-config.result }} == 'success' || ${{ needs.record_existing_label.outputs.passed }} == 'true' ]]; then
+          result="${{ needs.container-integrity-and-config.result }}"
+          if [[ "$result" == 'success' || "$result" == 'skipped' || ${{ needs.record_existing_label.outputs.passed }} == 'true' ]]; then
             echo 'The images were built successfully!';
           else exit 1; fi
