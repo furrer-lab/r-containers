@@ -28,6 +28,16 @@ RUN dnf -y install \
   libcurl-devel \
   # libuv (fs R package)
   libuv-devel \
+  # Text / font rendering
+  fontconfig-devel \
+  harfbuzz-devel \
+  fribidi-devel \
+  freetype-devel \
+  # Image formats
+  libpng-devel \
+  libtiff-devel \
+  libjpeg-devel \
+  libwebp-devel \
   # XML
   libxml2-devel \
   # GSL (gsl R package)
