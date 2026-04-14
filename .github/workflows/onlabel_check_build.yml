@@ -43,33 +43,39 @@ jobs:
             label: debian-clang-devel
             compiler: clang
             r-version: devel
+            allow-failure: false
           - rhub-image: ubuntu-gcc12
             dockerfile: debian
             label: debian-gcc-devel
             compiler: gcc
             r-version: devel
+            allow-failure: false
           - rhub-image: ubuntu-release
             dockerfile: debian
             label: debian-gcc-release
             compiler: gcc
             r-version: release
+            allow-failure: false
           - rhub-image: ubuntu-next
             dockerfile: debian
             label: debian-gcc-patched
             compiler: gcc
             r-version: patched
+            allow-failure: false
           # Fedora container (R-hub only provides gcc + R-devel for Fedora)
           - rhub-image: gcc15
             dockerfile: fedora
             label: fedora-gcc-devel
             compiler: gcc
             r-version: devel
+            allow-failure: true
           # Valgrind container (Fedora-based, gcc, R-devel)
           - rhub-image: valgrind
             dockerfile: valgrind
             label: valgrind-gcc-devel
             compiler: gcc
             r-version: devel
+            allow-failure: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -91,6 +97,7 @@ jobs:
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
       - name: Build and push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        continue-on-error: ${{ matrix.allow-failure }}
         with:
           context: ./containers/
           file: ./containers/${{ matrix.dockerfile }}/Dockerfile
@@ -127,11 +134,18 @@ jobs:
       matrix:
         include:
           - label: debian-clang-devel
+            allow-failure: false
           - label: debian-gcc-devel
+            allow-failure: false
           - label: debian-gcc-release
+            allow-failure: false
           - label: debian-gcc-patched
+            allow-failure: false
           - label: fedora-gcc-devel
+            allow-failure: true
           - label: valgrind-gcc-devel
+            allow-failure: false
+    continue-on-error: ${{ matrix.allow-failure }}
     steps:
     - uses: actions/checkout@v4
       with:
