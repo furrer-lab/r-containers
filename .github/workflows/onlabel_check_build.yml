@@ -28,32 +28,54 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CUSTOM_TAG: "onlabel-check-build-${{ github.run_number }}"
+      BUILDKIT_PROGRESS: plain
     permissions:                       # for `GITHUB_TOKEN`
       contents: read
       packages: write
     strategy:
       fail-fast: false
       matrix:
-        # NOTE: valgrind container is fedora, gcc, devel
-        #       see https://r-hub.github.io/containers/containers.html#valgrind
-        target-os: ['debian', 'fedora']
-        compiler: ['gcc', 'clang']
-        r-version: ['devel', 'release', 'patched']
-        exclude:
-          - target-os: 'fedora'
-            r-version: 'release'
-          - target-os: 'fedora'
-            r-version: 'patched'
-          - target-os: 'fedora'
-            compiler: 'clang' # no clang on fedora (see build map to r-hub images)
-          - compiler: 'clang'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'release'
         include:
-          - target-os: 'valgrind'
-            compiler: 'gcc'
-            r-version: 'devel'
+          # Ubuntu/debian containers
+          # See https://r-hub.github.io/containers/containers.html
+          - rhub-image: ubuntu-clang
+            dockerfile: debian
+            label: debian-clang-devel
+            compiler: clang
+            r-version: devel
+            allow-failure: false
+          - rhub-image: ubuntu-gcc12
+            dockerfile: debian
+            label: debian-gcc-devel
+            compiler: gcc
+            r-version: devel
+            allow-failure: false
+          - rhub-image: ubuntu-release
+            dockerfile: debian
+            label: debian-gcc-release
+            compiler: gcc
+            r-version: release
+            allow-failure: false
+          - rhub-image: ubuntu-next
+            dockerfile: debian
+            label: debian-gcc-patched
+            compiler: gcc
+            r-version: patched
+            allow-failure: false
+          # Fedora container (R-hub only provides gcc + R-devel for Fedora)
+          - rhub-image: gcc15
+            dockerfile: fedora
+            label: fedora-gcc-devel
+            compiler: gcc
+            r-version: devel
+            allow-failure: true
+          # Valgrind container (Fedora-based, gcc, R-devel)
+          - rhub-image: valgrind
+            dockerfile: valgrind
+            label: valgrind-gcc-devel
+            compiler: gcc
+            r-version: devel
+            allow-failure: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -69,72 +91,24 @@ jobs:
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          # TODO: set a proper name of the image (same as in context below)
-          images: ${{ env.DOCKER_REGISTRY}}/${{ format('{0}/{1}/{2}/{3}/abn', github.repository, matrix.target-os, matrix.compiler, matrix.r-version ) }}
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn
           tags: |                     # set Docker tags to git tags
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-      # For private repo cloned via ssh we need a deploy key
-      # - name: Write the ssh key file
-      #   run: |
-      #     echo "${{  secrets.DEVEL_ABN_DEPLOY }}" >> ssh_key
-      #   shell: bash
-      - name: Map to R-hub container names
-        id: rhub-mapping
-        run: |
-          # Map CRAN-style naming to R-hub container names
-          # Based on https://r-hub.github.io/containers/ and https://cran.r-project.org/web/checks/check_flavors.html#r-devel-linux-x86_64-fedora-clang
-          
-          TARGET_OS="${{ matrix.target-os }}"
-          COMPILER="${{ matrix.compiler }}"
-          R_VERSION="${{ matrix.r-version }}"
-          
-          echo "Input: ${TARGET_OS}/${COMPILER}/${R_VERSION}"
-          
-          # Default fallback
-          RHUB_IMAGE="ubuntu-clang"
-          
-          # Map debian combinations
-          if [[ "$TARGET_OS" == "debian" ]]; then
-            if [[ "$COMPILER" == "clang" && "$R_VERSION" == "devel" ]]; then
-              RHUB_IMAGE="ubuntu-clang"
-            elif [[ "$COMPILER" == "gcc" && "$R_VERSION" == "devel" ]]; then
-              RHUB_IMAGE="ubuntu-gcc12"
-            elif [[ "$R_VERSION" == "release" ]]; then
-              RHUB_IMAGE="ubuntu-release"
-            elif [[ "$R_VERSION" == "patched" ]]; then
-              RHUB_IMAGE="ubuntu-next"
-            fi
-          # Map fedora combinations  
-          elif [[ "$TARGET_OS" == "fedora" ]]; then
-            # Note: R-hub doesn't have direct fedora equivalents for primary CRAN containers
-            # Map to closest Ubuntu equivalents or specific Fedora containers
-            if [[ "$COMPILER" == "gcc" && "$R_VERSION" == "devel" ]]; then
-              RHUB_IMAGE="gcc15"  # Use Fedora-based gcc15 container
-            elif [[ "$COMPILER" == "clang" && "$R_VERSION" == "devel" ]]; then
-              RHUB_IMAGE="gcc15"  # No Fedora clang equivalent, use Fedora gcc15
-              echo "Warning: No direct Fedora clang equivalent on r-hub, using gcc15"
-            fi
-          # Map valgrind
-          elif [[ "$TARGET_OS" == "valgrind" ]]; then
-            RHUB_IMAGE="valgrind"
-          fi
-          
-          echo "Mapped to R-hub image: rhub/${RHUB_IMAGE}"
-          echo "rhub-image=${RHUB_IMAGE}" >> $GITHUB_OUTPUT
       - name: Build and push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        continue-on-error: ${{ matrix.allow-failure }}
         with:
-          context: ${{ format('./containers/{0}/', matrix.target-os ) }}
+          context: ./containers/
+          file: ./containers/${{ matrix.dockerfile }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            TARGET_OS=${{ matrix.target-os }}
             COMPILER=${{ matrix.compiler }}
             R_VERSION=${{ matrix.r-version }}
-            RHUB_IMAGE=${{ steps.rhub-mapping.outputs.rhub-image }}
-            PACKAGE_PATH=${{ env.PACKAGE_PATH}}
+            RHUB_IMAGE=${{ matrix.rhub-image }}
+            PACKAGE_PATH=${{ env.PACKAGE_PATH }}
             REPO_PATH=${{ env.REPO_PATH }}
             JAGS=${{ env.JAGS }}
             DRMEMORY=${{ env.DRMEMORY }}
@@ -142,40 +116,60 @@ jobs:
           # secret-files: |
           #   key=./ssh_key
 
-  container-integrity-and-config:
-    if: ${{ (success() || failure()) }}
-    runs-on: ubuntu-22.04
+  check-images:
+    # Determine which container images were successfully pushed by the build job.
+    # This produces a dynamic matrix so that container-integrity-and-config only
+    # runs for images that actually exist in the registry.
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
     needs: [ 'build' ]
+    permissions:
+      packages: read
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Log in to the registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check which images exist
+        id: set-matrix
+        run: |
+          labels=("debian-clang-devel" "debian-gcc-devel" "debian-gcc-release" "debian-gcc-patched" "fedora-gcc-devel" "valgrind-gcc-devel")
+          available="[]"
+          for label in "${labels[@]}"; do
+            image="${REGISTRY}/${REPO}/${label}/abn:${TAG}"
+            if docker manifest inspect "$image" > /dev/null 2>&1; then
+              echo "  [OK]   $label"
+              available=$(echo "$available" | jq -c ". + [{\"label\": \"$label\"}]")
+            else
+              echo "  [SKIP] $label (image not found)"
+            fi
+          done
+          echo "matrix={\"include\":$available}" >> $GITHUB_OUTPUT
+        env:
+          REGISTRY: ${{ env.DOCKER_REGISTRY }}
+          REPO: ${{ github.repository }}
+          TAG: "onlabel-check-build-${{ github.run_number }}"
+
+  container-integrity-and-config:
+    if: ${{ !cancelled() && needs.check-images.outputs.matrix != '' && fromJSON(needs.check-images.outputs.matrix).include[0] != null }}
+    runs-on: ubuntu-22.04
+    needs: [ 'build', 'check-images' ]
     permissions:
       contents: write
       packages: read
     container:
-      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.target-os }}/${{ matrix.compiler }}/${{ matrix.r-version }}/abn:onlabel-check-build-${{ github.run_number }}
+      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.label }}/abn:onlabel-check-build-${{ github.run_number }}
       options: --user 1001
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     strategy:
-      matrix:
-        target-os: ['debian', 'fedora']
-        compiler: ['gcc', 'clang']
-        r-version: ['devel', 'release', 'patched']
-        exclude:
-          - target-os: 'fedora'
-            r-version: 'release'
-          - target-os: 'fedora'
-            r-version: 'patched'
-          - target-os: 'fedora'
-            compiler: 'clang' # no clang on fedora (see build map to r-hub images))
-          - compiler: 'clang'
-            r-version: 'patched'
-          - compiler: 'clang'
-            r-version: 'release'
-        include:
-          - target-os: 'valgrind'
-            compiler: 'gcc'
-            r-version: 'devel'
       fail-fast: false
+      matrix: ${{ fromJSON(needs.check-images.outputs.matrix) }}
     steps:
     - uses: actions/checkout@v4
       with:
@@ -188,16 +182,17 @@ jobs:
       shell: Rscript {0}
     - name: Write out configuration
       run: |
-        Rscript -e 'args<-commandArgs(TRUE);knitr::knit_hooks$set(output = function(x, options){gsub("##", ">\n> ", x)});knitr::knit("src/release_info.tpl", sprintf("info/%s-%s-%s-%s.md", args[1], args[2], args[3], args[4]))' ${{ matrix.target-os}} ${{ matrix.compiler }} ${{ matrix.r-version }} abn
+        Rscript -e 'args<-commandArgs(TRUE);knitr::knit_hooks$set(output = function(x, options){gsub("##", ">\n> ", x)});knitr::knit("src/release_info.tpl", sprintf("info/%s-%s.md", args[1], args[2]))' ${{ matrix.label }} abn
     - name: Save config as artifact
       uses: actions/upload-artifact@v4
       with:
-        name: info-artifact-${{ matrix.target-os }}_${{ matrix.compiler }}_${{ matrix.r-version }}
-        path: info/${{ matrix.target-os }}-${{ matrix.compiler }}-${{ matrix.r-version }}-abn.md
+        name: info-artifact-${{ matrix.label }}
+        path: info/${{ matrix.label }}-abn.md
 
   report_build_check:
-    if: ${{ (success() || failure()) }}
+    if: ${{ !cancelled() }}
     needs:
+      - check-images
       - container-integrity-and-config
     runs-on: ubuntu-latest
     permissions:
@@ -213,12 +208,15 @@ jobs:
       - name: Check if on demand tasks succeeded
         run: |
           gh pr edit ${{ env.EVENT }} --remove-label ${{ env.LABEL_CHECK }} --repo ${{ env.OWNER }}/${{ env.REPO }}
-          if [ ${{ needs.container-integrity-and-config.result }} == "success" ]; then
+          result="${{ needs.container-integrity-and-config.result }}"
+          # 'skipped' means the dynamic matrix was empty (all allow-failure
+          # builds failed) — treat it the same as success.
+          if [ "$result" == "success" ] || [ "$result" == "skipped" ]; then
             gh pr edit ${{ env.EVENT }} --remove-label ${{ env.LABEL_FAILURE }} --repo ${{ env.OWNER }}/${{ env.REPO }}
             gh pr edit ${{ env.EVENT }} --add-label ${{ env.LABEL_SUCCESS }} --repo ${{ env.OWNER }}/${{ env.REPO }}
             echo "### ${{ github.event.label.url }} passed! :rocket:" >> $GITHUB_STEP_SUMMARY
             exit 0
-          elif [ ${{ needs.container-integrity-and-config.result }} == "failure" ]; then
+          elif [ "$result" == "failure" ]; then
             gh pr edit ${{ env.EVENT }} --remove-label ${{ env.LABEL_SUCCESS }} --repo ${{ env.OWNER }}/${{ env.REPO }}
             gh pr edit ${{ env.EVENT  }} --add-label ${{ env.LABEL_FAILURE }} --repo ${{ env.OWNER }}/${{ env.REPO }}
             echo "### ${{ github.event.label.url }} failed!" >> $GITHUB_STEP_SUMMARY
@@ -261,6 +259,7 @@ jobs:
     if: ${{ always() }}
     needs:
       - record_existing_label
+      - check-images
       - container-integrity-and-config
     runs-on: ubuntu-latest
     env:
@@ -270,6 +269,7 @@ jobs:
     steps:
       - name: Assert that either checks passed or the label is present
         run: |
-          if [[ ${{ needs.container-integrity-and-config.result }} == 'success' || ${{ needs.record_existing_label.outputs.passed }} == 'true' ]]; then
+          result="${{ needs.container-integrity-and-config.result }}"
+          if [[ "$result" == 'success' || "$result" == 'skipped' || ${{ needs.record_existing_label.outputs.passed }} == 'true' ]]; then
             echo 'The images were built successfully!';
           else exit 1; fi

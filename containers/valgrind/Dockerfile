@@ -1,147 +1,108 @@
 # Before the build stage
-ARG TARGET_OS
 ARG COMPILER
 ARG R_VERSION
 ARG RHUB_IMAGE=valgrind
 
-# For the valgrind container, target_os, compiler and r_version are not specified
-# However, the valgrind container is fedora, gcc, devel
+# The valgrind container is Fedora-based with gcc and R-devel
 # see https://r-hub.github.io/containers/containers.html#valgrind
 FROM rhub/${RHUB_IMAGE}
 
 # Build stage: ARGs need to be redeclared
-ARG TARGET_OS
 ARG COMPILER
 ARG R_VERSION
-# ARG PACKAGE
 ARG PACKAGE_PATH
 ARG REPO_PATH
 ARG JAGS
 ARG DRMEMORY
-# # sets the date for the CRAN snapshot (e.g. BUILD_DATE=2023-12-20)
-# ARG BUILD_DATE
 
-# Update package repositories
-RUN dnf check-update && dnf -y install \
+# Install ALL system dependencies in one layer
+RUN dnf -y upgrade
+RUN dnf -y install \
+  # Core build tools
+  cmake \
+  git \
+  openssh-clients \
+  pkgconf \
+  # SSL / curl
   openssl-devel \
-  libcurl-devel
+  libcurl-devel \
+  # libuv (fs R package)
+  libuv-devel \
+  # Text / font rendering
+  fontconfig-devel \
+  harfbuzz-devel \
+  fribidi-devel \
+  freetype-devel \
+  # Image formats
+  libpng-devel \
+  libtiff-devel \
+  libjpeg-devel \
+  libwebp-devel \
+  # XML
+  libxml2-devel \
+  # GSL (gsl R package)
+  gsl-devel \
+  # SQLite
+  sqlite-devel \
+  # NLopt (nloptr / lme4)
+  NLopt-devel \
+  # JAGS build deps + BLAS/LAPACK
+  lapack* blas* atlas* flexiblas-devel \
+  # s2 (INLA dependency chain)
+  abseil-cpp-devel \
+  # sf / fmesher (INLA dependency chain)
+  udunits2-devel \
+  gdal-devel \
+  geos-devel \
+  proj-devel \
+  # Magick++ (magick R package)
+  ImageMagick-c++-devel
 
-# Install dependencies for DrMemory
-RUN dnf -y install libunwind
 # Install DrMemory
+RUN dnf -y install libunwind
 ADD https://github.com/DynamoRIO/drmemory/releases/download/release_$DRMEMORY/DrMemory-Linux-$DRMEMORY.tar.gz /tmp/drmemory.tar.gz
-WORKDIR /tmp/
-RUN mkdir -p /opt/DrMemory
-RUN tar -xf drmemory.tar.gz --directory /opt/DrMemory
-RUN rm drmemory.tar.gz
-# add DrMemory to PATH
-RUN chmod 755 /opt/DrMemory/DrMemory-Linux-$DRMEMORY/bin/drmemory
+RUN mkdir -p /opt/DrMemory \
+    && tar -xf /tmp/drmemory.tar.gz --directory /opt/DrMemory \
+    && rm /tmp/drmemory.tar.gz \
+    && chmod 755 /opt/DrMemory/DrMemory-Linux-$DRMEMORY/bin/drmemory
 ENV PATH="/opt/DrMemory/DrMemory-Linux-$DRMEMORY/bin:${PATH}"
 
-# add R to PATH
+# Add R to PATH (valgrind R is installed at a fixed path)
 ENV PATH="/opt/R/devel-valgrind/bin:${PATH}"
 
-# diff to debian: /lib/ > /lib64/
-# ENV PATH "$PATH:/opt/R-devel/bin/"
-# Set a mirror for CRAN
-RUN RPATH=/opt/R/devel-valgrind \
-    && echo 'options(repos =c(CRAN = "https://cran.rstudio.com"))' >> ${RPATH}/lib/R/library/base/R/Rprofile
+# Set CRAN mirror (must happen before any R package installs)
+RUN R_HOME=$(R RHOME) && \
+    if [ -d "${R_HOME}/library/base/R" ]; then \
+      echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/library/base/R/Rprofile; \
+    elif [ -d "${R_HOME}/etc" ]; then \
+      echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/etc/Rprofile.site; \
+    else \
+      echo "ERROR: Could not find R profile location" >&2; exit 1; \
+    fi
 
-# rjags:
-RUN dnf -y install \
-  lapack* blas* atlas* 
+# Build and install JAGS from source
+# See https://usermanual.wiki/Document/jagsinstallationmanual.880863585.pdf
 ADD https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/$JAGS.tar.gz/download /tmp/jags.tar.gz
 WORKDIR /tmp/
-RUN tar -xf jags.tar.gz
-RUN rm jags.tar.gz
+RUN tar -xf jags.tar.gz && rm jags.tar.gz
 WORKDIR /tmp/$JAGS
-# Building JAGS requires the same environment that is then used to build rjags.
-# To achieve this we follow the approach for building JAGS with Clang outlined
-# in the JAGS installation guide
-# (https://usermanual.wiki/Document/jagsinstallationmanual.880863585.pdf)
-# and substitute the compilers with the specifics from the R installation that
-# we can get by using the `R CMD config CC/CXX/BLAS_LIBS/LAPACK_LIBS' commands:
-RUN if [ "$COMPILER" = "clang" ]; then RCC=/usr/bin/clang RCXX="/usr/bin/clang++ -std=gnu++17 -stdlib=libc++"; else RCC=/usr/bin/gcc RCXX="/usr/bin/g++"; fi \
-    && LD="llvm-ld" CC="${RCC}" CXX="${RCXX}" ./configure --with-blas="-L/opt/R/devel-valgrind/lib/R/lib -lRblas" --with-lapack="-L/opt/R/devel-valgrind/lib/R/lib -lRlapack" --libdir=/usr/local/lib && make && make install
-RUN ls /tmp/$JAGS
-# Add JAGS library path to LD_LIBRARY_PATH
+RUN if [ "$COMPILER" = "clang" ]; then \
+      RCC=/usr/bin/clang RCXX="/usr/bin/clang++ -std=gnu++17 -stdlib=libc++"; \
+    else \
+      RCC=/usr/bin/gcc RCXX="/usr/bin/g++"; \
+    fi \
+    && LD="llvm-ld" CC="${RCC}" CXX="${RCXX}" \
+       ./configure \
+         --with-blas="-L/opt/R/devel-valgrind/lib/R/lib -lRblas" \
+         --with-lapack="-L/opt/R/devel-valgrind/lib/R/lib -lRlapack" \
+         --libdir=/usr/local/lib \
+    && make && make install
+# JAGS shared libs are in /usr/local/lib — make sure the linker finds them
 ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
-# ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
-# RUN R -e "install.packages('rjags')"
-RUN R -e "install.packages('rjags', configure.args = '--enable-rpath')"
-RUN R -e "if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
+# Install rjags (needs --enable-rpath to find JAGS shared libs)
+RUN R -e "install.packages('rjags', configure.args = '--enable-rpath'); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
 
-# Get and install packages for local debugging
-RUN R -e "install.packages('devtools')" \
- && R -e "install.packages('remotes')" \
- && R -e "install.packages('R.rsp')" \
- && R -e "install.packages('renv')" \
- && R -e "install.packages('desc')"
-RUN R -e "pkgs <- c('devtools','remotes','R.rsp','renv','desc'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing) > 0) stop('Failed to install: ', paste(missing, collapse=', '))"
-# For code coverage
-RUN R -e "install.packages('DT')" \
- && R -e "install.packages('htmltools')" \
- && R -e "install.packages('covr')"
-RUN R -e "pkgs <- c('DT','htmltools','covr'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing) > 0) stop('Failed to install: ', paste(missing, collapse=', '))"
-
-# Prepare for potential check to be run
-RUN R -e "install.packages('urlchecker')"
-RUN R -e "if (!requireNamespace('urlchecker', quietly=TRUE)) stop('Failed to install: urlchecker')"
-
-# Install dependencies not managed by CRAN
-# - lme4 and gsl:
-RUN dnf -y install \
-      gsl-devel \
-      sqlite-devel \
-      NLopt-devel
-# RUN R -e "install.packages('lme4')"
-# RUN R -e "install.packages('gsl')"
-
-# Graphviz
-RUN R -e "install.packages('BiocManager')" \
- && R -e "BiocManager::install('Rgraphviz')"
-RUN R -e "pkgs <- c('BiocManager','Rgraphviz'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing) > 0) stop('Failed to install: ', paste(missing, collapse=', '))"
-
-# INLA
-# - s2
-RUN dnf -y install \
-      abseil-cpp-devel
-# - sf
-RUN dnf -y install \
-  udunits2-devel gdal-devel geos-devel proj-devel
-# RUN R -e "install.packages('sf')"
-# - fmesher
-RUN dnf -y install \
-      udunits2-devel
-# RUN R -e "install.packages('fmesher')"
-# - INLA
-RUN R -e "install.packages('INLA',repos=c(getOption('repos'),INLA='https://inla.r-inla-download.org/R/stable'), dep=TRUE)"
-RUN R -e "if (!requireNamespace('INLA', quietly=TRUE)) stop('Failed to install: INLA')"
-# - Magick++
-RUN dnf -y install \
-      ImageMagick-c++-devel
-# - libxml-2.0
-RUN dnf -y install \
-      libxml2-devel
-
-###
-# install all package dependencies
-###
-RUN dnf -y install \
-      git \
-      openssh-clients
-WORKDIR /root/
-# get a shallow copy of the target repository
-# # Note: If the repository is private you must use a deploy token here (ssh key) 
-# RUN --mount=type=secret,id=key,dst=/root/.ssh/key GIT_SSH_COMMAND="ssh -i /root/.ssh/key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone --depth=1 git@$REPO_PATH target
-RUN git clone --depth=1 https://$REPO_PATH target
-WORKDIR target/
-# get a list of all dependencies; install remaining packages
-# escape=\
-RUN R -e "renv::deactivate()"
-RUN R -e "package<-desc::desc()\$get_field('Package');pckgs<-unique(renv::dependencies('$PACKAGE_PATH')[,'Package']);pres_pckgs<-installed.packages()[,'Package'];install.packages(pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)])"
-
-# Check if the dependencies were installed correctly
-RUN R -e "renv::deactivate()"
-RUN R -e "package<-desc::desc()\$get_field('Package');pckgs<-unique(renv::dependencies('$PACKAGE_PATH')[,'Package']);pres_pckgs<-installed.packages()[,'Package'];if(any(!(pckgs %in% pres_pckgs) & !(pckgs == package))) { stop(paste0('Some dependencies were not installed correctly. Missing: ', paste(pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)], collapse=', '))) } else { cat('All dependencies were installed correctly.\n') }"
+# Run shared R package installation script
+COPY shared/install_r_packages.sh /tmp/install_r_packages.sh
+RUN chmod +x /tmp/install_r_packages.sh && /tmp/install_r_packages.sh
