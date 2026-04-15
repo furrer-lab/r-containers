@@ -193,6 +193,31 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: '0'
+    - name: Diagnostics - library paths and installed packages
+      run: |
+          cat("=== R.home() ===\n")
+          cat(R.home(), "\n")
+          cat("\n=== .libPaths() ===\n")
+          print(.libPaths())
+          cat("\n=== R_LIBS_USER ===\n")
+          cat(Sys.getenv("R_LIBS_USER", unset = "<unset>"), "\n")
+          cat("\n=== R_LIBS_SITE ===\n")
+          cat(Sys.getenv("R_LIBS_SITE", unset = "<unset>"), "\n")
+          cat("\n=== R_LIBS ===\n")
+          cat(Sys.getenv("R_LIBS", unset = "<unset>"), "\n")
+          cat("\n=== which R / Rscript ===\n")
+          system("which R")
+          system("which Rscript")
+          cat("\n=== /opt/ contents ===\n")
+          print(list.files("/opt/", recursive = FALSE))
+          cat("\n=== All installed packages ===\n")
+          print(installed.packages()[, c("Package", "LibPath", "Version")])
+          cat("\n=== devtools check ===\n")
+          tryCatch(
+            cat("devtools found at:", find.package("devtools"), "\n"),
+            error = function(e) cat("devtools NOT found:", conditionMessage(e), "\n")
+          )
+      shell: Rscript {0}
     - name: Install knitr
       run: |
           dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE)
