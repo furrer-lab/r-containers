@@ -51,8 +51,16 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   # Magick++ (magick R package)
   libmagick++-dev
 
-# Add R to PATH
-ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
+# Add R to PATH (rhub images install R at /opt/R/<version>/bin/)
+ENV PATH="/opt/R/$R_VERSION/bin:${PATH}"
+
+# Force all R package installs into .Library (the base R library directory).
+# This ensures packages are visible to all users, not just root.
+# R_LIBS_USER=" " (single space) is the canonical way to disable the user
+# library fallback that would otherwise install into /root/R/...
+ENV R_LIBS_USER=" "
+# Prevent renv auto-activation when cloning repos that contain .Rprofile
+ENV RENV_CONFIG_AUTOLOADER_ENABLED=false
 
 # Configure clang C++ compilation environment
 ENV CPLUS_INCLUDE_PATH="/usr/include/c++/13:/usr/include/x86_64-linux-gnu/c++/13"
@@ -69,12 +77,15 @@ RUN R_HOME=$(R RHOME) && \
     fi
 
 # Install rjags (JAGS is available as system package on debian)
-RUN R -e "install.packages('rjags'); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
+RUN R -e "install.packages('rjags', lib=.Library); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
 
 # glmmTMB workaround: needs explicit install before auto-dependency scan.
 # Should be installed automatically in the future.
-RUN R -e "install.packages('glmmTMB'); if (!requireNamespace('glmmTMB', quietly=TRUE)) stop('Failed to install: glmmTMB')"
+RUN R -e "install.packages('glmmTMB', lib=.Library); if (!requireNamespace('glmmTMB', quietly=TRUE)) stop('Failed to install: glmmTMB')"
 
 # Run shared R package installation script
 COPY shared/install_r_packages.sh /tmp/install_r_packages.sh
 RUN chmod +x /tmp/install_r_packages.sh && /tmp/install_r_packages.sh
+
+# Verify key packages are installed in .Library (fail the build if not)
+RUN R -e "pkgs <- c('devtools','renv','covr','rjags','glmmTMB','INLA','Rgraphviz'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing)) stop('Packages missing from container: ', paste(missing, collapse=', '))"

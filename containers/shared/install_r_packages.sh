@@ -6,12 +6,20 @@
 # Required environment variables:
 #   REPO_PATH    - GitHub repo path (e.g. github.com/furrer-lab/abn)
 #   PACKAGE_PATH - Path within the repo to the DESCRIPTION file (e.g. './')
+#
+# All packages are installed into .Library (the base R library directory)
+# so they are visible to every user, not just root. This is critical because
+# CI jobs run with --user 1001, which cannot see root's personal library at
+# /root/R/x86_64-pc-linux-gnu-library/.
 set -e
 
-# --- Helper: install a CRAN package and verify it loaded ---
+# --- Verify .Library is writable ---
+R -e "if (file.access(.Library, 2) != 0) stop('.Library is not writable: ', .Library)"
+
+# --- Helper: install a CRAN package into .Library and verify it loaded ---
 install_r_pkg() {
   echo ">>> Installing R package: $1"
-  R -e "install.packages('$1'); if (!requireNamespace('$1', quietly=TRUE)) stop('Failed to install: $1')"
+  R -e "install.packages('$1', lib=.Library); if (!requireNamespace('$1', quietly=TRUE)) stop('Failed to install: $1')"
 }
 
 # --- Verify CRAN mirror is configured (must be set up in Dockerfile before this script) ---
@@ -35,7 +43,7 @@ install_r_pkg urlchecker
 # --- Bioconductor ---
 install_r_pkg BiocManager
 echo ">>> Installing Rgraphviz (Bioconductor)"
-R -e "BiocManager::install('Rgraphviz'); if (!requireNamespace('Rgraphviz', quietly=TRUE)) stop('Failed to install: Rgraphviz')"
+R -e "BiocManager::install('Rgraphviz', lib=.Library); if (!requireNamespace('Rgraphviz', quietly=TRUE)) stop('Failed to install: Rgraphviz')"
 
 # --- INLA (non-CRAN repository) ---
 # Three-tier fallback: stable -> testing -> R-universe.
@@ -48,7 +56,7 @@ repos_testing  <- c(getOption('repos'), INLA='https://inla.r-inla-download.org/R
 repos_universe <- c(getOption('repos'), INLA='https://inla.r-universe.dev'); \
 try_install <- function(repos, tag) { \
   message(sprintf('>>> Trying INLA from %s ...', tag)); \
-  install.packages('INLA', repos=repos, dep=TRUE); \
+  install.packages('INLA', lib=.Library, repos=repos, dep=TRUE); \
   if (!requireNamespace('INLA', quietly=TRUE)) stop('INLA not loadable') \
 }; \
 tryCatch(try_install(repos_stable, 'stable'), error = function(e1) { \
@@ -65,12 +73,10 @@ git clone --depth=1 "https://${REPO_PATH}" target
 cd target/
 
 echo ">>> Installing remaining package dependencies"
-R -e "renv::deactivate()"
-R -e "package <- desc::desc()\$get_field('Package'); pckgs <- unique(renv::dependencies('${PACKAGE_PATH}')[,'Package']); pres_pckgs <- installed.packages()[,'Package']; missing <- pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)]; if (length(missing) > 0) { cat('Installing:', paste(missing, collapse=', '), '\n'); install.packages(missing) } else { cat('No additional dependencies to install.\n') }"
+R -e "package <- desc::desc()\$get_field('Package'); pckgs <- unique(renv::dependencies('${PACKAGE_PATH}')[,'Package']); pres_pckgs <- installed.packages()[,'Package']; missing <- pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)]; if (length(missing) > 0) { cat('Installing:', paste(missing, collapse=', '), '\n'); install.packages(missing, lib=.Library) } else { cat('No additional dependencies to install.\n') }"
 
 # --- Verify all dependencies installed ---
 echo ">>> Verifying all dependencies are installed"
-R -e "renv::deactivate()"
 R -e "package <- desc::desc()\$get_field('Package'); pckgs <- unique(renv::dependencies('${PACKAGE_PATH}')[,'Package']); pres_pckgs <- installed.packages()[,'Package']; missing <- pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)]; if (length(missing) > 0) { stop(paste0('Missing dependencies: ', paste(missing, collapse=', '))) } else { cat('All dependencies installed correctly.\n') }"
 
 echo ">>> R package installation complete"

@@ -61,6 +61,14 @@ RUN dnf -y install \
 # Add R to PATH
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"
 
+# Force all R package installs into .Library (the base R library directory).
+# This ensures packages are visible to all users, not just root.
+# R_LIBS_USER=" " (single space) is the canonical way to disable the user
+# library fallback that would otherwise install into /root/R/...
+ENV R_LIBS_USER=" "
+# Prevent renv auto-activation when cloning repos that contain .Rprofile
+ENV RENV_CONFIG_AUTOLOADER_ENABLED=false
+
 # Set CRAN mirror (must happen before any R package installs)
 RUN R_HOME=$(R RHOME) && \
     if [ -d "${R_HOME}/library/base/R" ]; then \
@@ -91,8 +99,11 @@ RUN if [ "$COMPILER" = "clang" ]; then \
     && make && make install
 
 # Install rjags (needs --enable-rpath to find JAGS shared libs)
-RUN R -e "install.packages('rjags', configure.args = '--enable-rpath'); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
+RUN R -e "install.packages('rjags', lib=.Library, configure.args = '--enable-rpath'); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
 
 # Run shared R package installation script
 COPY shared/install_r_packages.sh /tmp/install_r_packages.sh
 RUN chmod +x /tmp/install_r_packages.sh && /tmp/install_r_packages.sh
+
+# Verify key packages are installed in .Library (fail the build if not)
+RUN R -e "pkgs <- c('devtools','renv','covr','rjags','INLA','Rgraphviz'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing)) stop('Packages missing from container: ', paste(missing, collapse=', '))"
