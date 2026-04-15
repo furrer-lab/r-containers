@@ -62,10 +62,16 @@ jobs:
             compiler: gcc
             r-version: patched
             allow-failure: false
-          # Fedora container (R-hub only provides gcc + R-devel for Fedora)
+          # Fedora containers (R-hub only provides gcc + R-devel for Fedora)
           - rhub-image: gcc15
             dockerfile: fedora
             label: fedora-gcc-devel
+            compiler: gcc
+            r-version: devel
+            allow-failure: true
+          - rhub-image: gcc16
+            dockerfile: fedora
+            label: fedora-gcc16-devel
             compiler: gcc
             r-version: devel
             allow-failure: true
@@ -137,7 +143,7 @@ jobs:
       - name: Check which images exist
         id: set-matrix
         run: |
-          labels=("debian-clang-devel" "debian-gcc-devel" "debian-gcc-release" "debian-gcc-patched" "fedora-gcc-devel" "valgrind-gcc-devel")
+          labels=("debian-clang-devel" "debian-gcc-devel" "debian-gcc-release" "debian-gcc-patched" "fedora-gcc-devel" "fedora-gcc16-devel" "valgrind-gcc-devel")
           available="[]"
           for label in "${labels[@]}"; do
             image="${REGISTRY}/${REPO}/${label}/abn:${TAG}"
