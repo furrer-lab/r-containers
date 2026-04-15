@@ -1,17 +1,19 @@
 # Configuration
 
 >
->  R Under development (unstable) (2026-04-14 r89879)
+>  R version 4.5.3 (2026-03-11)
 >
 >  Platform: x86_64-pc-linux-gnu
 >
->  Running under: Fedora Linux 42 (Container Image)
+>  Running under: Ubuntu 24.04.4 LTS
 >
 >  
 >
 >  Matrix products: default
 >
->  BLAS/LAPACK: /usr/lib64/libopenblasp-r0.3.29.so;  LAPACK version 3.12.0
+>  BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+>
+>  LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
 >
 >  
 >
@@ -19,7 +21,7 @@
 >
 >   [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C              
 >
->   [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
+>   [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=C              
 >
 >   [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
 >
@@ -45,20 +47,20 @@
 >
 >  loaded via a namespace (and not attached):
 >
->  [1] compiler_4.7.0 tools_4.7.0    knitr_1.51     xfun_0.57      evaluate_1.0.5
+>  [1] compiler_4.5.3 tools_4.5.3    knitr_1.51     xfun_0.57      evaluate_1.0.5
 
 
 # Installed packages
 
 
 
-|         |Version    |
-|:--------|:----------|
-|evaluate |1.0.5      |
-|highr    |0.12       |
-|knitr    |1.51       |
-|xfun     |0.57       |
-|yaml     |2.3.12     |
-|pak      |0.9.3.9000 |
+|         |Version |
+|:--------|:-------|
+|evaluate |1.0.5   |
+|highr    |0.12    |
+|knitr    |1.51    |
+|xfun     |0.57    |
+|yaml     |2.3.12  |
+|pak      |0.9.3   |
 
 
