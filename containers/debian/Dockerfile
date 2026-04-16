@@ -13,7 +13,17 @@ ARG PACKAGE_PATH
 ARG REPO_PATH
 
 # Install ALL system dependencies in one layer
-RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
+RUN set -eux; \
+  for attempt in 1 2 3; do \
+    apt-get update --allow-releaseinfo-change && break; \
+    if [ "$attempt" -eq 3 ]; then \
+      echo "apt-get update failed after retries" >&2; \
+      exit 1; \
+    fi; \
+    rm -rf /var/lib/apt/lists/*; \
+    sleep 15; \
+  done; \
+  apt-get install -y --no-install-recommends \
   # Core build tools
   gfortran \
   cmake \
@@ -52,7 +62,8 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   libmagick++-dev \
   # Pandoc (vignette building)
   pandoc \
-  pandoc-citeproc
+  pandoc-citeproc; \
+  rm -rf /var/lib/apt/lists/*
 
 # Add R to PATH (rhub images install R at /opt/R/<version>/bin/)
 ENV PATH="/opt/R/$R_VERSION/bin:${PATH}"
