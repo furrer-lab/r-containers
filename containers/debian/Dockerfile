@@ -51,7 +51,8 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   # Magick++ (magick R package)
   libmagick++-dev \
   # Pandoc (vignette building)
-  pandoc
+  pandoc \
+  pandoc-citeproc
 
 # Add R to PATH (rhub images install R at /opt/R/<version>/bin/)
 ENV PATH="/opt/R/$R_VERSION/bin:${PATH}"
