@@ -56,7 +56,9 @@ RUN dnf -y install \
   geos-devel \
   proj-devel \
   # Magick++ (magick R package)
-  ImageMagick-c++-devel
+  ImageMagick-c++-devel \
+  # Pandoc (vignette building)
+  pandoc
 
 # Install DrMemory
 RUN dnf -y install libunwind

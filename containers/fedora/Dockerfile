@@ -56,7 +56,9 @@ RUN dnf -y install \
   geos-devel \
   proj-devel \
   # Magick++ (magick R package)
-  ImageMagick-c++-devel
+  ImageMagick-c++-devel \
+  # Pandoc (vignette building)
+  pandoc
 
 # Add R to PATH
 ENV PATH="/opt/R-$R_VERSION/bin:${PATH}"

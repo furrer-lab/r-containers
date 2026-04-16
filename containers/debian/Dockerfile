@@ -49,7 +49,9 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   libgeos-dev \
   libproj-dev \
   # Magick++ (magick R package)
-  libmagick++-dev
+  libmagick++-dev \
+  # Pandoc (vignette building)
+  pandoc
 
 # Add R to PATH (rhub images install R at /opt/R/<version>/bin/)
 ENV PATH="/opt/R/$R_VERSION/bin:${PATH}"
