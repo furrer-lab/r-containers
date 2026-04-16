@@ -61,8 +61,7 @@ RUN set -eux; \
   # Magick++ (magick R package)
   libmagick++-dev \
   # Pandoc (vignette building)
-  pandoc \
-  pandoc-citeproc; \
+  pandoc; \
   rm -rf /var/lib/apt/lists/*
 
 # Add R to PATH (rhub images install R at /opt/R/<version>/bin/)
