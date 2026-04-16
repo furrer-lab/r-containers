@@ -46,23 +46,20 @@ echo ">>> Installing Rgraphviz (Bioconductor)"
 R -e "BiocManager::install('Rgraphviz', lib=.Library); if (!requireNamespace('Rgraphviz', quietly=TRUE)) stop('Failed to install: Rgraphviz')"
 
 # --- INLA (non-CRAN repository) ---
-# Three-tier fallback: stable -> testing -> R-universe.
+# Two-tier fallback: stable -> testing.
 # The official INLA server (inla.r-inla-download.org) can be intermittently
-# unreachable, so we also try R-universe as a last resort on a different host.
+# unreachable, so we try the testing repo as a fallback.
 echo ">>> Installing INLA"
 R -e "\
-repos_stable   <- c(getOption('repos'), INLA='https://inla.r-inla-download.org/R/stable'); \
-repos_testing  <- c(getOption('repos'), INLA='https://inla.r-inla-download.org/R/testing'); \
-repos_universe <- c(getOption('repos'), INLA='https://inla.r-universe.dev'); \
+repos_stable  <- c(getOption('repos'), INLA='https://inla.r-inla-download.org/R/stable'); \
+repos_testing <- c(getOption('repos'), INLA='https://inla.r-inla-download.org/R/testing'); \
 try_install <- function(repos, tag) { \
   message(sprintf('>>> Trying INLA from %s ...', tag)); \
   install.packages('INLA', lib=.Library, repos=repos, dep=TRUE); \
   if (!requireNamespace('INLA', quietly=TRUE)) stop('INLA not loadable') \
 }; \
 tryCatch(try_install(repos_stable, 'stable'), error = function(e1) { \
-  tryCatch(try_install(repos_testing, 'testing'), error = function(e2) { \
-    try_install(repos_universe, 'R-universe') \
-  }) \
+  try_install(repos_testing, 'testing') \
 }); \
 if (!requireNamespace('INLA', quietly=TRUE)) stop('Failed to install INLA from any source')"
 
