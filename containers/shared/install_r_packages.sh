@@ -32,6 +32,11 @@ install_r_pkg R.rsp
 install_r_pkg renv
 install_r_pkg desc
 
+# --- Vignette building ---
+# rmarkdown >= 2.0 is required for modern pandoc citeproc support (built-in --citeproc)
+install_r_pkg rmarkdown
+install_r_pkg knitr
+
 # --- Code coverage ---
 install_r_pkg DT
 install_r_pkg htmltools
