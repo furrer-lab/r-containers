@@ -23,6 +23,7 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   # SSL / curl
   libssl-dev \
   libcurl4-openssl-dev \
+  curl \
   # Text / font rendering (ragg, systemfonts, textshaping)
   libfontconfig1-dev \
   libharfbuzz-dev \
@@ -52,6 +53,22 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   libmagick++-dev \
   # Pandoc (vignette building)
   pandoc
+
+# Ensure pandoc >= 2.11 for built-in citeproc support.
+# Ubuntu 22.04 ships pandoc 2.9.2 which still requires the removed
+# pandoc-citeproc binary.  When the system version is too old, replace
+# it with the last 2.x release (2.19.2).  On newer Ubuntu (24.04+)
+# this block is a no-op and will age away naturally.
+RUN PANDOC_VER=$(pandoc --version | head -1 | grep -oP '[\d.]+') && \
+    MAJOR=$(echo "$PANDOC_VER" | cut -d. -f1) && \
+    MINOR=$(echo "$PANDOC_VER" | cut -d. -f2) && \
+    if [ "$MAJOR" -lt 2 ] || { [ "$MAJOR" -eq 2 ] && [ "$MINOR" -lt 11 ]; }; then \
+      echo ">>> pandoc $PANDOC_VER < 2.11, upgrading to 2.19.2"; \
+      curl -sL https://github.com/jgm/pandoc/releases/download/2.19.2/pandoc-2.19.2-1-amd64.deb -o /tmp/pandoc.deb && \
+      dpkg -i /tmp/pandoc.deb && rm /tmp/pandoc.deb; \
+    else \
+      echo ">>> pandoc $PANDOC_VER >= 2.11, no upgrade needed"; \
+    fi
 
 # Add R to PATH (rhub images install R at /opt/R/<version>/bin/)
 ENV PATH="/opt/R/$R_VERSION/bin:${PATH}"
