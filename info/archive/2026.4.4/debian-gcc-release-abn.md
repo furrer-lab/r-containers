@@ -122,7 +122,7 @@
 |data.table        |1.18.2.1    |
 |deldir            |2.0-4       |
 |desc              |1.4.3       |
-|devtools          |2.5.0       |
+|devtools          |2.5.1       |
 |dfidx             |0.2-0       |
 |diffobj           |0.3.6       |
 |digest            |0.6.39      |
