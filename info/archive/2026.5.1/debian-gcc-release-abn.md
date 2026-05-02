@@ -1,17 +1,19 @@
 # Configuration
 
 >
->  R Under development (unstable) (2026-04-30 r89987)
+>  R version 4.5.3 (2026-03-11)
 >
 >  Platform: x86_64-pc-linux-gnu
 >
->  Running under: Fedora Linux 42 (Container Image)
+>  Running under: Ubuntu 24.04.4 LTS
 >
 >  
 >
 >  Matrix products: default
 >
->  BLAS/LAPACK: /usr/lib64/libopenblasp-r0.3.29.so;  LAPACK version 3.12.0
+>  BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+>
+>  LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
 >
 >  
 >
@@ -19,7 +21,7 @@
 >
 >   [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C              
 >
->   [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
+>   [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=C              
 >
 >   [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
 >
@@ -45,7 +47,7 @@
 >
 >  loaded via a namespace (and not attached):
 >
->  [1] compiler_4.7.0 cli_3.6.6      tools_4.7.0    otel_0.2.0     knitr_1.51    
+>  [1] compiler_4.5.3 cli_3.6.6      tools_4.5.3    otel_0.2.0     knitr_1.51    
 >
 >  [6] xfun_0.57      rlang_1.2.0    evaluate_1.0.5
 
@@ -57,15 +59,41 @@
 |                  |Version     |
 |:-----------------|:-----------|
 |knitr             |1.51        |
+|BiocGenerics      |0.56.0      |
+|BiocManager       |1.30.27     |
+|BiocVersion       |3.22.0      |
+|DBI               |1.3.0       |
+|DEoptimR          |1.1-4       |
+|DT                |0.34.0      |
+|Deriv             |4.2.0       |
+|Ecdat             |0.4.7       |
+|Formula           |1.2-5       |
+|INLA              |25.10.19    |
+|INLAspacetime     |0.1.13      |
+|INLAtools         |0.1.2       |
+|MatrixModels      |0.5-4       |
+|R.cache           |0.17.0      |
+|R.methodsS3       |1.8.2       |
+|R.oo              |1.27.1      |
+|R.rsp             |0.46.0      |
+|R.utils           |2.13.0      |
+|R6                |2.6.1       |
+|RColorBrewer      |1.1-3       |
+|Rcpp              |1.1.1-1     |
+|RcppArmadillo     |15.2.4-1    |
+|RcppEigen         |0.3.4.0.2   |
+|Rdpack            |2.6.6       |
+|Rgraphviz         |2.54.0      |
+|RhpcBLASctl       |0.23-42     |
+|S7                |0.2.1-1     |
+|SparseM           |1.84-2      |
+|TMB               |1.9.21      |
 |abind             |1.4-8       |
 |akima             |0.6-3.6     |
 |askpass           |1.2.1       |
 |backports         |1.5.1       |
 |base64enc         |0.1-6       |
 |bayesm            |3.1-7       |
-|BiocGenerics      |0.59.0      |
-|BiocManager       |1.30.27     |
-|BiocVersion       |3.24.0      |
 |bnlearn           |5.1         |
 |brew              |1.0-10      |
 |brglm             |0.7.3       |
@@ -90,14 +118,11 @@
 |crayon            |1.5.3       |
 |credentials       |2.0.3       |
 |crosstalk         |1.2.2       |
-|curl              |7.1.0       |
+|curl              |7.0.0       |
 |data.table        |1.18.2.1    |
-|DBI               |1.3.0       |
 |deldir            |2.0-4       |
-|DEoptimR          |1.1-4       |
-|Deriv             |4.2.0       |
 |desc              |1.4.3       |
-|devtools          |2.5.2       |
+|devtools          |2.5.1       |
 |dfidx             |0.2-0       |
 |diffobj           |0.3.6       |
 |digest            |0.6.39      |
@@ -106,9 +131,7 @@
 |dotCall64         |1.2         |
 |downlit           |0.4.5       |
 |dplyr             |1.2.1       |
-|DT                |0.34.0      |
 |e1071             |1.7-17      |
-|Ecdat             |0.4.7       |
 |ellipsis          |0.3.3       |
 |entropy           |1.3.2       |
 |evaluate          |1.0.5       |
@@ -119,22 +142,21 @@
 |fastmap           |1.2.0       |
 |fields            |17.1        |
 |fmesher           |0.7.0       |
-|fontawesome       |0.5.3       |
 |fontBitstreamVera |0.1.1       |
 |fontLiberation    |0.1.0       |
+|fontawesome       |0.5.3       |
 |fontquiver        |0.2.1       |
 |foreach           |1.5.2       |
 |forecast          |9.0.2       |
-|Formula           |1.2-5       |
-|fracdiff          |1.5-4       |
-|fs                |2.1.0       |
+|fracdiff          |1.5-3       |
+|fs                |2.0.1       |
 |gdtools           |0.5.0       |
 |generics          |0.1.4       |
 |gert              |2.3.1       |
 |ggfun             |0.2.0       |
 |ggimage           |0.3.5       |
 |ggiraph           |0.9.6       |
-|ggplot2           |4.0.3       |
+|ggplot2           |4.0.2       |
 |ggplotify         |0.1.3       |
 |ggpubr            |0.6.3       |
 |ggrepel           |0.9.8       |
@@ -144,13 +166,13 @@
 |gitcreds          |0.1.2       |
 |glmmTMB           |1.1.14      |
 |glue              |1.8.1       |
-|graph             |1.91.0      |
+|graph             |1.88.1      |
 |gridExtra         |2.3         |
 |gridGraphics      |0.5-1       |
 |gsl               |2.1-9       |
 |gtable            |0.3.6       |
-|hexbin            |1.28.5      |
 |hexSticker        |0.5.1       |
+|hexbin            |1.28.5      |
 |highr             |0.12        |
 |htmltools         |0.5.9       |
 |htmlwidgets       |1.6.4       |
@@ -158,7 +180,6 @@
 |httr              |1.4.8       |
 |httr2             |1.2.2       |
 |ini               |0.3.1       |
-|INLA              |25.10.19    |
 |isoband           |0.3.0       |
 |iterators         |1.0.14      |
 |jquerylib         |0.1.4       |
@@ -176,7 +197,6 @@
 |magrittr          |2.0.5       |
 |maps              |3.4.3       |
 |markdown          |2.0         |
-|MatrixModels      |0.5-4       |
 |matrixStats       |1.5.0       |
 |mclogit           |0.9.15      |
 |memisc            |0.99.31.8.3 |
@@ -194,61 +214,47 @@
 |numDeriv          |2016.8-1.1  |
 |openssl           |2.4.0       |
 |otel              |0.2.0       |
-|pak               |0.9.5.9000  |
+|pak               |0.9.4       |
 |pbkrtest          |0.5.5       |
 |pillar            |1.11.1      |
 |pixmap            |0.4-14      |
 |pkgbuild          |1.4.8       |
 |pkgconfig         |2.0.3       |
 |pkgdown           |2.2.0       |
-|pkgload           |1.5.2       |
+|pkgload           |1.5.1       |
 |plyr              |1.8.9       |
 |polynom           |1.4-1       |
 |praise            |1.0.0       |
 |prettyunits       |1.2.0       |
-|processx          |3.9.0       |
+|processx          |3.8.7       |
 |profileModel      |0.6.2       |
 |profvis           |0.4.0       |
 |promises          |1.5.0       |
 |proxy             |0.4-29      |
-|ps                |1.9.3       |
+|ps                |1.9.2       |
 |purrr             |1.2.2       |
 |quantreg          |6.1         |
-|R.cache           |0.17.0      |
-|R.methodsS3       |1.8.2       |
-|R.oo              |1.27.1      |
-|R.rsp             |0.46.0      |
-|R.utils           |2.13.0      |
-|R6                |2.6.1       |
 |ragg              |1.5.2       |
 |rappdirs          |0.3.4       |
 |rbibutils         |2.4.1       |
 |rcmdcheck         |1.4.0       |
-|RColorBrewer      |1.1-3       |
-|Rcpp              |1.1.1-1.1   |
-|RcppArmadillo     |15.2.6-1    |
-|RcppEigen         |0.3.4.0.2   |
-|Rdpack            |2.6.6       |
 |reformulas        |0.4.4       |
 |remotes           |2.5.0       |
 |renv              |1.2.2       |
 |reshape2          |1.4.5       |
 |rex               |1.2.2       |
 |rgl               |1.3.36      |
-|Rgraphviz         |2.57.0      |
-|RhpcBLASctl       |0.23-42     |
 |rjags             |4-17        |
 |rlang             |1.2.0       |
 |rmarkdown         |2.31        |
 |robustbase        |0.99-7      |
-|roxygen2          |8.0.0       |
+|roxygen2          |7.3.3       |
 |rprojroot         |2.1.1       |
 |rstatix           |0.7.3       |
 |rstudioapi        |0.18.0      |
 |runjags           |2.2.2-5     |
 |rversions         |3.0.0       |
 |s2                |1.1.9       |
-|S7                |0.2.2       |
 |sandwich          |3.1-1       |
 |sass              |0.4.10      |
 |scales            |1.4.0       |
@@ -260,9 +266,8 @@
 |sn                |2.1.3       |
 |sourcetools       |0.1.7-2     |
 |sp                |2.2-1       |
-|spam              |2.11-3      |
-|SparseM           |1.84-2      |
 |spData            |2.3.4       |
+|spam              |2.11-3      |
 |spdep             |1.4-2       |
 |splancs           |2.01-45     |
 |statmod           |1.5.1       |
@@ -282,7 +287,6 @@
 |tidyterra         |1.1.0       |
 |timeDate          |4052.112    |
 |tinytex           |0.59        |
-|TMB               |1.9.21      |
 |units             |1.0-1       |
 |urca              |1.3-4       |
 |urlchecker        |1.0.1       |
