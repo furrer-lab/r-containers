@@ -113,9 +113,16 @@ ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 # Install rjags (needs --enable-rpath to find JAGS shared libs)
 RUN R -e "install.packages('rjags', lib=.Library, configure.args = '--enable-rpath'); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
 
-# Run shared R package installation script
-COPY shared/install_r_packages.sh /tmp/install_r_packages.sh
-RUN chmod +x /tmp/install_r_packages.sh && /tmp/install_r_packages.sh
+# Run shared R package installation scripts (split into granular stages
+# matching the debian layer-image structure: INLA, Bioconductor, tooling).
+COPY shared/install_inla.sh /tmp/install_inla.sh
+RUN chmod +x /tmp/install_inla.sh && /tmp/install_inla.sh
+
+COPY shared/install_bioc.sh /tmp/install_bioc.sh
+RUN chmod +x /tmp/install_bioc.sh && /tmp/install_bioc.sh
+
+COPY shared/install_tooling.sh /tmp/install_tooling.sh
+RUN chmod +x /tmp/install_tooling.sh && /tmp/install_tooling.sh
 
 # Verify key packages are installed in .Library (fail the build if not)
-RUN R -e "pkgs <- c('devtools','renv','covr','rjags','INLA','Rgraphviz'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing)) stop('Packages missing from container: ', paste(missing, collapse=', '))"
+RUN R -e "pkgs <- c('devtools','renv','covr','rjags','glmmTMB','INLA','Rgraphviz'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing)) stop('Packages missing from container: ', paste(missing, collapse=', '))"

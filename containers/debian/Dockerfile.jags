@@ -1,0 +1,10 @@
+# Layer 2/5: rjags.
+#
+# Installs the rjags R package on top of the syslibs base (which already
+# provides the JAGS system package on debian/ubuntu).
+
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+
+# Install rjags (JAGS itself is provided by the apt package in the syslibs layer)
+RUN R -e "install.packages('rjags', lib=.Library); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"

@@ -1,0 +1,10 @@
+# Layer 3/5: INLA.
+#
+# Installs INLA on top of the jags layer using the shared install_inla.sh
+# script (stable -> testing fallback).
+
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+
+COPY shared/install_inla.sh /tmp/install_inla.sh
+RUN chmod +x /tmp/install_inla.sh && /tmp/install_inla.sh
