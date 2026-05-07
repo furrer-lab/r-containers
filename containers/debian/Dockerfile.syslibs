@@ -41,6 +41,8 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   libgsl-dev \
   # NLopt (nloptr / lme4)
   libnlopt-dev \
+  # libuv (fs R package)
+  libuv1-dev \
   # JAGS (rjags)
   jags \
   # s2 (INLA dependency chain)
