@@ -36,46 +36,271 @@ jobs:
       with:
         scheme: calver
 
-  build-and-push:
+  # ---------------------------------------------------------------------------
+  # Layered build for debian variants.
+  #
+  # Each debian image is composed of 5 cached layers, pushed independently to
+  # the registry so subsequent builds can short-circuit unchanged layers:
+  #
+  #   syslibs -> jags -> inla -> bioc -> abn (final)
+  #
+  # Image naming: ${REGISTRY}/${repo}/<label>/<layer>:<tag>
+  # ---------------------------------------------------------------------------
+
+  build-syslibs:
     runs-on: ubuntu-latest
     needs: increment-tag
     env:
       CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
       BUILDKIT_PROGRESS: plain
-    permissions:                       # for `GITHUB_TOKEN`
+    permissions:
       contents: read
       packages: write
     strategy:
       fail-fast: false
       matrix:
         include:
-          # Ubuntu/debian containers
-          # See https://r-hub.github.io/containers/containers.html
           - rhub-image: ubuntu-clang
-            dockerfile: debian
             label: debian-clang-devel
-            compiler: clang
             r-version: devel
-            allow-failure: false
           - rhub-image: ubuntu-gcc12
-            dockerfile: debian
             label: debian-gcc-devel
-            compiler: gcc
             r-version: devel
-            allow-failure: false
           - rhub-image: ubuntu-release
-            dockerfile: debian
             label: debian-gcc-release
-            compiler: gcc
             r-version: release
-            allow-failure: false
           - rhub-image: ubuntu-next
-            dockerfile: debian
             label: debian-gcc-patched
-            compiler: gcc
             r-version: patched
-            allow-failure: false
-          # Fedora containers (R-hub only provides gcc + R-devel for Fedora)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs
+          tags: |
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/debian/Dockerfile.syslibs
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs:latest
+          cache-to: type=inline
+          build-args: |
+            R_VERSION=${{ matrix.r-version }}
+            RHUB_IMAGE=${{ matrix.rhub-image }}
+
+  build-jags:
+    runs-on: ubuntu-latest
+    needs: [ increment-tag, build-syslibs ]
+    env:
+      CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
+      BUILDKIT_PROGRESS: plain
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: debian-clang-devel
+          - label: debian-gcc-devel
+          - label: debian-gcc-release
+          - label: debian-gcc-patched
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags
+          tags: |
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/debian/Dockerfile.jags
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags:latest
+          cache-to: type=inline
+          build-args: |
+            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs:${{ env.CUSTOM_TAG }}
+
+  build-inla:
+    runs-on: ubuntu-latest
+    needs: [ increment-tag, build-jags ]
+    env:
+      CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
+      BUILDKIT_PROGRESS: plain
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: debian-clang-devel
+          - label: debian-gcc-devel
+          - label: debian-gcc-release
+          - label: debian-gcc-patched
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla
+          tags: |
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/debian/Dockerfile.inla
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla:latest
+          cache-to: type=inline
+          build-args: |
+            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags:${{ env.CUSTOM_TAG }}
+
+  build-bioc:
+    runs-on: ubuntu-latest
+    needs: [ increment-tag, build-inla ]
+    env:
+      CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
+      BUILDKIT_PROGRESS: plain
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: debian-clang-devel
+          - label: debian-gcc-devel
+          - label: debian-gcc-release
+          - label: debian-gcc-patched
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc
+          tags: |
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/debian/Dockerfile.bioc
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc:latest
+          cache-to: type=inline
+          build-args: |
+            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla:${{ env.CUSTOM_TAG }}
+
+  build-final-debian:
+    runs-on: ubuntu-latest
+    needs: [ increment-tag, build-bioc ]
+    env:
+      CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
+      BUILDKIT_PROGRESS: plain
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: debian-clang-devel
+            compiler: clang
+          - label: debian-gcc-devel
+            compiler: gcc
+          - label: debian-gcc-release
+            compiler: gcc
+          - label: debian-gcc-patched
+            compiler: gcc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn
+          tags: |
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/debian/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:latest
+          cache-to: type=inline
+          build-args: |
+            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc:${{ env.CUSTOM_TAG }}
+            COMPILER=${{ matrix.compiler }}
+            PACKAGE_PATH=${{ env.PACKAGE_PATH }}
+            REPO_PATH=${{ env.REPO_PATH }}
+
+  # ---------------------------------------------------------------------------
+  # Single-Dockerfile build for fedora + valgrind variants (unchanged from
+  # the original create-publish-docker workflow, just filtered to non-debian).
+  # ---------------------------------------------------------------------------
+
+  build-final-other:
+    runs-on: ubuntu-latest
+    needs: increment-tag
+    env:
+      CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
+      BUILDKIT_PROGRESS: plain
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
           - rhub-image: gcc15
             dockerfile: fedora
             label: fedora-gcc-devel
@@ -88,7 +313,6 @@ jobs:
             compiler: gcc
             r-version: devel
             allow-failure: true
-          # Valgrind container (Fedora-based, gcc, R-devel)
           - rhub-image: valgrind
             dockerfile: valgrind
             label: valgrind-gcc-devel
@@ -96,26 +320,21 @@ jobs:
             r-version: devel
             allow-failure: false
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Log in to the registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract tags and labels
-        id: meta
+      - id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn
-          tags: |                     # set Docker tags to git tags
+          tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-      - name: Build and push
-        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         continue-on-error: ${{ matrix.allow-failure }}
         with:
           context: ./containers/
@@ -123,6 +342,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:latest
+          cache-to: type=inline
           build-args: |
             COMPILER=${{ matrix.compiler }}
             R_VERSION=${{ matrix.r-version }}
@@ -136,12 +357,12 @@ jobs:
           #   key=./ssh_key
 
   check-images:
-    # Determine which container images were successfully pushed by the build job.
+    # Determine which container images were successfully pushed by the build jobs.
     # This produces a dynamic matrix so that container-integrity-and-config only
     # runs for images that actually exist in the registry.
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
-    needs: [ 'increment-tag', 'build-and-push' ]
+    needs: [ 'increment-tag', 'build-final-debian', 'build-final-other' ]
     permissions:
       packages: read
     outputs:
@@ -176,7 +397,7 @@ jobs:
   container-integrity-and-config:
     if: ${{ !cancelled() && needs.check-images.outputs.matrix != '' && fromJSON(needs.check-images.outputs.matrix).include[0] != null }}
     runs-on: ubuntu-22.04
-    needs: [ 'increment-tag', 'build-and-push', 'check-images' ]
+    needs: [ 'increment-tag', 'build-final-debian', 'build-final-other', 'check-images' ]
     permissions:
       contents: write
       packages: read

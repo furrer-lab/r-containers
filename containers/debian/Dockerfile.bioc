@@ -1,0 +1,10 @@
+# Layer 4/5: Bioconductor (BiocManager + Rgraphviz).
+#
+# Installs the Bioconductor toolchain on top of the inla layer using the
+# shared install_bioc.sh script.
+
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+
+COPY shared/install_bioc.sh /tmp/install_bioc.sh
+RUN chmod +x /tmp/install_bioc.sh && /tmp/install_bioc.sh
