@@ -1,11 +1,11 @@
 # Configuration
 
 >
->  R Under development (unstable) (2026-05-31 r90090)
+>  R Under development (unstable) (2026-04-30 r89987)
 >
 >  Platform: x86_64-pc-linux-gnu
 >
->  Running under: Fedora Linux 42 (Container Image)
+>  Running under: Fedora Linux 44 (Container Image)
 >
 >  
 >
@@ -47,7 +47,7 @@
 >
 >  [1] compiler_4.7.0 cli_3.6.6      tools_4.7.0    otel_0.2.0     knitr_1.51    
 >
->  [6] xfun_0.58      rlang_1.2.0    evaluate_1.0.5
+>  [6] xfun_0.57      rlang_1.2.0    evaluate_1.0.5
 
 
 # Installed packages
@@ -63,22 +63,22 @@
 |backports         |1.5.1       |
 |base64enc         |0.1-6       |
 |bayesm            |3.1-7       |
-|BiocGenerics      |0.59.3      |
+|BiocGenerics      |0.59.0      |
 |BiocManager       |1.30.27     |
 |BiocVersion       |3.24.0      |
 |bnlearn           |5.1         |
 |brew              |1.0-10      |
 |brglm             |0.7.3       |
 |brio              |1.1.5       |
-|broom             |1.0.13      |
-|bslib             |0.11.0      |
+|broom             |1.0.12      |
+|bslib             |0.10.0      |
 |cachem            |1.1.0       |
 |callr             |3.7.6       |
 |car               |3.1-5       |
 |carData           |3.0-6       |
 |classInt          |0.4-11      |
 |cli               |3.6.6       |
-|clipr             |0.8.1       |
+|clipr             |0.8.0       |
 |coda              |0.19-4.1    |
 |colorspace        |2.1-2       |
 |commonmark        |2.0.0       |
@@ -86,12 +86,12 @@
 |corrplot          |0.95        |
 |covr              |3.6.5       |
 |cowplot           |1.2.0       |
-|cpp11             |0.5.5       |
+|cpp11             |0.5.4       |
 |crayon            |1.5.3       |
 |credentials       |2.0.3       |
 |crosstalk         |1.2.2       |
 |curl              |7.1.0       |
-|data.table        |1.18.4      |
+|data.table        |1.18.2.1    |
 |DBI               |1.3.0       |
 |deldir            |2.0-4       |
 |DEoptimR          |1.1-4       |
@@ -117,7 +117,7 @@
 |farver            |2.1.2       |
 |fastGHQuad        |1.0.1       |
 |fastmap           |1.2.0       |
-|fields            |17.3        |
+|fields            |17.1        |
 |fmesher           |0.7.0       |
 |fontawesome       |0.5.3       |
 |fontBitstreamVera |0.1.1       |
@@ -128,7 +128,7 @@
 |Formula           |1.2-5       |
 |fracdiff          |1.5-4       |
 |fs                |2.1.0       |
-|gdtools           |0.5.1       |
+|gdtools           |0.5.0       |
 |generics          |0.1.4       |
 |gert              |2.3.1       |
 |ggfun             |0.2.0       |
@@ -140,7 +140,7 @@
 |ggrepel           |0.9.8       |
 |ggsci             |5.0.0       |
 |ggsignif          |0.6.4       |
-|gh                |1.6.0       |
+|gh                |1.5.0       |
 |gitcreds          |0.1.2       |
 |glmmTMB           |1.1.14      |
 |glue              |1.8.1       |
@@ -159,9 +159,6 @@
 |httr2             |1.2.2       |
 |ini               |0.3.1       |
 |INLA              |25.10.19    |
-|inlabru           |2.14.1      |
-|INLAspacetime     |0.1.14      |
-|INLAtools         |0.1.4       |
 |isoband           |0.3.0       |
 |iterators         |1.0.14      |
 |jquerylib         |0.1.4       |
@@ -192,10 +189,10 @@
 |mnormt            |2.1.2       |
 |modelr            |0.1.11      |
 |moments           |0.14.1      |
-|mvtnorm           |1.4-0       |
+|mvtnorm           |1.3-7       |
 |nloptr            |2.2.1       |
 |numDeriv          |2016.8-1.1  |
-|openssl           |2.4.1       |
+|openssl           |2.4.0       |
 |otel              |0.2.0       |
 |pak               |0.9.5.9000  |
 |pbkrtest          |0.5.5       |
@@ -229,12 +226,12 @@
 |rcmdcheck         |1.4.0       |
 |RColorBrewer      |1.1-3       |
 |Rcpp              |1.1.1-1.1   |
-|RcppArmadillo     |15.2.7-1    |
+|RcppArmadillo     |15.2.6-1    |
 |RcppEigen         |0.3.4.0.2   |
 |Rdpack            |2.6.6       |
 |reformulas        |0.4.4       |
 |remotes           |2.5.0       |
-|renv              |1.2.3       |
+|renv              |1.2.2       |
 |reshape2          |1.4.5       |
 |rex               |1.2.2       |
 |rgl               |1.3.36      |
@@ -250,25 +247,25 @@
 |rstudioapi        |0.18.0      |
 |runjags           |2.2.2-5     |
 |rversions         |3.0.0       |
-|s2                |1.1.11      |
+|s2                |1.1.9       |
 |S7                |0.2.2       |
 |sandwich          |3.1-1       |
 |sass              |0.4.10      |
 |scales            |1.4.0       |
 |sessioninfo       |1.2.3       |
-|sf                |1.1-1       |
+|sf                |1.1-0       |
 |shiny             |1.13.0      |
 |showtext          |0.9-8       |
 |showtextdb        |3.0         |
 |sn                |2.1.3       |
 |sourcetools       |0.1.7-2     |
 |sp                |2.2-1       |
-|spam              |2.11-4      |
+|spam              |2.11-3      |
 |SparseM           |1.84-2      |
-|spData            |2.3.5       |
+|spData            |2.3.4       |
 |spdep             |1.4-2       |
 |splancs           |2.01-45     |
-|statmod           |1.5.2       |
+|statmod           |1.5.1       |
 |stringi           |1.8.7       |
 |stringr           |1.6.0       |
 |svglite           |2.2.2       |
@@ -276,7 +273,7 @@
 |sysfonts          |0.8.9       |
 |systemfonts       |1.3.2       |
 |tensorA           |0.36.2.1    |
-|terra             |1.9-27      |
+|terra             |1.9-11      |
 |testthat          |3.3.2       |
 |textshaping       |1.0.5       |
 |tibble            |3.3.1       |
@@ -297,7 +294,7 @@
 |whisker           |0.4.1       |
 |withr             |3.0.2       |
 |wk                |0.9.5       |
-|xfun              |0.58        |
+|xfun              |0.57        |
 |xml2              |1.5.2       |
 |xopen             |1.0.1       |
 |xtable            |1.8-8       |
