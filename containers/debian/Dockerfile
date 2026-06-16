@@ -1,110 +1,22 @@
-# Before the build stage
-ARG COMPILER
-ARG R_VERSION
-ARG RHUB_IMAGE=ubuntu-clang
+# Layer 5/5 (final): R development tooling, glmmTMB workaround, target repo
+# clone, and dependency scan.
+#
+# Built on top of the bioc layer. This is the only layer that touches the
+# target repository, so it is the layer most likely to need rebuilding on
+# every CI run; everything below it is heavily cached.
 
-# Use the mapped R-hub image name from the workflow
-FROM rhub/${RHUB_IMAGE}
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
 
 # Build stage: ARGs need to be redeclared
 ARG COMPILER
-ARG R_VERSION
 ARG PACKAGE_PATH
 ARG REPO_PATH
 
-# Install ALL system dependencies in one layer
-RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
-  # Core build tools
-  gfortran \
-  cmake \
-  git \
-  openssh-client \
-  pkg-config \
-  # SSL / curl
-  libssl-dev \
-  libcurl4-openssl-dev \
-  curl \
-  # Text / font rendering (ragg, systemfonts, textshaping)
-  libfontconfig1-dev \
-  libharfbuzz-dev \
-  libfribidi-dev \
-  libfreetype6-dev \
-  # Image formats
-  libpng-dev \
-  libtiff5-dev \
-  libjpeg-dev \
-  libwebp-dev \
-  # XML
-  libxml2-dev \
-  # GSL (gsl R package)
-  libgsl-dev \
-  # NLopt (nloptr / lme4)
-  libnlopt-dev \
-  # JAGS (rjags)
-  jags \
-  # s2 (INLA dependency chain)
-  libabsl-dev \
-  # sf / fmesher (INLA dependency chain)
-  libudunits2-dev \
-  libgdal-dev \
-  libgeos-dev \
-  libproj-dev \
-  # Magick++ (magick R package)
-  libmagick++-dev \
-  # Pandoc (vignette building)
-  pandoc
-
-# Ensure pandoc >= 2.11 for built-in citeproc support.
-# Ubuntu 22.04 ships pandoc 2.9.2 which still requires the removed
-# pandoc-citeproc binary.  When the system version is too old, replace
-# it with the last 2.x release (2.19.2).  On newer Ubuntu (24.04+)
-# this block is a no-op and will age away naturally.
-RUN PANDOC_VER=$(pandoc --version | head -1 | grep -oP '[\d.]+') && \
-    MAJOR=$(echo "$PANDOC_VER" | cut -d. -f1) && \
-    MINOR=$(echo "$PANDOC_VER" | cut -d. -f2) && \
-    if [ "$MAJOR" -lt 2 ] || { [ "$MAJOR" -eq 2 ] && [ "$MINOR" -lt 11 ]; }; then \
-      echo ">>> pandoc $PANDOC_VER < 2.11, upgrading to 2.19.2"; \
-      curl -sL https://github.com/jgm/pandoc/releases/download/2.19.2/pandoc-2.19.2-1-amd64.deb -o /tmp/pandoc.deb && \
-      dpkg -i /tmp/pandoc.deb && rm /tmp/pandoc.deb; \
-    else \
-      echo ">>> pandoc $PANDOC_VER >= 2.11, no upgrade needed"; \
-    fi
-
-# Add R to PATH (rhub images install R at /opt/R/<version>/bin/)
-ENV PATH="/opt/R/$R_VERSION/bin:${PATH}"
-
-# Force all R package installs into .Library (the base R library directory).
-# This ensures packages are visible to all users, not just root.
-# R_LIBS_USER=" " (single space) is the canonical way to disable the user
-# library fallback that would otherwise install into /root/R/...
-ENV R_LIBS_USER=" "
-# Prevent renv auto-activation when cloning repos that contain .Rprofile
-ENV RENV_CONFIG_AUTOLOADER_ENABLED=false
-
-# Configure clang C++ compilation environment
-ENV CPLUS_INCLUDE_PATH="/usr/include/c++/13:/usr/include/x86_64-linux-gnu/c++/13"
-ENV C_INCLUDE_PATH="/usr/include"
-
-# Set CRAN mirror (must happen before any R package installs)
-RUN R_HOME=$(R RHOME) && \
-    if [ -d "${R_HOME}/library/base/R" ]; then \
-      echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/library/base/R/Rprofile; \
-    elif [ -d "${R_HOME}/etc" ]; then \
-      echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/etc/Rprofile.site; \
-    else \
-      echo "ERROR: Could not find R profile location" >&2; exit 1; \
-    fi
-
-# Install rjags (JAGS is available as system package on debian)
-RUN R -e "install.packages('rjags', lib=.Library); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
-
-# glmmTMB workaround: needs explicit install before auto-dependency scan.
-# Should be installed automatically in the future.
-RUN R -e "install.packages('glmmTMB', lib=.Library); if (!requireNamespace('glmmTMB', quietly=TRUE)) stop('Failed to install: glmmTMB')"
-
-# Run shared R package installation script
-COPY shared/install_r_packages.sh /tmp/install_r_packages.sh
-RUN chmod +x /tmp/install_r_packages.sh && /tmp/install_r_packages.sh
+# Run shared R tooling installation script (devtools, renv, covr, glmmTMB,
+# clone target repo, install remaining dependencies, verify deps).
+COPY shared/install_tooling.sh /tmp/install_tooling.sh
+RUN chmod +x /tmp/install_tooling.sh && /tmp/install_tooling.sh
 
 # Verify key packages are installed in .Library (fail the build if not)
 RUN R -e "pkgs <- c('devtools','renv','covr','rjags','glmmTMB','INLA','Rgraphviz'); missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; if (length(missing)) stop('Packages missing from container: ', paste(missing, collapse=', '))"

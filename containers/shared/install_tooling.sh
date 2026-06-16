@@ -1,29 +1,28 @@
 #!/bin/bash
-# Shared R package installation script for all container variants.
-# This script is COPY'd into each container and run after all OS-specific
-# system packages and libraries (JAGS, etc.) are already installed.
+# Install R development tooling, the glmmTMB workaround, then clone the
+# target repository and install any remaining dependencies.
 #
 # Required environment variables:
 #   REPO_PATH    - GitHub repo path (e.g. github.com/furrer-lab/abn)
 #   PACKAGE_PATH - Path within the repo to the DESCRIPTION file (e.g. './')
 #
-# All packages are installed into .Library (the base R library directory)
-# so they are visible to every user, not just root. This is critical because
-# CI jobs run with --user 1001, which cannot see root's personal library at
-# /root/R/x86_64-pc-linux-gnu-library/.
+# Requirements (must be set up by the Dockerfile before running this script):
+#   - R is on PATH
+#   - .Library is writable
+#   - CRAN mirror is configured in Rprofile / Rprofile.site
 set -e
 
-# --- Verify .Library is writable ---
+echo ">>> Verifying .Library is writable"
 R -e "if (file.access(.Library, 2) != 0) stop('.Library is not writable: ', .Library)"
+
+echo ">>> Verifying CRAN mirror is configured"
+R -e "if (is.null(getOption('repos')['CRAN']) || getOption('repos')['CRAN'] == '@CRAN@') stop('CRAN mirror not configured. Set it up in the Dockerfile before running this script.')"
 
 # --- Helper: install a CRAN package into .Library and verify it loaded ---
 install_r_pkg() {
   echo ">>> Installing R package: $1"
   R -e "install.packages('$1', lib=.Library); if (!requireNamespace('$1', quietly=TRUE)) stop('Failed to install: $1')"
 }
-
-# --- Verify CRAN mirror is configured (must be set up in Dockerfile before this script) ---
-R -e "if (is.null(getOption('repos')['CRAN']) || getOption('repos')['CRAN'] == '@CRAN@') stop('CRAN mirror not configured. Set it up in the Dockerfile before running this script.')"
 
 # --- Development tooling ---
 install_r_pkg devtools
@@ -45,28 +44,9 @@ install_r_pkg covr
 # --- R CMD check helpers ---
 install_r_pkg urlchecker
 
-# --- Bioconductor ---
-install_r_pkg BiocManager
-echo ">>> Installing Rgraphviz (Bioconductor)"
-R -e "BiocManager::install('Rgraphviz', lib=.Library); if (!requireNamespace('Rgraphviz', quietly=TRUE)) stop('Failed to install: Rgraphviz')"
-
-# --- INLA (non-CRAN repository) ---
-# Two-tier fallback: stable -> testing.
-# The official INLA server (inla.r-inla-download.org) can be intermittently
-# unreachable, so we try the testing repo as a fallback.
-echo ">>> Installing INLA"
-R -e "\
-repos_stable  <- c(getOption('repos'), INLA='https://inla.r-inla-download.org/R/stable'); \
-repos_testing <- c(getOption('repos'), INLA='https://inla.r-inla-download.org/R/testing'); \
-try_install <- function(repos, tag) { \
-  message(sprintf('>>> Trying INLA from %s ...', tag)); \
-  install.packages('INLA', lib=.Library, repos=repos, dep=TRUE); \
-  if (!requireNamespace('INLA', quietly=TRUE)) stop('INLA not loadable') \
-}; \
-tryCatch(try_install(repos_stable, 'stable'), error = function(e1) { \
-  try_install(repos_testing, 'testing') \
-}); \
-if (!requireNamespace('INLA', quietly=TRUE)) stop('Failed to install INLA from any source')"
+# --- glmmTMB workaround: needs explicit install before auto-dependency scan.
+#     Should be installed automatically in the future. ---
+install_r_pkg glmmTMB
 
 # --- Clone target repo and install remaining dependencies ---
 echo ">>> Cloning target repository"
@@ -81,4 +61,4 @@ R -e "package <- desc::desc()\$get_field('Package'); pckgs <- unique(renv::depen
 echo ">>> Verifying all dependencies are installed"
 R -e "package <- desc::desc()\$get_field('Package'); pckgs <- unique(renv::dependencies('${PACKAGE_PATH}')[,'Package']); pres_pckgs <- installed.packages()[,'Package']; missing <- pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)]; if (length(missing) > 0) { stop(paste0('Missing dependencies: ', paste(missing, collapse=', '))) } else { cat('All dependencies installed correctly.\n') }"
 
-echo ">>> R package installation complete"
+echo ">>> R tooling installation complete"
