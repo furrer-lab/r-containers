@@ -1,11 +1,11 @@
 # Configuration
 
 >
->  R Under development (unstable) (2026-06-29 r90199)
+>  R Under development (unstable) (2026-05-31 r90090)
 >
 >  Platform: x86_64-pc-linux-gnu
 >
->  Running under: Fedora Linux 44 (Container Image)
+>  Running under: Fedora Linux 42 (Container Image)
 >
 >  
 >
@@ -47,7 +47,7 @@
 >
 >  [1] compiler_4.7.0 cli_3.6.6      tools_4.7.0    otel_0.2.0     knitr_1.51    
 >
->  [6] xfun_0.59      rlang_1.2.0    evaluate_1.0.5
+>  [6] xfun_0.58      rlang_1.2.0    evaluate_1.0.5
 
 
 # Installed packages
@@ -63,7 +63,7 @@
 |backports         |1.5.1       |
 |base64enc         |0.1-6       |
 |bayesm            |3.1-7       |
-|BiocGenerics      |0.59.8      |
+|BiocGenerics      |0.59.3      |
 |BiocManager       |1.30.27     |
 |BiocVersion       |3.24.0      |
 |bnlearn           |5.1         |
@@ -73,7 +73,7 @@
 |broom             |1.0.13      |
 |bslib             |0.11.0      |
 |cachem            |1.1.0       |
-|callr             |3.8.0       |
+|callr             |3.7.6       |
 |car               |3.1-5       |
 |carData           |3.0-6       |
 |classInt          |0.4-11      |
@@ -83,7 +83,6 @@
 |colorspace        |2.1-2       |
 |commonmark        |2.0.0       |
 |compositions      |2.0-9       |
-|CompQuadForm      |1.4.4       |
 |corrplot          |0.95        |
 |covr              |3.6.5       |
 |cowplot           |1.2.0       |
@@ -95,7 +94,7 @@
 |data.table        |1.18.4      |
 |DBI               |1.3.0       |
 |deldir            |2.0-4       |
-|DEoptimR          |1.2-0       |
+|DEoptimR          |1.1-4       |
 |Deriv             |4.2.0       |
 |desc              |1.4.3       |
 |devtools          |2.5.2       |
@@ -119,7 +118,7 @@
 |fastGHQuad        |1.0.1       |
 |fastmap           |1.2.0       |
 |fields            |17.3        |
-|fmesher           |0.8.0       |
+|fmesher           |0.7.0       |
 |fontawesome       |0.5.3       |
 |fontBitstreamVera |0.1.1       |
 |fontLiberation    |0.1.0       |
@@ -139,14 +138,14 @@
 |ggplotify         |0.1.3       |
 |ggpubr            |0.6.3       |
 |ggrepel           |0.9.8       |
-|ggsci             |5.1.0       |
+|ggsci             |5.0.0       |
 |ggsignif          |0.6.4       |
 |gh                |1.6.0       |
 |gitcreds          |0.1.2       |
 |glmmTMB           |1.1.14      |
 |glue              |1.8.1       |
 |graph             |1.91.0      |
-|gridExtra         |2.3.1       |
+|gridExtra         |2.3         |
 |gridGraphics      |0.5-1       |
 |gsl               |2.1-9       |
 |gtable            |0.3.6       |
@@ -157,7 +156,7 @@
 |htmlwidgets       |1.6.4       |
 |httpuv            |1.6.17      |
 |httr              |1.4.8       |
-|httr2             |1.2.3       |
+|httr2             |1.2.2       |
 |ini               |0.3.1       |
 |INLA              |25.10.19    |
 |inlabru           |2.14.1      |
@@ -186,27 +185,26 @@
 |memisc            |0.99.31.8.3 |
 |memoise           |2.0.1       |
 |microbenchmark    |1.5.0       |
-|micsr             |0.1-5       |
 |mime              |0.13        |
 |miniUI            |0.1.2       |
 |minqa             |1.2.8       |
-|mlogit            |2.0-0       |
+|mlogit            |1.1-3       |
 |mnormt            |2.1.2       |
 |modelr            |0.1.11      |
 |moments           |0.14.1      |
-|mvtnorm           |1.4-1       |
+|mvtnorm           |1.4-0       |
 |nloptr            |2.2.1       |
 |numDeriv          |2016.8-1.1  |
-|openssl           |2.4.2       |
+|openssl           |2.4.1       |
 |otel              |0.2.0       |
-|pak               |0.10.0.9000 |
+|pak               |0.9.5.9000  |
 |pbkrtest          |0.5.5       |
 |pillar            |1.11.1      |
 |pixmap            |0.4-14      |
 |pkgbuild          |1.4.8       |
 |pkgconfig         |2.0.3       |
 |pkgdown           |2.2.0       |
-|pkgload           |1.5.3       |
+|pkgload           |1.5.2       |
 |plyr              |1.8.9       |
 |polynom           |1.4-1       |
 |praise            |1.0.0       |
@@ -231,7 +229,7 @@
 |rcmdcheck         |1.4.0       |
 |RColorBrewer      |1.1-3       |
 |Rcpp              |1.1.1-1.1   |
-|RcppArmadillo     |15.4.0-1    |
+|RcppArmadillo     |15.2.7-1    |
 |RcppEigen         |0.3.4.0.2   |
 |Rdpack            |2.6.6       |
 |reformulas        |0.4.4       |
@@ -249,7 +247,7 @@
 |roxygen2          |8.0.0       |
 |rprojroot         |2.1.1       |
 |rstatix           |0.7.3       |
-|rstudioapi        |0.19.0      |
+|rstudioapi        |0.18.0      |
 |runjags           |2.2.2-5     |
 |rversions         |3.0.0       |
 |s2                |1.1.11      |
@@ -257,9 +255,9 @@
 |sandwich          |3.1-1       |
 |sass              |0.4.10      |
 |scales            |1.4.0       |
-|sessioninfo       |1.2.4       |
+|sessioninfo       |1.2.3       |
 |sf                |1.1-1       |
-|shiny             |1.14.0      |
+|shiny             |1.13.0      |
 |showtext          |0.9-8       |
 |showtextdb        |3.0         |
 |sn                |2.1.3       |
@@ -270,6 +268,7 @@
 |spData            |2.3.5       |
 |spdep             |1.4-2       |
 |splancs           |2.01-45     |
+|statmod           |1.5.2       |
 |stringi           |1.8.7       |
 |stringr           |1.6.0       |
 |svglite           |2.2.2       |
@@ -277,15 +276,15 @@
 |sysfonts          |0.8.9       |
 |systemfonts       |1.3.2       |
 |tensorA           |0.36.2.1    |
-|terra             |1.9-34      |
+|terra             |1.9-27      |
 |testthat          |3.3.2       |
 |textshaping       |1.0.5       |
 |tibble            |3.3.1       |
 |tidyr             |1.3.2       |
 |tidyselect        |1.2.1       |
-|tidyterra         |1.2.0       |
+|tidyterra         |1.1.0       |
 |timeDate          |4052.112    |
-|tinytex           |0.60        |
+|tinytex           |0.59        |
 |TMB               |1.9.21      |
 |units             |1.0-1       |
 |urca              |1.3-4       |
@@ -296,15 +295,15 @@
 |viridisLite       |0.4.3       |
 |waldo             |0.6.2       |
 |whisker           |0.4.1       |
-|withr             |3.0.3       |
+|withr             |3.0.2       |
 |wk                |0.9.5       |
-|xfun              |0.59        |
-|xml2              |1.6.0       |
+|xfun              |0.58        |
+|xml2              |1.5.2       |
 |xopen             |1.0.1       |
 |xtable            |1.8-8       |
 |yaml              |2.3.12      |
 |yulab.utils       |0.2.4       |
-|zip               |3.0.0       |
+|zip               |2.3.3       |
 |zoo               |1.8-15      |
 
 
