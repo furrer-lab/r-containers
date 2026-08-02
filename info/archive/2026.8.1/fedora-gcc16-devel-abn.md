@@ -1,11 +1,11 @@
 # Configuration
 
 >
->  R Under development (unstable) (2026-07-31 r90332)
+>  R Under development (unstable) (2026-06-29 r90199)
 >
 >  Platform: x86_64-pc-linux-gnu
 >
->  Running under: Fedora Linux 42 (Container Image)
+>  Running under: Fedora Linux 44 (Container Image)
 >
 >  
 >
@@ -47,7 +47,7 @@
 >
 >  [1] compiler_4.7.0 cli_3.6.6      tools_4.7.0    otel_0.2.0     knitr_1.51    
 >
->  [6] xfun_0.60      rlang_1.3.0    evaluate_1.0.5
+>  [6] xfun_0.59      rlang_1.2.0    evaluate_1.0.5
 
 
 # Installed packages
@@ -63,10 +63,10 @@
 |backports         |1.5.1       |
 |base64enc         |0.1-6       |
 |bayesm            |3.1-7       |
-|BiocGenerics      |0.59.10     |
+|BiocGenerics      |0.59.8      |
 |BiocManager       |1.30.27     |
 |BiocVersion       |3.24.0      |
-|bnlearn           |5.2.1       |
+|bnlearn           |5.1         |
 |brew              |1.0-10      |
 |brglm             |0.7.3       |
 |brio              |1.1.5       |
@@ -80,7 +80,7 @@
 |cli               |3.6.6       |
 |clipr             |0.8.1       |
 |coda              |0.19-4.1    |
-|colorspace        |2.1-3       |
+|colorspace        |2.1-2       |
 |commonmark        |2.0.0       |
 |compositions      |2.0-9       |
 |CompQuadForm      |1.4.4       |
@@ -96,13 +96,13 @@
 |DBI               |1.3.0       |
 |deldir            |2.0-4       |
 |DEoptimR          |1.2-0       |
-|Deriv             |4.3.0       |
+|Deriv             |4.2.0       |
 |desc              |1.4.3       |
 |devtools          |2.5.2       |
 |dfidx             |0.2-0       |
-|diffobj           |0.3.8       |
+|diffobj           |0.3.6       |
 |digest            |0.6.39      |
-|doBy              |4.7.2       |
+|doBy              |4.7.1       |
 |doParallel        |1.0.17      |
 |dotCall64         |1.2         |
 |downlit           |0.4.5       |
@@ -131,17 +131,17 @@
 |fs                |2.1.0       |
 |gdtools           |0.5.1       |
 |generics          |0.1.4       |
-|gert              |2.4.0       |
-|ggfun             |0.2.1       |
+|gert              |2.3.1       |
+|ggfun             |0.2.0       |
 |ggimage           |0.3.5       |
 |ggiraph           |0.9.6       |
 |ggplot2           |4.0.3       |
 |ggplotify         |0.1.3       |
-|ggpubr            |1.0.0       |
+|ggpubr            |0.6.3       |
 |ggrepel           |0.9.8       |
-|ggsci             |5.2.0       |
+|ggsci             |5.1.0       |
 |ggsignif          |0.6.4       |
-|gh                |1.6.1       |
+|gh                |1.6.0       |
 |gitcreds          |0.1.2       |
 |glmmTMB           |1.1.14      |
 |glue              |1.8.1       |
@@ -150,31 +150,31 @@
 |gridGraphics      |0.5-1       |
 |gsl               |2.1-9       |
 |gtable            |0.3.6       |
-|hexbin            |1.28.6      |
+|hexbin            |1.28.5      |
 |hexSticker        |0.5.1       |
 |highr             |0.12        |
 |htmltools         |0.5.9       |
 |htmlwidgets       |1.6.4       |
 |httpuv            |1.6.17      |
 |httr              |1.4.8       |
-|httr2             |1.3.0       |
+|httr2             |1.2.3       |
 |ini               |0.3.1       |
 |INLA              |25.10.19    |
-|inlabru           |2.15.0      |
+|inlabru           |2.14.1      |
 |INLAspacetime     |0.1.14      |
 |INLAtools         |0.1.4       |
 |isoband           |0.3.0       |
 |iterators         |1.0.14      |
 |jquerylib         |0.1.4       |
 |jsonlite          |2.0.0       |
-|kableExtra        |1.4.1       |
+|kableExtra        |1.4.0       |
 |knitr.1           |1.51        |
 |labeling          |0.4.3       |
 |later             |1.4.8       |
 |lazyeval          |0.2.3       |
 |lifecycle         |1.0.5       |
-|litedown          |0.10        |
-|lme4              |2.0-6       |
+|litedown          |0.9         |
+|lme4              |2.0-1       |
 |lmtest            |0.9-40      |
 |magick            |2.9.1       |
 |magrittr          |2.0.5       |
@@ -185,6 +185,7 @@
 |mclogit           |0.9.15      |
 |memisc            |0.99.31.8.3 |
 |memoise           |2.0.1       |
+|microbenchmark    |1.5.0       |
 |micsr             |0.1-5       |
 |mime              |0.13        |
 |miniUI            |0.1.2       |
@@ -193,18 +194,18 @@
 |mnormt            |2.1.2       |
 |modelr            |0.1.11      |
 |moments           |0.14.1      |
-|mvtnorm           |1.4-2       |
+|mvtnorm           |1.4-1       |
 |nloptr            |2.2.1       |
 |numDeriv          |2016.8-1.1  |
 |openssl           |2.4.2       |
 |otel              |0.2.0       |
-|pak               |0.11.1.9000 |
+|pak               |0.10.0.9000 |
 |pbkrtest          |0.5.5       |
 |pillar            |1.11.1      |
 |pixmap            |0.4-14      |
 |pkgbuild          |1.4.8       |
 |pkgconfig         |2.0.3       |
-|pkgdown           |2.2.1       |
+|pkgdown           |2.2.0       |
 |pkgload           |1.5.3       |
 |plyr              |1.8.9       |
 |polynom           |1.4-1       |
@@ -229,8 +230,8 @@
 |rbibutils         |2.4.1       |
 |rcmdcheck         |1.4.0       |
 |RColorBrewer      |1.1-3       |
-|Rcpp              |1.1.2       |
-|RcppArmadillo     |15.4.2-1    |
+|Rcpp              |1.1.1-1.1   |
+|RcppArmadillo     |15.4.0-1    |
 |RcppEigen         |0.3.4.0.2   |
 |Rdpack            |2.6.6       |
 |reformulas        |0.4.4       |
@@ -242,28 +243,28 @@
 |Rgraphviz         |2.57.0      |
 |RhpcBLASctl       |0.23-42     |
 |rjags             |4-17        |
-|rlang             |1.3.0       |
+|rlang             |1.2.0       |
 |rmarkdown         |2.31        |
 |robustbase        |0.99-7      |
 |roxygen2          |8.0.0       |
 |rprojroot         |2.1.1       |
-|rstatix           |1.1.0       |
+|rstatix           |0.7.3       |
 |rstudioapi        |0.19.0      |
 |runjags           |2.2.2-5     |
 |rversions         |3.0.0       |
 |s2                |1.1.11      |
 |S7                |0.2.2       |
-|sandwich          |3.1-2       |
+|sandwich          |3.1-1       |
 |sass              |0.4.10      |
 |scales            |1.4.0       |
 |sessioninfo       |1.2.4       |
-|sf                |1.1-2       |
+|sf                |1.1-1       |
 |shiny             |1.14.0      |
 |showtext          |0.9-8       |
 |showtextdb        |3.0         |
 |sn                |2.1.3       |
 |sourcetools       |0.1.7-2     |
-|sp                |2.2-3       |
+|sp                |2.2-1       |
 |spam              |2.11-4      |
 |SparseM           |1.84-2      |
 |spData            |2.3.5       |
@@ -285,10 +286,10 @@
 |tidyterra         |1.2.0       |
 |timeDate          |4052.112    |
 |tinytex           |0.60        |
-|TMB               |1.9.23      |
+|TMB               |1.9.21      |
 |units             |1.0-1       |
 |urca              |1.3-4       |
-|urlchecker        |2.0.0       |
+|urlchecker        |1.0.1       |
 |usethis           |3.2.1       |
 |utf8              |1.2.6       |
 |vctrs             |0.7.3       |
@@ -297,13 +298,13 @@
 |whisker           |0.4.1       |
 |withr             |3.0.3       |
 |wk                |0.9.5       |
-|xfun              |0.60        |
+|xfun              |0.59        |
 |xml2              |1.6.0       |
 |xopen             |1.0.1       |
 |xtable            |1.8-8       |
 |yaml              |2.3.12      |
 |yulab.utils       |0.2.4       |
-|zip               |3.0.1       |
-|zoo               |1.9-0       |
+|zip               |3.0.0       |
+|zoo               |1.8-15      |
 
 
