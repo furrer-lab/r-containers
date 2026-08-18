@@ -52,21 +52,35 @@ R -e "BiocManager::install('Rgraphviz', lib=.Library); if (!requireNamespace('Rg
 
 # --- INLA (non-CRAN repository) ---
 # Two-tier fallback: stable -> testing.
+#
 # The official INLA server (inla.r-inla-download.org) can be intermittently
 # unreachable, so we try the testing repo as a fallback.
 echo ">>> Installing INLA"
 R -e "\
-repos_stable  <- c(getOption('repos'), INLA='https://inla.r-inla-download.org/R/stable'); \
-repos_testing <- c(getOption('repos'), INLA='https://inla.r-inla-download.org/R/testing'); \
-try_install <- function(repos, tag) { \
-  message(sprintf('>>> Trying INLA from %s ...', tag)); \
-  install.packages('INLA', lib=.Library, repos=repos, dep=TRUE); \
+# 1. Ensure pak is installed \
+if (!requireNamespace('pak', quietly=TRUE)) { \
+  install.packages('pak', lib=.Library, repos='https://cloud.r-project.org/') \
+} \
+try_install_pak <- function(inla_repo, tag) { \
+  message(sprintf('>>> Trying INLA from %s via pak...', tag)) \
+  # Tell pak to use both CRAN (for dependencies) and the specific INLA repo \
+  options(repos = c(CRAN = 'https://cloud.r-project.org/', INLA = inla_repo)) \
+  # pak will automatically resolve, download, and install \
+  pak::pkg_install('INLA', ask = FALSE) \
   if (!requireNamespace('INLA', quietly=TRUE)) stop('INLA not loadable') \
-}; \
-tryCatch(try_install(repos_stable, 'stable'), error = function(e1) { \
-  try_install(repos_testing, 'testing') \
-}); \
-if (!requireNamespace('INLA', quietly=TRUE)) stop('Failed to install INLA from any source')"
+} \
+# 2. Try stable, fallback to testing on error \
+tryCatch({ \
+  try_install_pak('https://inla.r-inla-download.org/R/stable', 'stable') \
+}, error = function(e) { \
+  message(sprintf('>>> Stable failed with error: %s', e\$message)) \
+  try_install_pak('https://inla.r-inla-download.org/R/testing', 'testing') \
+}) \
+# 3. Final verification \
+if (!requireNamespace('INLA', quietly=TRUE)) { \
+  stop('Failed to install INLA from any source') \
+} \
+"
 
 # --- Clone target repo and install remaining dependencies ---
 echo ">>> Cloning target repository"
