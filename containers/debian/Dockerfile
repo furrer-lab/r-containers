@@ -20,6 +20,8 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   git \
   openssh-client \
   pkg-config \
+  # libuv (R pkg fs)
+  libuv1-dev \
   # SSL / curl
   libssl-dev \
   libcurl4-openssl-dev \
