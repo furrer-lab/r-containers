@@ -55,32 +55,66 @@ R -e "BiocManager::install('Rgraphviz', lib=.Library); if (!requireNamespace('Rg
 #
 # The official INLA server (inla.r-inla-download.org) can be intermittently
 # unreachable, so we try the testing repo as a fallback.
-echo ">>> Installing INLA"
-R -e "\
-# 1. Ensure pak is installed \
-if (!requireNamespace('pak', quietly=TRUE)) { \
-  install.packages('pak', lib=.Library, repos='https://cloud.r-project.org/') \
-} \
-try_install_pak <- function(inla_repo, tag) { \
-  message(sprintf('>>> Trying INLA from %s via pak...', tag)) \
-  # Tell pak to use both CRAN (for dependencies) and the specific INLA repo \
-  options(repos = c(CRAN = 'https://cloud.r-project.org/', INLA = inla_repo)) \
-  # pak will automatically resolve, download, and install \
-  pak::pkg_install('INLA', ask = FALSE) \
-  if (!requireNamespace('INLA', quietly=TRUE)) stop('INLA not loadable') \
-} \
-# 2. Try stable, fallback to testing on error \
-tryCatch({ \
-  try_install_pak('https://inla.r-inla-download.org/R/stable', 'stable') \
-}, error = function(e) { \
-  message(sprintf('>>> Stable failed with error: %s', e\$message)) \
-  try_install_pak('https://inla.r-inla-download.org/R/testing', 'testing') \
-}) \
-# 3. Final verification \
-if (!requireNamespace('INLA', quietly=TRUE)) { \
-  stop('Failed to install INLA from any source') \
-} \
-"
+echo ">>> Bypassing WAF: Resolving latest INLA version via curl..."
+USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+
+install_inla_from_repo() {
+    local REPO_TAG=$1
+    echo ">>> Trying INLA from ${REPO_TAG} ..."
+    local INLA_REPO="https://inla.r-inla-download.org/R/${REPO_TAG}/src/contrib"
+    
+    # 1. Fetch all versions, sort, and pick the highest
+    local INLA_VERSION=$(curl -s -L -A "$USER_AGENT" "$INLA_REPO/PACKAGES" | awk '/^Package:/ {pkg=$2} pkg=="INLA" && /^Version:/ {print $2}' | sort -V | tail -n 1)
+    
+    if [ -z "$INLA_VERSION" ]; then
+        echo "Failed to fetch INLA version from ${REPO_TAG}."
+        return 1
+    fi
+    
+    echo ">>> Found highest INLA version: ${INLA_VERSION} in ${REPO_TAG}. Downloading..."
+    
+    # 2. Download the tarball directly to /tmp
+    curl -s -L -A "$USER_AGENT" -o /tmp/INLA.tar.gz "$INLA_REPO/INLA_${INLA_VERSION}.tar.gz"
+    
+    if [ ! -s /tmp/INLA.tar.gz ]; then
+        echo "Failed to download INLA tarball from ${REPO_TAG}."
+        return 1
+    fi
+    
+    echo ">>> Handing local tarball to R for installation..."
+    
+    # 3. Install the local tarball using R
+    R -e " \
+    if (!requireNamespace('remotes', quietly=TRUE)) { \
+      install.packages('remotes', repos='https://cloud.r-project.org/') \
+    } \
+    message('>>> Installing INLA and dependencies...') \
+    tryCatch({ \
+        remotes::install_local('/tmp/INLA.tar.gz', \
+                               dependencies=TRUE, \
+                               upgrade='never', \
+                               repos='https://cloud.r-project.org/') \
+    }, error = function(e) { \
+        stop(paste('Error during INLA installation:', e\$message)) \
+    }) \
+    if (!requireNamespace('INLA', quietly=TRUE)) { \
+        stop('INLA not loadable after local install') \
+    }"
+    
+    return $?
+}
+
+if install_inla_from_repo "stable"; then
+    echo ">>> INLA installed successfully from stable."
+else
+    echo ">>> Stable failed. Falling back to testing..."
+    if install_inla_from_repo "testing"; then
+        echo ">>> INLA installed successfully from testing."
+    else
+        echo "ERROR: Failed to install INLA from any source."
+        exit 1
+    fi
+fi
 
 # --- Clone target repo and install remaining dependencies ---
 echo ">>> Cloning target repository"
