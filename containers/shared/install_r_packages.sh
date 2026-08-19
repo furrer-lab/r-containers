@@ -93,7 +93,7 @@ message(">>> Installing INLA and dependencies...")
 tryCatch({
     remotes::install_local(
         "/tmp/INLA.tar.gz",
-        dependencies = TRUE,
+        dependencies = NA,
         upgrade = "never",
         repos = "https://cloud.r-project.org/"
     )
