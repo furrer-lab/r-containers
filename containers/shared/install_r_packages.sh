@@ -83,23 +83,27 @@ install_inla_from_repo() {
     
     echo ">>> Handing local tarball to R for installation..."
     
-    # 3. Install the local tarball using R
-    R -e " \
-    if (!requireNamespace('remotes', quietly=TRUE)) { \
-      install.packages('remotes', repos='https://cloud.r-project.org/') \
-    } \
-    message('>>> Installing INLA and dependencies...') \
-    tryCatch({ \
-        remotes::install_local('/tmp/INLA.tar.gz', \
-                               dependencies=TRUE, \
-                               upgrade='never', \
-                               repos='https://cloud.r-project.org/') \
-    }, error = function(e) { \
-        stop(paste('Error during INLA installation:', e\$message)) \
-    }) \
-    if (!requireNamespace('INLA', quietly=TRUE)) { \
-        stop('INLA not loadable after local install') \
-    }"
+    # 3. Install the local tarball using R. Use a heredoc instead of R -e:
+    # shell processing of escaped newlines can concatenate R expressions.
+    Rscript --vanilla - <<'RSCRIPT'
+if (!requireNamespace("remotes", quietly = TRUE)) {
+    install.packages("remotes", repos = "https://cloud.r-project.org/")
+}
+message(">>> Installing INLA and dependencies...")
+tryCatch({
+    remotes::install_local(
+        "/tmp/INLA.tar.gz",
+        dependencies = TRUE,
+        upgrade = "never",
+        repos = "https://cloud.r-project.org/"
+    )
+}, error = function(e) {
+    stop(paste("Error during INLA installation:", e$message))
+})
+if (!requireNamespace("INLA", quietly = TRUE)) {
+    stop("INLA not loadable after local install")
+}
+RSCRIPT
     
     return $?
 }
