@@ -95,6 +95,7 @@ tryCatch({
         "/tmp/INLA.tar.gz",
         dependencies = NA,
         upgrade = "never",
+        build = FALSE,
         repos = "https://cloud.r-project.org/"
     )
 }, error = function(e) {
