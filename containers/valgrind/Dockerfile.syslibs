@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright 2026 Jonas I. Liechti <j-i-l@t4d.ch>
+
+ARG R_VERSION=devel
+FROM rhub/valgrind
+LABEL org.opencontainers.image.licenses="GPL-3.0-only" \
+      org.opencontainers.image.authors="Jonas I. Liechti <j-i-l@t4d.ch>"
+ARG DRMEMORY
+RUN dnf -y upgrade && dnf -y install \
+  cmake git openssh-clients pkgconf openssl-devel libcurl-devel libuv-devel \
+  fontconfig-devel harfbuzz-devel fribidi-devel freetype-devel \
+  libpng-devel libtiff-devel libjpeg-devel libwebp-devel libxml2-devel \
+  gsl-devel sqlite-devel NLopt-devel lapack\* blas\* atlas\* flexiblas-devel \
+  abseil-cpp-devel udunits2-devel gdal-devel geos-devel proj-devel \
+  ImageMagick-c++-devel pandoc libunwind
+ADD https://github.com/DynamoRIO/drmemory/releases/download/release_$DRMEMORY/DrMemory-Linux-$DRMEMORY.tar.gz /tmp/drmemory.tar.gz
+RUN mkdir -p /opt/DrMemory && tar -xf /tmp/drmemory.tar.gz --directory /opt/DrMemory && rm /tmp/drmemory.tar.gz
+ENV PATH="/opt/R/devel-valgrind/bin:/opt/DrMemory/DrMemory-Linux-$DRMEMORY/bin:${PATH}"
+ENV R_LIBS_USER=" "
+ENV RENV_CONFIG_AUTOLOADER_ENABLED=false
+RUN R_HOME=$(R RHOME) && echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' >> ${R_HOME}/etc/Rprofile.site
