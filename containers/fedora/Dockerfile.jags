@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright 2026 Jonas I. Liechti <j-i-l@t4d.ch>
+
+ARG BASE_IMAGE
+ARG JAGS
+FROM ${BASE_IMAGE}
+
+LABEL org.opencontainers.image.licenses="GPL-3.0-only" \
+      org.opencontainers.image.authors="Jonas I. Liechti <j-i-l@t4d.ch>"
+
+ARG COMPILER
+ARG JAGS
+ADD https://sourceforge.net/projects/mcmc-jags/files/JAGS/4.x/Source/$JAGS.tar.gz/download /tmp/jags.tar.gz
+WORKDIR /tmp/
+RUN tar -xf jags.tar.gz && rm jags.tar.gz
+WORKDIR /tmp/$JAGS
+RUN if [ "$COMPILER" = "clang" ]; then \
+      RCC=/usr/bin/clang RCXX="/usr/bin/clang++ -std=gnu++17 -stdlib=libc++"; \
+    else RCC=/usr/bin/gcc RCXX="/usr/bin/g++"; fi \
+    && LD="llvm-ld" CC="${RCC}" CXX="${RCXX}" ./configure \
+      --with-blas="-L/opt/R-devel/lib64/R/lib -lRblas" \
+      --with-lapack="-L/opt/R-devel/lib64/R/lib -lRlapack" \
+      --libdir=/usr/local/lib64 \
+    && make && make install
+ENV LD_LIBRARY_PATH="/usr/local/lib64:${LD_LIBRARY_PATH}"
+RUN R -e "install.packages('rjags', lib=.Library, configure.args='--enable-rpath'); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"

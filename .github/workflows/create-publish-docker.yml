@@ -42,10 +42,11 @@ jobs:
   # ---------------------------------------------------------------------------
   # Layered build for debian variants.
   #
-  # Each debian image is composed of 5 cached layers, pushed independently to
-  # the registry so subsequent builds can short-circuit unchanged layers:
+  # Debian component and stacked images are pushed independently to the
+  # registry so subsequent builds can short-circuit unchanged layers:
   #
-  #   syslibs -> jags -> inla -> bioc -> abn (final)
+  #   syslibs -> {jags, inla, bioc}
+  #   jags -> jags-inla -> jags-inla-bioc -> abn
   #
   # Image naming: ${REGISTRY}/${repo}/<label>/<layer>:<tag>
   # ---------------------------------------------------------------------------
@@ -149,7 +150,7 @@ jobs:
 
   build-inla:
     runs-on: ubuntu-latest
-    needs: [ increment-tag, build-jags ]
+    needs: [ increment-tag, build-syslibs ]
     env:
       CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
       BUILDKIT_PROGRESS: plain
@@ -189,11 +190,11 @@ jobs:
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla:latest
           cache-to: type=inline
           build-args: |
-            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags:${{ env.CUSTOM_TAG }}
+            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs:${{ env.CUSTOM_TAG }}
 
   build-bioc:
     runs-on: ubuntu-latest
-    needs: [ increment-tag, build-inla ]
+    needs: [ increment-tag, build-syslibs ]
     env:
       CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
       BUILDKIT_PROGRESS: plain
@@ -233,11 +234,99 @@ jobs:
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc:latest
           cache-to: type=inline
           build-args: |
-            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla:${{ env.CUSTOM_TAG }}
+            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs:${{ env.CUSTOM_TAG }}
+
+  build-jags-inla:
+    runs-on: ubuntu-latest
+    needs: [ increment-tag, build-jags, build-inla, build-bioc ]
+    env:
+      CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
+      BUILDKIT_PROGRESS: plain
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: debian-clang-devel
+          - label: debian-gcc-devel
+          - label: debian-gcc-release
+          - label: debian-gcc-patched
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla
+          tags: |
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/debian/Dockerfile.jags-inla
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla:latest
+          cache-to: type=inline
+          build-args: |
+            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags:${{ env.CUSTOM_TAG }}
+
+  build-jags-inla-bioc:
+    runs-on: ubuntu-latest
+    needs: [ increment-tag, build-jags-inla ]
+    env:
+      CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
+      BUILDKIT_PROGRESS: plain
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: debian-clang-devel
+          - label: debian-gcc-devel
+          - label: debian-gcc-release
+          - label: debian-gcc-patched
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla-bioc
+          tags: |
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/debian/Dockerfile.jags-inla-bioc
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla-bioc:latest
+          cache-to: type=inline
+          build-args: |
+            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla:${{ env.CUSTOM_TAG }}
 
   build-final-debian:
     runs-on: ubuntu-latest
-    needs: [ increment-tag, build-bioc ]
+    needs: [ increment-tag, build-jags-inla-bioc ]
     env:
       CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
       BUILDKIT_PROGRESS: plain
@@ -281,17 +370,16 @@ jobs:
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:latest
           cache-to: type=inline
           build-args: |
-            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc:${{ env.CUSTOM_TAG }}
+            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla-bioc:${{ env.CUSTOM_TAG }}
             COMPILER=${{ matrix.compiler }}
             PACKAGE_PATH=${{ env.PACKAGE_PATH }}
             REPO_PATH=${{ env.REPO_PATH }}
 
   # ---------------------------------------------------------------------------
-  # Single-Dockerfile build for fedora + valgrind variants (unchanged from
-  # the original create-publish-docker workflow, just filtered to non-debian).
+  # Component and stacked build for Fedora and Fedora-based Valgrind variants.
   # ---------------------------------------------------------------------------
 
-  build-final-other:
+  build-other-syslibs:
     runs-on: ubuntu-latest
     needs: increment-tag
     env:
@@ -305,23 +393,14 @@ jobs:
       matrix:
         include:
           - rhub-image: gcc15
-            dockerfile: fedora
             label: fedora-gcc-devel
-            compiler: gcc
             r-version: devel
-            allow-failure: true
           - rhub-image: gcc16
-            dockerfile: fedora
             label: fedora-gcc16-devel
-            compiler: gcc
             r-version: devel
-            allow-failure: true
           - rhub-image: valgrind
-            dockerfile: valgrind
-            label: valgrind-gcc-devel
-            compiler: gcc
+            label: fedora-valgrind-gcc-devel
             r-version: devel
-            allow-failure: false
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -333,7 +412,7 @@ jobs:
       - id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
@@ -341,23 +420,246 @@ jobs:
         continue-on-error: ${{ matrix.allow-failure }}
         with:
           context: ./containers/
-          file: ./containers/${{ matrix.dockerfile }}/Dockerfile
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.syslibs
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:latest
           cache-to: type=inline
           build-args: |
-            COMPILER=${{ matrix.compiler }}
             R_VERSION=${{ matrix.r-version }}
             RHUB_IMAGE=${{ matrix.rhub-image }}
-            PACKAGE_PATH=${{ env.PACKAGE_PATH }}
-            REPO_PATH=${{ env.REPO_PATH }}
-            JAGS=${{ env.JAGS }}
             DRMEMORY=${{ env.DRMEMORY }}
           # For private repo cloned via ssh
           # secret-files: |
           #   key=./ssh_key
+
+  build-other-jags:
+    runs-on: ubuntu-latest
+    needs: [ increment-tag, build-other-syslibs ]
+    env:
+      CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}"
+      BUILDKIT_PROGRESS: plain
+    permissions: { contents: read, packages: write }
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: fedora-gcc-devel
+            rhub-image: gcc15
+            compiler: gcc
+          - label: fedora-gcc16-devel
+            rhub-image: gcc16
+            compiler: gcc
+          - label: fedora-valgrind-gcc-devel
+            rhub-image: valgrind
+            compiler: gcc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with: { registry: ${{ env.DOCKER_REGISTRY }}, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
+      - id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags
+          tags: |
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags:latest
+          cache-to: type=inline
+          build-args: |
+            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs:${{ env.CUSTOM_TAG }}
+            COMPILER=${{ matrix.compiler }}
+            JAGS=${{ env.JAGS }}
+
+  build-other-inla:
+    runs-on: ubuntu-latest
+    needs: [ increment-tag, build-other-syslibs ]
+    env: { CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}", BUILDKIT_PROGRESS: plain }
+    permissions: { contents: read, packages: write }
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: fedora-gcc-devel
+          - label: fedora-gcc16-devel
+          - label: fedora-valgrind-gcc-devel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with: { registry: ${{ env.DOCKER_REGISTRY }}, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
+      - id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla
+          tags: |
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.inla
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla:latest
+          cache-to: type=inline
+          build-args: BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs:${{ env.CUSTOM_TAG }}
+
+  build-other-bioc:
+    runs-on: ubuntu-latest
+    needs: [ increment-tag, build-other-syslibs ]
+    env: { CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}", BUILDKIT_PROGRESS: plain }
+    permissions: { contents: read, packages: write }
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: fedora-gcc-devel
+          - label: fedora-gcc16-devel
+          - label: fedora-valgrind-gcc-devel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with: { registry: ${{ env.DOCKER_REGISTRY }}, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
+      - id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc
+          tags: |
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.bioc
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc:latest
+          cache-to: type=inline
+          build-args: BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs:${{ env.CUSTOM_TAG }}
+
+  build-other-jags-inla:
+    runs-on: ubuntu-latest
+    needs: [ increment-tag, build-other-jags, build-other-inla, build-other-bioc ]
+    env: { CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}", BUILDKIT_PROGRESS: plain }
+    permissions: { contents: read, packages: write }
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: fedora-gcc-devel
+          - label: fedora-gcc16-devel
+          - label: fedora-valgrind-gcc-devel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with: { registry: ${{ env.DOCKER_REGISTRY }}, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
+      - id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla
+          tags: |
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags-inla
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla:latest
+          cache-to: type=inline
+          build-args: BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags:${{ env.CUSTOM_TAG }}
+
+  build-other-jags-inla-bioc:
+    runs-on: ubuntu-latest
+    needs: [ increment-tag, build-other-jags-inla ]
+    env: { CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}", BUILDKIT_PROGRESS: plain }
+    permissions: { contents: read, packages: write }
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: fedora-gcc-devel
+          - label: fedora-gcc16-devel
+          - label: fedora-valgrind-gcc-devel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with: { registry: ${{ env.DOCKER_REGISTRY }}, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
+      - id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla-bioc
+          tags: |
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags-inla-bioc
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla-bioc:latest
+          cache-to: type=inline
+          build-args: BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla:${{ env.CUSTOM_TAG }}
+
+  build-final-other:
+    runs-on: ubuntu-latest
+    needs: [ increment-tag, build-other-jags-inla-bioc ]
+    env: { CUSTOM_TAG: "${{ needs.increment-tag.outputs.VERSION }}", BUILDKIT_PROGRESS: plain }
+    permissions: { contents: read, packages: write }
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: fedora-gcc-devel
+            compiler: gcc
+          - label: fedora-gcc16-devel
+            compiler: gcc
+          - label: fedora-valgrind-gcc-devel
+            compiler: gcc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with: { registry: ${{ env.DOCKER_REGISTRY }}, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
+      - id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn
+          tags: |
+            type=raw,value=${{ env.CUSTOM_TAG }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.abn
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:latest
+          cache-to: type=inline
+          build-args: |
+            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla-bioc:${{ env.CUSTOM_TAG }}
+            PACKAGE_PATH=${{ env.PACKAGE_PATH }}
+            REPO_PATH=${{ env.REPO_PATH }}
 
   check-images:
     # Determine which container images were successfully pushed by the build jobs.
@@ -380,7 +682,7 @@ jobs:
       - name: Check which images exist
         id: set-matrix
         run: |
-          labels=("debian-clang-devel" "debian-gcc-devel" "debian-gcc-release" "debian-gcc-patched" "fedora-gcc-devel" "fedora-gcc16-devel" "valgrind-gcc-devel")
+           labels=("debian-clang-devel" "debian-gcc-devel" "debian-gcc-release" "debian-gcc-patched" "fedora-gcc-devel" "fedora-gcc16-devel" "fedora-valgrind-gcc-devel")
           available="[]"
           for label in "${labels[@]}"; do
             image="${REGISTRY}/${REPO}/${label}/abn:${TAG}"

@@ -1,10 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # SPDX-FileCopyrightText: Copyright 2026 Jonas I. Liechti <j-i-l@t4d.ch>
 
-# Clean Bioconductor image: common system libraries plus Bioconductor/Rgraphviz,
-# without JAGS or INLA.
-#
-# This image is a reusable sibling of the jags and inla images.
+# Stacked JAGS + INLA + Bioconductor image used by the final Debian build.
 
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
