@@ -59,13 +59,33 @@ All containers are built on top of [R-hub base images](https://r-hub.github.io/c
 | `debian-gcc-patched` | `rhub/ubuntu-next` | Ubuntu 22.04 | gcc | patched | system package | |
 | `fedora-gcc-devel` | `rhub/gcc15` | Fedora | gcc 15 | devel | built from source | allow-failure |
 | `fedora-gcc16-devel` | `rhub/gcc16` | Fedora | gcc 16 | devel | built from source | allow-failure |
-| `valgrind-gcc-devel` | `rhub/valgrind` | Fedora | gcc | devel | built from source | includes valgrind + DrMemory |
+| `fedora-valgrind-gcc-devel` | `rhub/valgrind` | Fedora-based Valgrind environment | gcc | devel | built from source | includes Valgrind + DrMemory |
 
 Images are available at:
 
 ```
 ghcr.io/furrer-lab/r-containers/<container>/abn:<tag>
 ```
+
+### Published image matrix
+
+The links below point to the corresponding GitHub Container Registry package.
+All published images receive both the release tag and `latest`.
+
+| Variant | `syslibs` | `jags` | `inla` | `bioc` | `jags-inla` | `jags-inla-bioc` | `abn` |
+|---|---|---|---|---|---|---|---|
+| `debian-clang-devel` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Fabn) |
+| `debian-gcc-devel` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Fabn) |
+| `debian-gcc-release` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Fabn) |
+| `debian-gcc-patched` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Fabn) |
+| `fedora-gcc-devel` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Fabn) |
+| `fedora-gcc16-devel` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Fabn) |
+| `fedora-valgrind-gcc-devel` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Fabn) |
+
+For efficiency, images within each variant are based on one another where
+possible, allowing Docker and the registry to reuse unchanged layers. The
+component images branch from `syslibs`; the stacked images extend the JAGS
+lineage through `jags-inla`, `jags-inla-bioc`, and finally `abn`.
 
 ## Pre-installed R packages
 
@@ -93,7 +113,7 @@ Containers are rebuilt automatically on two triggers:
 The pipeline has four stages:
 
 1. **`increment-tag`** — generates a [calver](https://calver.org/) version tag (`YYYY.MM.N`, e.g., `2025.4.1`)
-2. **`build-and-push`** — builds all 7 container variants in parallel and pushes to GHCR
+2. **`build-and-push`** — builds all container variants and Debian component/stacked images, then pushes them to GHCR
 3. **`check-images`** — probes the registry to determine which images were successfully pushed (handles `allow-failure` containers gracefully)
 4. **`container-integrity-and-config`** — pulls each available image, runs it as `--user 1001`, generates `sessionInfo()` and installed-package reports, and commits the results to the `info/` directory
 
@@ -116,10 +136,16 @@ r-containers/
 │   ├── create-publish-docker.yml   # Main CI: build, push, and verify containers
 │   └── onlabel_check_build.yml     # PR check: build containers on label trigger
 ├── containers/
-│   ├── debian/Dockerfile           # Debian/Ubuntu containers (apt-get, system JAGS)
-│   ├── fedora/Dockerfile           # Fedora containers (dnf, JAGS from source)
-│   ├── valgrind/Dockerfile         # Valgrind container (Fedora + valgrind + DrMemory)
-│   ├── shared/install_r_packages.sh  # Common R package installation (used by all)
+│   ├── debian/Dockerfile           # Final Debian/Ubuntu abn image
+│   ├── debian/Dockerfile.syslibs   # Common Debian/Ubuntu system base
+│   ├── debian/Dockerfile.jags      # Reusable JAGS/rjags image
+│   ├── debian/Dockerfile.inla      # Reusable INLA image
+│   ├── debian/Dockerfile.bioc      # Reusable Bioconductor image
+│   ├── debian/Dockerfile.jags-inla      # Stacked JAGS + INLA image
+│   └── debian/Dockerfile.jags-inla-bioc # Stacked JAGS + INLA + Bioconductor image
+│   ├── fedora/                     # Fedora component and stacked Dockerfiles
+│   ├── valgrind/                   # Fedora-based Valgrind component and stacked Dockerfiles
+│   ├── shared/                     # Shared INLA, Bioconductor, and tooling installers
 │   └── test/Dockerfile             # Minimal test Dockerfile
 ├── src/
 │   └── release_info.tpl            # knitr template for container info reports
@@ -131,17 +157,40 @@ r-containers/
 
 ### Dockerfile architecture
 
-Each Dockerfile follows the same pattern:
+Each variant publishes reusable component images and a stacked build chain:
 
-1. Start `FROM rhub/<base-image>` (parameterised via `RHUB_IMAGE` build arg)
-2. Install OS-level system libraries (compilers, dev headers, JAGS dependencies)
-3. Set `ENV R_LIBS_USER=" "` to disable the user library fallback
-4. Set `ENV RENV_CONFIG_AUTOLOADER_ENABLED=false` to prevent renv auto-activation
-5. Configure a CRAN mirror in the R profile
-6. Install JAGS — via `apt-get` on debian, built from source on fedora/valgrind
-7. Install container-specific R packages (rjags, glmmTMB)
-8. Run `shared/install_r_packages.sh` for all common R packages
-9. Verify all key packages are loadable (build fails if any are missing)
+```text
+syslibs
+├── jags
+├── inla
+└── bioc
+
+jags -> jags-inla -> jags-inla-bioc -> abn
+```
+
+The published image names are:
+
+```text
+<variant>/syslibs:<tag>
+<variant>/jags:<tag>
+<variant>/inla:<tag>
+<variant>/bioc:<tag>
+<variant>/jags-inla:<tag>
+<variant>/jags-inla-bioc:<tag>
+<variant>/abn:<tag>
+```
+
+The `jags`, `inla`, and `bioc` images are independent reusable components based
+on `syslibs`. The `jags-inla` and `jags-inla-bioc` images are stacked build
+bases containing all components required by the final `abn` image. For
+efficiency, these images are based on one another so Docker and the registry
+can reuse unchanged layers.
+
+All production images are published with both the version tag and `latest`.
+
+Each Dockerfile configures `R_LIBS_USER=" "` to disable the user library
+fallback, prevents renv auto-activation, configures a CRAN mirror, and installs
+its layer-specific packages into `.Library`.
 
 ### Why `R_LIBS_USER=" "` and `lib=.Library`?
 
