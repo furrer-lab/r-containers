@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright 2026 Jonas I. Liechti <j-i-l@t4d.ch>
+
 # Install INLA into .Library, with stable -> testing fallback.
 #
 # The official INLA server (inla.r-inla-download.org) can be intermittently

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright 2026 Jonas I. Liechti <j-i-l@t4d.ch>
+
 # Layer 5/5 (final): R development tooling, glmmTMB workaround, target repo
 # clone, and dependency scan.
 #
@@ -7,6 +10,9 @@
 
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
+
+LABEL org.opencontainers.image.licenses="GPL-3.0-only" \
+      org.opencontainers.image.authors="Jonas I. Liechti <j-i-l@t4d.ch>"
 
 # Build stage: ARGs need to be redeclared
 ARG COMPILER

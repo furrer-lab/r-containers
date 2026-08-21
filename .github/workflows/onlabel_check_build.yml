@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright 2026 Jonas I. Liechti <j-i-l@t4d.ch>
+
 # Workflow triggered when labeling a pull request with `build::check`
 # This action is adapted from https://github.com/t4d-gmbh/stubbed_versioning
 name: Check Container Builds

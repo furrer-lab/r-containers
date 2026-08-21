@@ -1,4 +1,7 @@
 #!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-FileCopyrightText: Copyright 2026 Jonas I. Liechti <j-i-l@t4d.ch>
+
 # Install R development tooling, the glmmTMB workaround, then clone the
 # target repository and install any remaining dependencies.
 #
