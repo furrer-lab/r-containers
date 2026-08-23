@@ -47,7 +47,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./debian/Dockerfile.syslibs
+          file: ./containers/debian/Dockerfile.syslibs
           push: true
           tags: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/debian-gcc-release/syslibs:${{ env.CUSTOM_TAG }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/debian-gcc-release/syslibs:latest
@@ -75,7 +75,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./debian/Dockerfile.jags
+          file: ./containers/debian/Dockerfile.jags
           push: true
           tags: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/debian-gcc-release/jags:${{ env.CUSTOM_TAG }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/debian-gcc-release/jags:latest
@@ -102,7 +102,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./debian/Dockerfile.inla
+          file: ./containers/debian/Dockerfile.inla
           push: true
           tags: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/debian-gcc-release/inla:${{ env.CUSTOM_TAG }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/debian-gcc-release/inla:latest
@@ -129,7 +129,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./debian/Dockerfile.bioc
+          file: ./containers/debian/Dockerfile.bioc
           push: true
           tags: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/debian-gcc-release/bioc:${{ env.CUSTOM_TAG }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/debian-gcc-release/bioc:latest
@@ -156,7 +156,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./debian/Dockerfile.jags-inla
+          file: ./containers/debian/Dockerfile.jags-inla
           push: true
           tags: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/debian-gcc-release/jags-inla:${{ env.CUSTOM_TAG }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/debian-gcc-release/jags-inla:latest
@@ -183,7 +183,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./debian/Dockerfile.jags-inla-bioc
+          file: ./containers/debian/Dockerfile.jags-inla-bioc
           push: true
           tags: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/debian-gcc-release/jags-inla-bioc:${{ env.CUSTOM_TAG }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/debian-gcc-release/jags-inla-bioc:latest
@@ -239,7 +239,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./${{ matrix.dockerfile }}/Dockerfile.abn
+          file: ./containers/${{ matrix.dockerfile }}/Dockerfile.abn
           push: true
           tags: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:${{ env.CUSTOM_TAG }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:latest

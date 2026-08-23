@@ -94,7 +94,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./debian/Dockerfile.syslibs
+          file: ./containers/debian/Dockerfile.syslibs
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -139,7 +139,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./debian/Dockerfile.jags
+          file: ./containers/debian/Dockerfile.jags
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -183,7 +183,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./debian/Dockerfile.inla
+          file: ./containers/debian/Dockerfile.inla
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -227,7 +227,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./debian/Dockerfile.bioc
+          file: ./containers/debian/Dockerfile.bioc
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -271,7 +271,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./debian/Dockerfile.jags-inla
+          file: ./containers/debian/Dockerfile.jags-inla
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -315,7 +315,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./debian/Dockerfile.jags-inla-bioc
+          file: ./containers/debian/Dockerfile.jags-inla-bioc
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -363,7 +363,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./debian/Dockerfile
+          file: ./containers/debian/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -420,7 +420,7 @@ jobs:
         continue-on-error: ${{ matrix.allow-failure }}
         with:
           context: ./containers/
-          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.syslibs
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.syslibs
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -472,7 +472,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -513,7 +513,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.inla
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.inla
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -551,7 +551,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.bioc
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.bioc
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -589,7 +589,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags-inla
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags-inla
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -627,7 +627,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags-inla-bioc
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags-inla-bioc
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -668,7 +668,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.abn
+          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.abn
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
