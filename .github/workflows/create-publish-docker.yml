@@ -67,15 +67,9 @@ jobs:
           - rhub-image: ubuntu-clang
             label: debian-clang-devel
             r-version: devel
-          - rhub-image: ubuntu-gcc12
-            label: debian-gcc-devel
-            r-version: devel
           - rhub-image: ubuntu-release
             label: debian-gcc-release
             r-version: release
-          - rhub-image: ubuntu-next
-            label: debian-gcc-patched
-            r-version: patched
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -118,9 +112,7 @@ jobs:
       matrix:
         include:
           - label: debian-clang-devel
-          - label: debian-gcc-devel
           - label: debian-gcc-release
-          - label: debian-gcc-patched
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -162,9 +154,7 @@ jobs:
       matrix:
         include:
           - label: debian-clang-devel
-          - label: debian-gcc-devel
           - label: debian-gcc-release
-          - label: debian-gcc-patched
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -206,9 +196,7 @@ jobs:
       matrix:
         include:
           - label: debian-clang-devel
-          - label: debian-gcc-devel
           - label: debian-gcc-release
-          - label: debian-gcc-patched
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -250,9 +238,7 @@ jobs:
       matrix:
         include:
           - label: debian-clang-devel
-          - label: debian-gcc-devel
           - label: debian-gcc-release
-          - label: debian-gcc-patched
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -294,9 +280,7 @@ jobs:
       matrix:
         include:
           - label: debian-clang-devel
-          - label: debian-gcc-devel
           - label: debian-gcc-release
-          - label: debian-gcc-patched
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -339,11 +323,9 @@ jobs:
         include:
           - label: debian-clang-devel
             compiler: clang
-          - label: debian-gcc-devel
             compiler: gcc
           - label: debian-gcc-release
             compiler: gcc
-          - label: debian-gcc-patched
             compiler: gcc
     steps:
       - uses: actions/checkout@v4
@@ -395,9 +377,6 @@ jobs:
           - rhub-image: gcc15
             label: fedora-gcc-devel
             r-version: devel
-          - rhub-image: gcc16
-            label: fedora-gcc16-devel
-            r-version: devel
           - rhub-image: valgrind
             label: fedora-valgrind-gcc-devel
             r-version: devel
@@ -448,9 +427,6 @@ jobs:
           - label: fedora-gcc-devel
             rhub-image: gcc15
             compiler: gcc
-          - label: fedora-gcc16-devel
-            rhub-image: gcc16
-            compiler: gcc
           - label: fedora-valgrind-gcc-devel
             rhub-image: valgrind
             compiler: gcc
@@ -493,7 +469,6 @@ jobs:
       matrix:
         include:
           - label: fedora-gcc-devel
-          - label: fedora-gcc16-devel
           - label: fedora-valgrind-gcc-devel
     steps:
       - uses: actions/checkout@v4
@@ -531,7 +506,6 @@ jobs:
       matrix:
         include:
           - label: fedora-gcc-devel
-          - label: fedora-gcc16-devel
           - label: fedora-valgrind-gcc-devel
     steps:
       - uses: actions/checkout@v4
@@ -569,7 +543,6 @@ jobs:
       matrix:
         include:
           - label: fedora-gcc-devel
-          - label: fedora-gcc16-devel
           - label: fedora-valgrind-gcc-devel
     steps:
       - uses: actions/checkout@v4
@@ -607,7 +580,6 @@ jobs:
       matrix:
         include:
           - label: fedora-gcc-devel
-          - label: fedora-gcc16-devel
           - label: fedora-valgrind-gcc-devel
     steps:
       - uses: actions/checkout@v4
@@ -646,7 +618,6 @@ jobs:
         include:
           - label: fedora-gcc-devel
             compiler: gcc
-          - label: fedora-gcc16-devel
             compiler: gcc
           - label: fedora-valgrind-gcc-devel
             compiler: gcc
@@ -700,7 +671,7 @@ jobs:
       - name: Check which images exist
         id: set-matrix
         run: |
-          labels=("debian-clang-devel" "debian-gcc-devel" "debian-gcc-release" "debian-gcc-patched" "fedora-gcc-devel" "fedora-gcc16-devel" "fedora-valgrind-gcc-devel")
+          labels=("debian-clang-devel" "debian-gcc-release" "fedora-gcc-devel" "fedora-valgrind-gcc-devel")
           available="[]"
           for label in "${labels[@]}"; do
             image="${REGISTRY}/${REPO}/${label}/abn:${TAG}"
