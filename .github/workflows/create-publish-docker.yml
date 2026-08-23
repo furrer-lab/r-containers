@@ -94,7 +94,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/debian/Dockerfile.syslibs
+          file: ./debian/Dockerfile.syslibs
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -139,7 +139,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/debian/Dockerfile.jags
+          file: ./debian/Dockerfile.jags
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -183,7 +183,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/debian/Dockerfile.inla
+          file: ./debian/Dockerfile.inla
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -227,7 +227,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/debian/Dockerfile.bioc
+          file: ./debian/Dockerfile.bioc
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -271,7 +271,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/debian/Dockerfile.jags-inla
+          file: ./debian/Dockerfile.jags-inla
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -315,7 +315,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/debian/Dockerfile.jags-inla-bioc
+          file: ./debian/Dockerfile.jags-inla-bioc
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -363,7 +363,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/debian/Dockerfile
+          file: ./debian/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -420,7 +420,7 @@ jobs:
         continue-on-error: ${{ matrix.allow-failure }}
         with:
           context: ./containers/
-          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.syslibs
+          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.syslibs
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -458,7 +458,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with: { registry: ${{ env.DOCKER_REGISTRY }}, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
@@ -469,7 +472,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags
+          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -496,7 +499,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with: { registry: ${{ env.DOCKER_REGISTRY }}, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
@@ -507,7 +513,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.inla
+          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.inla
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -531,7 +537,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with: { registry: ${{ env.DOCKER_REGISTRY }}, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
@@ -542,7 +551,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.bioc
+          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.bioc
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -566,7 +575,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with: { registry: ${{ env.DOCKER_REGISTRY }}, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
@@ -577,7 +589,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags-inla
+          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags-inla
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -601,7 +613,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with: { registry: ${{ env.DOCKER_REGISTRY }}, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
@@ -612,7 +627,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags-inla-bioc
+          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags-inla-bioc
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -639,7 +654,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with: { registry: ${{ env.DOCKER_REGISTRY }}, username: ${{ github.actor }}, password: ${{ secrets.GITHUB_TOKEN }} }
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
@@ -650,7 +668,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.abn
+          file: ./${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.abn
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -682,7 +700,7 @@ jobs:
       - name: Check which images exist
         id: set-matrix
         run: |
-           labels=("debian-clang-devel" "debian-gcc-devel" "debian-gcc-release" "debian-gcc-patched" "fedora-gcc-devel" "fedora-gcc16-devel" "fedora-valgrind-gcc-devel")
+          labels=("debian-clang-devel" "debian-gcc-devel" "debian-gcc-release" "debian-gcc-patched" "fedora-gcc-devel" "fedora-gcc16-devel" "fedora-valgrind-gcc-devel")
           available="[]"
           for label in "${labels[@]}"; do
             image="${REGISTRY}/${REPO}/${label}/abn:${TAG}"
