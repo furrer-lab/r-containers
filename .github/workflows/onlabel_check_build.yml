@@ -14,7 +14,6 @@ env:
   LABEL_SUCCESS: 'build::passed'
   LABEL_FAILURE: 'build::failed'
 
-  DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}  # where to register the image
   REPO_PATH: ${{ vars.REPO_PATH }}
   # REPO_PATH: github.com:furrer-lab/abn.git  # for private repo cloned via ssh
   # Set the path to the package where the DESCRIPTION file can be found
@@ -22,13 +21,10 @@ env:
   JAGS: ${{ vars.JAGS }}
   # this if for the valgrind container only
   DRMEMORY: ${{ vars.DRMEMORY }}
-  CHGLOG_RELEASE: ${{ vars.CHGLOG_RELEASE }}
-  CHGLOG_PATH: ${{ vars.CHGLOG_PATH }}
-  # Tag used for all images built by this workflow run.
+  # Namespaces local images within this workflow run.
   CUSTOM_TAG: "onlabel-check-build-${{ github.run_number }}"
 
 jobs:
-
 
   # Each matrix runner builds the complete stack locally. No image is pushed
   # and no intermediate image is shared through the registry.
@@ -84,7 +80,6 @@ jobs:
             compiler: gcc
             rhub_image: valgrind
             r_version: devel
-            drmemory: ${{ env.DRMEMORY }}
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -99,7 +94,7 @@ jobs:
           build-args: |
             R_VERSION=${{ matrix.r_version }}
             RHUB_IMAGE=${{ matrix.rhub_image }}
-            DRMEMORY=${{ matrix.drmemory }}
+            DRMEMORY=${{ env.DRMEMORY }}
 
       - name: Build JAGS
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
@@ -206,7 +201,6 @@ jobs:
           fi
         shell: bash
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           EVENT: ${{ github.event.number }}  # This is either the issue or pr
 
   build_check_passed:
@@ -214,12 +208,8 @@ jobs:
     needs:
       - build
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      OWNER: ${{ github.repository_owner }}
-      REPO: ${{ github.event.repository.name }}
     steps:
-      - name: Assert that either checks passed or the label is present
+      - name: Assert that all builds passed
         run: |
           build_result="${{ needs.build.result }}"
           if [[ "$build_result" == 'success' ]]; then
