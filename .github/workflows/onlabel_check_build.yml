@@ -14,7 +14,6 @@ env:
   LABEL_SUCCESS: 'build::passed'
   LABEL_FAILURE: 'build::failed'
 
-  DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}  # where to register the image
   REPO_PATH: ${{ vars.REPO_PATH }}
   # REPO_PATH: github.com:furrer-lab/abn.git  # for private repo cloned via ssh
   # Set the path to the package where the DESCRIPTION file can be found
@@ -22,418 +21,160 @@ env:
   JAGS: ${{ vars.JAGS }}
   # this if for the valgrind container only
   DRMEMORY: ${{ vars.DRMEMORY }}
-  CHGLOG_RELEASE: ${{ vars.CHGLOG_RELEASE }}
-  CHGLOG_PATH: ${{ vars.CHGLOG_PATH }}
-  # Tag used for all images built by this workflow run.
+  # Namespaces local images within this workflow run.
   CUSTOM_TAG: "onlabel-check-build-${{ github.run_number }}"
 
 jobs:
 
-  # ---------------------------------------------------------------------------
-  # Layered build for debian variants.
-  # See create-publish-docker.yml for the full architectural rationale.
-  # PR builds pull cache from the production `latest` tag of each layer.
-  # ---------------------------------------------------------------------------
-
-  build-syslibs:
+  # Each matrix runner builds the complete stack locally. No image is pushed
+  # and no intermediate image is shared through the registry.
+  build:
     runs-on: ubuntu-latest
     env:
       BUILDKIT_PROGRESS: plain
     permissions:
       contents: read
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - rhub-image: ubuntu-clang
-            label: debian-clang-devel
-            r-version: devel
-          - rhub-image: ubuntu-gcc12
-            label: debian-gcc-devel
-            r-version: devel
-          - rhub-image: ubuntu-release
-            label: debian-gcc-release
-            r-version: release
-          - rhub-image: ubuntu-next
-            label: debian-gcc-patched
-            r-version: patched
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with:
-          registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs
-          tags: |
-            type=raw,value=${{ env.CUSTOM_TAG }}
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        with:
-          context: ./containers/
-          file: ./containers/debian/Dockerfile.syslibs
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs:latest
-          cache-to: type=inline
-          build-args: |
-            R_VERSION=${{ matrix.r-version }}
-            RHUB_IMAGE=${{ matrix.rhub-image }}
-
-  build-jags:
-    runs-on: ubuntu-latest
-    needs: build-syslibs
-    env:
-      BUILDKIT_PROGRESS: plain
-    permissions:
-      contents: read
-      packages: write
     strategy:
       fail-fast: false
       matrix:
         include:
           - label: debian-clang-devel
-          - label: debian-gcc-devel
-          - label: debian-gcc-release
-          - label: debian-gcc-patched
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with:
-          registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags
-          tags: |
-            type=raw,value=${{ env.CUSTOM_TAG }}
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        with:
-          context: ./containers/
-          file: ./containers/debian/Dockerfile.jags
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags:latest
-          cache-to: type=inline
-          build-args: |
-            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs:${{ env.CUSTOM_TAG }}
-
-  build-inla:
-    runs-on: ubuntu-latest
-    needs: build-jags
-    env:
-      BUILDKIT_PROGRESS: plain
-    permissions:
-      contents: read
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - label: debian-clang-devel
-          - label: debian-gcc-devel
-          - label: debian-gcc-release
-          - label: debian-gcc-patched
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with:
-          registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla
-          tags: |
-            type=raw,value=${{ env.CUSTOM_TAG }}
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        with:
-          context: ./containers/
-          file: ./containers/debian/Dockerfile.inla
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla:latest
-          cache-to: type=inline
-          build-args: |
-            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags:${{ env.CUSTOM_TAG }}
-
-  build-bioc:
-    runs-on: ubuntu-latest
-    needs: build-inla
-    env:
-      BUILDKIT_PROGRESS: plain
-    permissions:
-      contents: read
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - label: debian-clang-devel
-          - label: debian-gcc-devel
-          - label: debian-gcc-release
-          - label: debian-gcc-patched
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with:
-          registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc
-          tags: |
-            type=raw,value=${{ env.CUSTOM_TAG }}
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        with:
-          context: ./containers/
-          file: ./containers/debian/Dockerfile.bioc
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc:latest
-          cache-to: type=inline
-          build-args: |
-            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla:${{ env.CUSTOM_TAG }}
-
-  build-final-debian:
-    runs-on: ubuntu-latest
-    needs: build-bioc
-    env:
-      BUILDKIT_PROGRESS: plain
-    permissions:
-      contents: read
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - label: debian-clang-devel
+            dockerfile: debian
+            final_dockerfile: Dockerfile
             compiler: clang
+            rhub_image: ubuntu-clang
+            r_version: devel
           - label: debian-gcc-devel
+            dockerfile: debian
+            final_dockerfile: Dockerfile
             compiler: gcc
+            rhub_image: ubuntu-gcc12
+            r_version: devel
           - label: debian-gcc-release
+            dockerfile: debian
+            final_dockerfile: Dockerfile
             compiler: gcc
+            rhub_image: ubuntu-release
+            r_version: release
           - label: debian-gcc-patched
+            dockerfile: debian
+            final_dockerfile: Dockerfile
             compiler: gcc
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with:
-          registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn
-          tags: |
-            type=raw,value=${{ env.CUSTOM_TAG }}
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        with:
-          context: ./containers/
-          file: ./containers/debian/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:latest
-          cache-to: type=inline
-          build-args: |
-            BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc:${{ env.CUSTOM_TAG }}
-            COMPILER=${{ matrix.compiler }}
-            PACKAGE_PATH=${{ env.PACKAGE_PATH }}
-            REPO_PATH=${{ env.REPO_PATH }}
-
-  # ---------------------------------------------------------------------------
-  # Single-Dockerfile build for fedora + valgrind variants.
-  # ---------------------------------------------------------------------------
-
-  build-final-other:
-    runs-on: ubuntu-latest
-    env:
-      BUILDKIT_PROGRESS: plain
-    permissions:
-      contents: read
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - rhub-image: gcc15
+            rhub_image: ubuntu-next
+            r_version: patched
+          - label: fedora-gcc-devel
             dockerfile: fedora
-            label: fedora-gcc-devel
+            final_dockerfile: Dockerfile.abn
             compiler: gcc
-            r-version: devel
-            allow-failure: true
-          - rhub-image: gcc16
+            rhub_image: gcc15
+            r_version: devel
+          - label: fedora-gcc16-devel
             dockerfile: fedora
-            label: fedora-gcc16-devel
+            final_dockerfile: Dockerfile.abn
             compiler: gcc
-            r-version: devel
-            allow-failure: true
-          - rhub-image: valgrind
+            rhub_image: gcc16
+            r_version: devel
+          - label: fedora-valgrind-gcc-devel
             dockerfile: valgrind
-            label: valgrind-gcc-devel
+            final_dockerfile: Dockerfile.abn
             compiler: gcc
-            r-version: devel
-            allow-failure: false
+            rhub_image: valgrind
+            r_version: devel
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
-          registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn
-          tags: |
-            type=raw,value=${{ env.CUSTOM_TAG }}
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        continue-on-error: ${{ matrix.allow-failure }}
+          driver: docker
+
+      - name: Build syslibs
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/${{ matrix.dockerfile }}/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:latest
-          cache-to: type=inline
+          file: ./containers/${{ matrix.dockerfile }}/Dockerfile.syslibs
+          load: true
+          tags: local/${{ matrix.label }}/syslibs:${{ env.CUSTOM_TAG }}
           build-args: |
+            R_VERSION=${{ matrix.r_version }}
+            RHUB_IMAGE=${{ matrix.rhub_image }}
+            DRMEMORY=${{ env.DRMEMORY }}
+
+      - name: Build JAGS
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/${{ matrix.dockerfile }}/Dockerfile.jags
+          load: true
+          tags: local/${{ matrix.label }}/jags:${{ env.CUSTOM_TAG }}
+          build-args: |
+            BASE_IMAGE=local/${{ matrix.label }}/syslibs:${{ env.CUSTOM_TAG }}
             COMPILER=${{ matrix.compiler }}
-            R_VERSION=${{ matrix.r-version }}
-            RHUB_IMAGE=${{ matrix.rhub-image }}
+            JAGS=${{ env.JAGS }}
+
+      - name: Build INLA
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/${{ matrix.dockerfile }}/Dockerfile.inla
+          load: true
+          tags: local/${{ matrix.label }}/inla:${{ env.CUSTOM_TAG }}
+          build-args: BASE_IMAGE=local/${{ matrix.label }}/syslibs:${{ env.CUSTOM_TAG }}
+
+      - name: Build Bioconductor
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/${{ matrix.dockerfile }}/Dockerfile.bioc
+          load: true
+          tags: local/${{ matrix.label }}/bioc:${{ env.CUSTOM_TAG }}
+          build-args: BASE_IMAGE=local/${{ matrix.label }}/syslibs:${{ env.CUSTOM_TAG }}
+
+      - name: Build JAGS and INLA
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/${{ matrix.dockerfile }}/Dockerfile.jags-inla
+          load: true
+          tags: local/${{ matrix.label }}/jags-inla:${{ env.CUSTOM_TAG }}
+          build-args: BASE_IMAGE=local/${{ matrix.label }}/jags:${{ env.CUSTOM_TAG }}
+
+      - name: Build JAGS, INLA, and Bioconductor
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/${{ matrix.dockerfile }}/Dockerfile.jags-inla-bioc
+          load: true
+          tags: local/${{ matrix.label }}/jags-inla-bioc:${{ env.CUSTOM_TAG }}
+          build-args: BASE_IMAGE=local/${{ matrix.label }}/jags-inla:${{ env.CUSTOM_TAG }}
+
+      - name: Build ABN
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: ./containers/
+          file: ./containers/${{ matrix.dockerfile }}/${{ matrix.final_dockerfile }}
+          load: true
+          tags: local/${{ matrix.label }}/abn:${{ env.CUSTOM_TAG }}
+          build-args: |
+            BASE_IMAGE=local/${{ matrix.label }}/jags-inla-bioc:${{ env.CUSTOM_TAG }}
+            COMPILER=${{ matrix.compiler }}
             PACKAGE_PATH=${{ env.PACKAGE_PATH }}
             REPO_PATH=${{ env.REPO_PATH }}
-            JAGS=${{ env.JAGS }}
-            DRMEMORY=${{ env.DRMEMORY }}
-          # For private repo cloned via ssh
-          # secret-files: |
-          #   key=./ssh_key
 
-  check-images:
-    # Determine which container images were successfully pushed by the build jobs.
-    # This produces a dynamic matrix so that container-integrity-and-config only
-    # runs for images that actually exist in the registry.
-    if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
-    needs: [ 'build-final-debian', 'build-final-other' ]
-    permissions:
-      packages: read
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - name: Log in to the registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-        with:
-          registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check which images exist
-        id: set-matrix
+      - name: Verify final image and write configuration
         run: |
-          labels=("debian-clang-devel" "debian-gcc-devel" "debian-gcc-release" "debian-gcc-patched" "fedora-gcc-devel" "fedora-gcc16-devel" "valgrind-gcc-devel")
-          available="[]"
-          for label in "${labels[@]}"; do
-            image="${REGISTRY}/${REPO}/${label}/abn:${TAG}"
-            if docker manifest inspect "$image" > /dev/null 2>&1; then
-              echo "  [OK]   $label"
-              available=$(echo "$available" | jq -c ". + [{\"label\": \"$label\"}]")
-            else
-              echo "  [SKIP] $label (image not found)"
-            fi
-          done
-          echo "matrix={\"include\":$available}" >> $GITHUB_OUTPUT
-        env:
-          REGISTRY: ${{ env.DOCKER_REGISTRY }}
-          REPO: ${{ github.repository }}
-          TAG: "onlabel-check-build-${{ github.run_number }}"
-
-  container-integrity-and-config:
-    if: ${{ !cancelled() && needs.check-images.outputs.matrix != '' && fromJSON(needs.check-images.outputs.matrix).include[0] != null }}
-    runs-on: ubuntu-22.04
-    needs: [ 'build-final-debian', 'build-final-other', 'check-images' ]
-    permissions:
-      contents: write
-      packages: read
-    container:
-      image: ${{ vars.CONTAINER_SOURCE }}/${{ matrix.label }}/abn:onlabel-check-build-${{ github.run_number }}
-      options: --user 1001
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.check-images.outputs.matrix) }}
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: '0'
-    - name: Diagnostics - library paths and installed packages
-      run: |
-          cat("=== R.home() ===\n")
-          cat(R.home(), "\n")
-          cat("\n=== .libPaths() ===\n")
-          print(.libPaths())
-          cat("\n=== R_LIBS_USER ===\n")
-          cat(Sys.getenv("R_LIBS_USER", unset = "<unset>"), "\n")
-          cat("\n=== R_LIBS_SITE ===\n")
-          cat(Sys.getenv("R_LIBS_SITE", unset = "<unset>"), "\n")
-          cat("\n=== R_LIBS ===\n")
-          cat(Sys.getenv("R_LIBS", unset = "<unset>"), "\n")
-          cat("\n=== which R / Rscript ===\n")
-          system("which R")
-          system("which Rscript")
-          cat("\n=== /opt/ contents ===\n")
-          print(list.files("/opt/", recursive = FALSE))
-          cat("\n=== All installed packages ===\n")
-          print(installed.packages()[, c("Package", "LibPath", "Version")])
-          cat("\n=== devtools check ===\n")
-          tryCatch(
-            cat("devtools found at:", find.package("devtools"), "\n"),
-            error = function(e) cat("devtools NOT found:", conditionMessage(e), "\n")
-          )
-      shell: Rscript {0}
-    - name: Install knitr
-      run: |
-          dir.create(Sys.getenv("R_LIBS_USER"), recursive = TRUE)
-          .libPaths(Sys.getenv("R_LIBS_USER"))
-          install.packages("knitr")
-      shell: Rscript {0}
-    - name: Write out configuration
-      run: |
-        Rscript -e 'args<-commandArgs(TRUE);knitr::knit_hooks$set(output = function(x, options){gsub("##", ">\n> ", x)});knitr::knit("src/release_info.tpl", sprintf("info/%s-%s.md", args[1], args[2]))' ${{ matrix.label }} abn
-    - name: Save config as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: info-artifact-${{ matrix.label }}
-        path: info/${{ matrix.label }}-abn.md
-
+          mkdir -p info
+          docker run --rm --user 1001 \
+            --volume "$GITHUB_WORKSPACE:/workspace" \
+            --workdir /workspace \
+            local/${{ matrix.label }}/abn:${{ env.CUSTOM_TAG }} \
+            Rscript -e 'cat("R.home(): ", R.home(), "\\n"); stopifnot(requireNamespace("INLA", quietly=TRUE), requireNamespace("rjags", quietly=TRUE), requireNamespace("Rgraphviz", quietly=TRUE)); knitr::knit_hooks$set(output = function(x, options) gsub("##", ">\\n> ", x)); knitr::knit("src/release_info.tpl", sprintf("info/%s-abn.md", "${{ matrix.label }}"))'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: info-artifact-${{ matrix.label }}
+          path: info/${{ matrix.label }}-abn.md
   report_build_check:
     if: ${{ !cancelled() }}
     needs:
-      - check-images
-      - container-integrity-and-config
+      - build
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -448,68 +189,31 @@ jobs:
       - name: Check if on demand tasks succeeded
         run: |
           gh pr edit ${{ env.EVENT }} --remove-label ${{ env.LABEL_CHECK }} --repo ${{ env.OWNER }}/${{ env.REPO }}
-          result="${{ needs.container-integrity-and-config.result }}"
-          # 'skipped' means the dynamic matrix was empty (all allow-failure
-          # builds failed) — treat it the same as success.
-          if [ "$result" == "success" ] || [ "$result" == "skipped" ]; then
+          build_result="${{ needs.build.result }}"
+          gh pr edit ${{ env.EVENT }} --remove-label ${{ env.LABEL_SUCCESS }} --repo ${{ env.OWNER }}/${{ env.REPO }}
+          if [ "$build_result" == "success" ]; then
             gh pr edit ${{ env.EVENT }} --remove-label ${{ env.LABEL_FAILURE }} --repo ${{ env.OWNER }}/${{ env.REPO }}
             gh pr edit ${{ env.EVENT }} --add-label ${{ env.LABEL_SUCCESS }} --repo ${{ env.OWNER }}/${{ env.REPO }}
             echo "### ${{ github.event.label.url }} passed! :rocket:" >> $GITHUB_STEP_SUMMARY
             exit 0
-          elif [ "$result" == "failure" ]; then
-            gh pr edit ${{ env.EVENT }} --remove-label ${{ env.LABEL_SUCCESS }} --repo ${{ env.OWNER }}/${{ env.REPO }}
-            gh pr edit ${{ env.EVENT  }} --add-label ${{ env.LABEL_FAILURE }} --repo ${{ env.OWNER }}/${{ env.REPO }}
+          else
+            gh pr edit ${{ env.EVENT }} --add-label ${{ env.LABEL_FAILURE }} --repo ${{ env.OWNER }}/${{ env.REPO }}
             echo "### ${{ github.event.label.url }} failed!" >> $GITHUB_STEP_SUMMARY
             exit 1
-          else
-            gh pr edit ${{ env.EVENT }} --add-label ${{ env.LABEL_CHECK }} --repo ${{ env.OWNER }}/${{ env.REPO }}
-            echo "Container build task outcome was: ${{ needs.container-integrity-and-config.result }}"
           fi
         shell: bash
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          EVENT: ${{ github.event.number }}  # This is either the issue or pr
-
-  record_existing_label:
-    runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      OWNER: ${{ github.repository_owner }}
-      REPO: ${{ github.event.repository.name }}
-    permissions:
-      contents: write
-      pull-requests: write
-      repository-projects: write
-    outputs:
-      passed: ${{ steps.passed.outputs.PASSED}}
-    steps:
-      - name: Check if the pull request is labeled with ${{ env.LABEL_SUCCESS }}  # 2
-        id: passed
-        run: |
-          if $( gh pr view ${{ env.EVENT }} --repo ${{ env.OWNER }}/${{ env.REPO }} --json "labels" --jq ".[].[].name" | grep --quiet ${{ env.LABEL_SUCCESS }}); then
-            echo "PASSED=true" >> $GITHUB_OUTPUT
-          else
-            echo "PASSED=false" >> $GITHUB_OUTPUT
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           EVENT: ${{ github.event.number }}  # This is either the issue or pr
 
   build_check_passed:
     if: ${{ always() }}
     needs:
-      - record_existing_label
-      - check-images
-      - container-integrity-and-config
+      - build
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      OWNER: ${{ github.repository_owner }}
-      REPO: ${{ github.event.repository.name }}
     steps:
-      - name: Assert that either checks passed or the label is present
+      - name: Assert that all builds passed
         run: |
-          result="${{ needs.container-integrity-and-config.result }}"
-          if [[ "$result" == 'success' || "$result" == 'skipped' || ${{ needs.record_existing_label.outputs.passed }} == 'true' ]]; then
+          build_result="${{ needs.build.result }}"
+          if [[ "$build_result" == 'success' ]]; then
             echo 'The images were built successfully!';
           else exit 1; fi

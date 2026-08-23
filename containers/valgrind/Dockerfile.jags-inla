@@ -1,15 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # SPDX-FileCopyrightText: Copyright 2026 Jonas I. Liechti <j-i-l@t4d.ch>
 
-# Clean INLA image: common system libraries plus INLA, without JAGS or Bioconductor.
-#
-# This image is a reusable sibling of the jags and bioc images.
-
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
-
 LABEL org.opencontainers.image.licenses="GPL-3.0-only" \
       org.opencontainers.image.authors="Jonas I. Liechti <j-i-l@t4d.ch>"
-
 COPY shared/install_inla.sh /tmp/install_inla.sh
 RUN chmod +x /tmp/install_inla.sh && /tmp/install_inla.sh
