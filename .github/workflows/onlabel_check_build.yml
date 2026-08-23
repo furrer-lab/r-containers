@@ -208,25 +208,32 @@ jobs:
         include:
           - label: debian-clang-devel
             dockerfile: debian
+            final_dockerfile: Dockerfile
             compiler: clang
           - label: debian-gcc-devel
             dockerfile: debian
+            final_dockerfile: Dockerfile
             compiler: gcc
           - label: debian-gcc-release
             dockerfile: debian
+            final_dockerfile: Dockerfile
             compiler: gcc
             base_tag: onlabel-check-build-${{ github.run_number }}
           - label: debian-gcc-patched
             dockerfile: debian
+            final_dockerfile: Dockerfile
             compiler: gcc
           - label: fedora-gcc-devel
             dockerfile: fedora
+            final_dockerfile: Dockerfile.abn
             compiler: gcc
           - label: fedora-gcc16-devel
             dockerfile: fedora
+            final_dockerfile: Dockerfile.abn
             compiler: gcc
           - label: fedora-valgrind-gcc-devel
             dockerfile: valgrind
+            final_dockerfile: Dockerfile.abn
             compiler: gcc
     steps:
       - uses: actions/checkout@v4
@@ -239,7 +246,7 @@ jobs:
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
-          file: ./containers/${{ matrix.dockerfile }}/Dockerfile.abn
+          file: ./containers/${{ matrix.dockerfile }}/${{ matrix.final_dockerfile }}
           push: true
           tags: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:${{ env.CUSTOM_TAG }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:latest
