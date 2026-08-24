@@ -80,13 +80,47 @@ if (!requireNamespace("remotes", quietly = TRUE)) {
                    repos = "https://cloud.r-project.org/")
 }
 
+repos <- c(
+  CRAN = "https://cloud.r-project.org/",
+  INLA = "https://inlabru-org.r-universe.dev/"
+)
+
+inla_dir <- tempfile("INLA-")
+dir.create(inla_dir)
+on.exit(unlink(inla_dir, recursive = TRUE), add = TRUE)
+utils::untar("/tmp/INLA.tar.gz", exdir = inla_dir)
+
+# rlang >= 1.2.0 uses R_envSymbols(), which is not available in the
+# R-devel snapshot used by the Fedora images. Install the last compatible
+# release first so dependency resolution does not select the broken version.
+if (grepl("Under development", R.version$status, fixed = TRUE)) {
+  message(">>> Pinning rlang to 1.1.7 for R-devel")
+  remotes::install_version(
+    "rlang",
+    version = "1.1.7",
+    lib = .Library,
+    upgrade = "never",
+    repos = repos
+  )
+}
+
+message(">>> Installing INLA dependency chain")
+remotes::install_deps(
+  file.path(inla_dir, "INLA"),
+  dependencies = NA,
+  upgrade = "never",
+  lib = .Library,
+  repos = repos
+)
+
+message(">>> Installing INLA without re-resolving dependencies")
 remotes::install_local(
   "/tmp/INLA.tar.gz",
   lib = .Library,
-  dependencies = NA,
+  dependencies = FALSE,
   upgrade = "never",
   build = FALSE,
-  repos = "https://cloud.r-project.org/"
+  repos = repos
 )
 
 if (!requireNamespace("INLA", quietly = TRUE)) {
