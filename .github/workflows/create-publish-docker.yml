@@ -695,7 +695,7 @@ jobs:
       contents: write
       packages: read
     container:
-      image: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:${{ needs.increment-tag.outputs.VERSION }}
+      image: ${{ vars.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:${{ needs.increment-tag.outputs.VERSION }}
       options: --user 1001
       credentials:
         username: ${{ github.actor }}
@@ -768,7 +768,12 @@ jobs:
     - name: Update the archive
       run: |
         mkdir -p info/archive/${{ needs.increment-tag.outputs.VERSION }}
-        cp info/*.md info/archive/${{ needs.increment-tag.outputs.VERSION }}/
+        reports=(info/*.md)
+        if [ "${reports[0]}" = "info/*.md" ]; then
+          echo "No container reports were generated."
+          exit 1
+        fi
+        cp "${reports[@]}" info/archive/${{ needs.increment-tag.outputs.VERSION }}/
     - name: Commit config for container
       uses: EndBug/add-and-commit@v9
       env:

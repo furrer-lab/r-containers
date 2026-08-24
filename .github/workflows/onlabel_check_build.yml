@@ -29,6 +29,7 @@ jobs:
   # Each matrix runner builds the complete stack locally. No image is pushed
   # and no intermediate image is shared through the registry.
   build:
+    if: ${{ github.event.label.name == 'build::check' }}
     runs-on: ubuntu-latest
     env:
       BUILDKIT_PROGRESS: plain
@@ -154,7 +155,7 @@ jobs:
           name: info-artifact-${{ matrix.label }}
           path: info/${{ matrix.label }}-abn.md
   report_build_check:
-    if: ${{ !cancelled() }}
+    if: ${{ github.event.label.name == 'build::check' && !cancelled() }}
     needs:
       - build
     runs-on: ubuntu-latest
@@ -188,7 +189,7 @@ jobs:
           EVENT: ${{ github.event.number }}  # This is either the issue or pr
 
   build_check_passed:
-    if: ${{ always() }}
+    if: ${{ github.event.label.name == 'build::check' && always() }}
     needs:
       - build
     runs-on: ubuntu-latest
