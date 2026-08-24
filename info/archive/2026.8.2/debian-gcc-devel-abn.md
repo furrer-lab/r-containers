@@ -4,7 +4,7 @@
 # Configuration
 
 >
->  R Under development (unstable) (2026-08-22 r90443)
+>  R Under development (unstable) (2026-04-13 r89874)
 >
 >  Platform: x86_64-pc-linux-gnu
 >
@@ -184,7 +184,7 @@
 |numDeriv          |2016.8-1.1  |
 |openssl           |2.4.2       |
 |otel              |0.2.0       |
-|pak               |0.11.1.9000 |
+|pak               |0.11.1      |
 |pbkrtest          |0.5.5       |
 |pillar            |1.11.1      |
 |pkgbuild          |1.4.8       |

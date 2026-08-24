@@ -4,11 +4,11 @@
 # Configuration
 
 >
->  R Under development (unstable) (2026-08-22 r90443)
+>  R version 4.6.1 RC (2026-06-18 r90185)
 >
 >  Platform: x86_64-pc-linux-gnu
 >
->  Running under: Ubuntu 22.04.5 LTS
+>  Running under: Ubuntu 24.04.4 LTS
 >
 >  
 >
@@ -16,19 +16,23 @@
 >
 >  BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
 >
->  LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0
+>  LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
 >
 >  
 >
 >  locale:
 >
->   [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+>   [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C              
 >
->   [4] LC_COLLATE=C           LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+>   [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=C              
 >
->   [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+>   [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
 >
->  [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+>   [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
+>
+>   [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+>
+>  [11] LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
 >
 >  
 >
@@ -46,7 +50,7 @@
 >
 >  loaded via a namespace (and not attached):
 >
->  [1] compiler_4.7.0 cli_3.6.6      tools_4.7.0    otel_0.2.0     knitr_1.51    
+>  [1] compiler_4.6.1 cli_3.6.6      tools_4.6.1    otel_0.2.0     knitr_1.51    
 >
 >  [6] xfun_0.60      rlang_1.3.0    evaluate_1.0.5
 
@@ -58,9 +62,9 @@
 |                  |Version     |
 |:-----------------|:-----------|
 |knitr             |1.51        |
-|BiocGenerics      |0.59.12     |
+|BiocGenerics      |0.58.1      |
 |BiocManager       |1.30.27     |
-|BiocVersion       |3.24.0      |
+|BiocVersion       |3.23.1      |
 |DBI               |1.3.0       |
 |DT                |0.34.0      |
 |Deriv             |4.3.0       |
@@ -77,7 +81,7 @@
 |RcppArmadillo     |15.4.2-1    |
 |RcppEigen         |0.3.4.0.2   |
 |Rdpack            |2.6.6       |
-|Rgraphviz         |2.57.0      |
+|Rgraphviz         |2.56.0      |
 |RhpcBLASctl       |0.23-42     |
 |S7                |0.2.2       |
 |TMB               |1.9.25      |
@@ -145,7 +149,7 @@
 |gitcreds          |0.1.2       |
 |glmmTMB           |1.1.14      |
 |glue              |1.8.1       |
-|graph             |1.91.0      |
+|graph             |1.90.0      |
 |gridGraphics      |0.5-1       |
 |gtable            |0.3.6       |
 |hexSticker        |0.5.1       |
@@ -184,7 +188,7 @@
 |numDeriv          |2016.8-1.1  |
 |openssl           |2.4.2       |
 |otel              |0.2.0       |
-|pak               |0.11.1.9000 |
+|pak               |0.11.1      |
 |pbkrtest          |0.5.5       |
 |pillar            |1.11.1      |
 |pkgbuild          |1.4.8       |
