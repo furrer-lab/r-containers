@@ -11,7 +11,7 @@
 #   - R is on PATH
 #   - .Library is writable
 #   - CRAN mirror is configured in Rprofile / Rprofile.site
-set -e
+set -euo pipefail
 
 echo ">>> Verifying .Library is writable"
 R -e "if (file.access(.Library, 2) != 0) stop('.Library is not writable: ', .Library)"
@@ -25,21 +25,48 @@ install_inla_from_repo() {
   local repo_tag=$1
   local inla_repo="https://inla.r-inla-download.org/R/${repo_tag}/src/contrib"
   local inla_version
+  local packages_file
 
   echo ">>> Trying INLA from ${repo_tag} ..."
-  inla_version=$(curl -fsSL -A "$USER_AGENT" "$inla_repo/PACKAGES" |
-    awk '/^Package:/ {pkg=$2} pkg=="INLA" && /^Version:/ {print $2}' |
-    sort -V | tail -n 1)
+  packages_file=$(mktemp)
+  if ! curl -fsSL \
+    --retry 5 \
+    --retry-delay 2 \
+    --retry-all-errors \
+    --connect-timeout 30 \
+    --max-time 120 \
+    -A "$USER_AGENT" \
+    -o "$packages_file" \
+    "$inla_repo/PACKAGES"; then
+    echo "Failed to fetch the INLA package index from ${repo_tag}."
+    rm -f "$packages_file"
+    return 1
+  fi
+
+  inla_version=$(awk '/^Package:/ {pkg=$2} pkg=="INLA" && /^Version:/ {print $2}' \
+    "$packages_file" | sort -V | tail -n 1)
+  rm -f "$packages_file"
 
   if [ -z "$inla_version" ]; then
-    echo "Failed to fetch INLA version from ${repo_tag}."
+    echo "INLA package index from ${repo_tag} did not contain a version."
     return 1
   fi
 
   echo ">>> Found highest INLA version: ${inla_version} in ${repo_tag}. Downloading..."
   rm -f /tmp/INLA.tar.gz
-  curl -fsSL -A "$USER_AGENT" -o /tmp/INLA.tar.gz \
-    "$inla_repo/INLA_${inla_version}.tar.gz"
+  if ! curl -fsSL \
+    --retry 5 \
+    --retry-delay 2 \
+    --retry-all-errors \
+    --connect-timeout 30 \
+    --max-time 300 \
+    -A "$USER_AGENT" \
+    -o /tmp/INLA.tar.gz \
+    "$inla_repo/INLA_${inla_version}.tar.gz"; then
+    echo "Failed to download INLA ${inla_version} from ${repo_tag}."
+    rm -f /tmp/INLA.tar.gz
+    return 1
+  fi
 
   if [ ! -s /tmp/INLA.tar.gz ]; then
     echo "Failed to download INLA tarball from ${repo_tag}."
