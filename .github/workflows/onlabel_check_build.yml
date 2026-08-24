@@ -44,31 +44,13 @@ jobs:
             compiler: clang
             rhub_image: ubuntu-clang
             r_version: devel
-          - label: debian-gcc-devel
-            dockerfile: debian
-            final_dockerfile: Dockerfile
-            compiler: gcc
-            rhub_image: ubuntu-gcc12
-            r_version: devel
           - label: debian-gcc-release
             dockerfile: debian
             final_dockerfile: Dockerfile
             compiler: gcc
             rhub_image: ubuntu-release
             r_version: release
-          - label: debian-gcc-patched
-            dockerfile: debian
-            final_dockerfile: Dockerfile
-            compiler: gcc
-            rhub_image: ubuntu-next
-            r_version: patched
           - label: fedora-gcc-devel
-            dockerfile: fedora
-            final_dockerfile: Dockerfile.abn
-            compiler: gcc
-            rhub_image: gcc15
-            r_version: devel
-          - label: fedora-gcc16-devel
             dockerfile: fedora
             final_dockerfile: Dockerfile.abn
             compiler: gcc

@@ -49,37 +49,39 @@ docker run --rm -it --user 1001 \
 
 ## Container variants
 
-All containers are built on top of [R-hub base images](https://r-hub.github.io/containers/containers.html) and published to the GitHub Container Registry (GHCR).
+This repository wraps a selected set of [R-hub base images](https://r-hub.github.io/containers/containers.html) with the system libraries and R packages needed by `abn`. The R-hub image is the build and runtime foundation; the images published by this repository are derived images and are not aliases for the R-hub images.
 
-| Container | Base image | OS | Compiler | R version | JAGS | Notes |
+| Published variant | R-hub base image | OS | Compiler | R version | JAGS | Notes |
 |-----------|------------|----|----------|-----------|------|-------|
-| `debian-clang-devel` | `rhub/ubuntu-clang` | Ubuntu 22.04 | clang | devel | system package | |
-| `debian-gcc-devel` | `rhub/ubuntu-gcc12` | Ubuntu 22.04 | gcc 12 | devel | system package | |
-| `debian-gcc-release` | `rhub/ubuntu-release` | Ubuntu 24.04 | gcc | release | system package | recommended for general use |
-| `debian-gcc-patched` | `rhub/ubuntu-next` | Ubuntu 22.04 | gcc | patched | system package | |
-| `fedora-gcc-devel` | `rhub/gcc15` | Fedora | gcc 15 | devel | built from source | allow-failure |
-| `fedora-gcc16-devel` | `rhub/gcc16` | Fedora | gcc 16 | devel | built from source | allow-failure |
-| `fedora-valgrind-gcc-devel` | `rhub/valgrind` | Fedora-based Valgrind environment | gcc | devel | built from source | includes Valgrind + DrMemory |
+| `debian-clang-devel` | `ghcr.io/r-hub/containers/ubuntu-clang:latest` | Ubuntu | clang | development | system package | |
+| `debian-gcc-release` | `ghcr.io/r-hub/containers/ubuntu-release:latest` | Ubuntu | gcc | release | system package | recommended for general use |
+| `fedora-gcc-devel` | `ghcr.io/r-hub/containers/gcc16:latest` | Fedora | gcc 16 | development | built from source | |
+| `fedora-valgrind-gcc-devel` | `ghcr.io/r-hub/containers/valgrind:latest` | Fedora-based Valgrind environment | gcc | development | built from source | includes Valgrind + DrMemory |
+
+The three variants labelled `-devel` use R-hub development images. The
+`debian-gcc-release` variant intentionally uses the R-hub release image.
+
+These are the only R-hub bases wrapped and published by this repository. We do
+not publish derived images for other R-hub bases, including `ubuntu-gcc16`,
+`ubuntu-next`, `ubuntu-gcc12`, or the retired `gcc15` image.
 
 Images are available at:
 
 ```
-ghcr.io/furrer-lab/r-containers/<container>/abn:<tag>
+ghcr.io/furrer-lab/r-containers/<variant>/<layer>:<tag>
 ```
 
 ### Published image matrix
 
 The links below point to the corresponding GitHub Container Registry package.
-All published images receive both the release tag and `latest`.
+Each variant publishes the seven layers listed below, and all production images
+receive both the release tag and `latest`.
 
 | Variant | `syslibs` | `jags` | `inla` | `bioc` | `jags-inla` | `jags-inla-bioc` | `abn` |
 |---|---|---|---|---|---|---|---|
 | `debian-clang-devel` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-clang-devel%2Fabn) |
-| `debian-gcc-devel` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-devel%2Fabn) |
 | `debian-gcc-release` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-release%2Fabn) |
-| `debian-gcc-patched` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Fdebian-gcc-patched%2Fabn) |
 | `fedora-gcc-devel` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc-devel%2Fabn) |
-| `fedora-gcc16-devel` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-gcc16-devel%2Fabn) |
 | `fedora-valgrind-gcc-devel` | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Fsyslibs) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Fjags) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Finla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Fbioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Fjags-inla) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Fjags-inla-bioc) | [package](https://github.com/furrer-lab/r-containers/pkgs/container/r-containers%2Ffedora-valgrind-gcc-devel%2Fabn) |
 
 For efficiency, images within each variant are based on one another where
@@ -113,8 +115,8 @@ Containers are rebuilt automatically on two triggers:
 The pipeline has four stages:
 
 1. **`increment-tag`** — generates a [calver](https://calver.org/) version tag (`YYYY.MM.N`, e.g., `2025.4.1`)
-2. **`build-and-push`** — builds all container variants and Debian component/stacked images, then pushes them to GHCR
-3. **`check-images`** — probes the registry to determine which images were successfully pushed (handles `allow-failure` containers gracefully)
+2. **Layered build jobs** — build and push the four container variants and their component/stacked images to GHCR
+3. **`check-images`** — probes the registry to determine which final images were successfully pushed
 4. **`container-integrity-and-config`** — pulls each available image, runs it as `--user 1001`, generates `sessionInfo()` and installed-package reports, and commits the results to the `info/` directory
 
 ### PR checks (`onlabel_check_build.yml`)
@@ -136,7 +138,7 @@ r-containers/
 │   ├── create-publish-docker.yml   # Main CI: build, push, and verify containers
 │   └── onlabel_check_build.yml     # PR check: build containers on label trigger
 ├── containers/
-│   ├── debian/Dockerfile           # Final Debian/Ubuntu abn image
+│   ├── debian/Dockerfile           # Final Debian/Ubuntu image
 │   ├── debian/Dockerfile.syslibs   # Common Debian/Ubuntu system base
 │   ├── debian/Dockerfile.jags      # Reusable JAGS/rjags image
 │   ├── debian/Dockerfile.inla      # Reusable INLA image
@@ -212,7 +214,6 @@ The following GitHub Actions repository variables are used:
 | `DRMEMORY` | DrMemory version for the valgrind container |
 | `CHGLOG_RELEASE` | git-chglog release version |
 | `CHGLOG_PATH` | git-chglog binary path |
-| `CONTAINER_SOURCE` | Registry path prefix for pulling images in integrity checks |
 
 ## License
 
