@@ -88,6 +88,15 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          annotations: |
+            org.opencontainers.image.description=R-hub-based image with system libraries for R packages.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -95,6 +104,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs:latest
           cache-to: type=inline
           build-args: |
@@ -131,6 +141,15 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          annotations: |
+            org.opencontainers.image.description=R-hub-based image with JAGS and rjags.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -138,6 +157,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags:latest
           cache-to: type=inline
           build-args: |
@@ -173,6 +193,15 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          annotations: |
+            org.opencontainers.image.description=R-hub-based image with INLA.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -180,6 +209,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla:latest
           cache-to: type=inline
           build-args: |
@@ -215,6 +245,15 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          annotations: |
+            org.opencontainers.image.description=R-hub-based image with Bioconductor packages.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -222,6 +261,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc:latest
           cache-to: type=inline
           build-args: |
@@ -257,6 +297,15 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          annotations: |
+            org.opencontainers.image.description=R-hub-based image with JAGS, rjags, and INLA.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -264,6 +313,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla:latest
           cache-to: type=inline
           build-args: |
@@ -299,6 +349,15 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          annotations: |
+            org.opencontainers.image.description=R-hub-based image with JAGS, INLA, and Bioconductor packages.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -306,6 +365,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla-bioc:latest
           cache-to: type=inline
           build-args: |
@@ -343,6 +403,22 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          labels: |
+            org.opencontainers.image.description=abn container with R package development tooling and resolved dependencies.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+          annotations: |
+            org.opencontainers.image.description=abn container with R package development tooling and resolved dependencies.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -350,6 +426,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:latest
           cache-to: type=inline
           build-args: |
@@ -396,6 +473,15 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          annotations: |
+            org.opencontainers.image.description=R-hub-based image with system libraries for R packages.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -403,6 +489,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:latest
           cache-to: type=inline
           build-args: |
@@ -445,6 +532,15 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          annotations: |
+            org.opencontainers.image.description=R-hub-based image with JAGS and rjags.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -452,6 +548,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags:latest
           cache-to: type=inline
           build-args: |
@@ -485,6 +582,15 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          annotations: |
+            org.opencontainers.image.description=R-hub-based image with INLA.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -492,6 +598,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla:latest
           cache-to: type=inline
           build-args: BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs:${{ env.CUSTOM_TAG }}
@@ -522,6 +629,15 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          annotations: |
+            org.opencontainers.image.description=R-hub-based image with Bioconductor packages.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -529,6 +645,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc:latest
           cache-to: type=inline
           build-args: BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs:${{ env.CUSTOM_TAG }}
@@ -559,6 +676,15 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          annotations: |
+            org.opencontainers.image.description=R-hub-based image with JAGS, rjags, and INLA.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -566,6 +692,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla:latest
           cache-to: type=inline
           build-args: BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags:${{ env.CUSTOM_TAG }}
@@ -596,6 +723,15 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          annotations: |
+            org.opencontainers.image.description=R-hub-based image with JAGS, INLA, and Bioconductor packages.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -603,6 +739,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla-bioc:latest
           cache-to: type=inline
           build-args: BASE_IMAGE=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla:${{ env.CUSTOM_TAG }}
@@ -635,6 +772,22 @@ jobs:
           tags: |
             type=raw,value=${{ env.CUSTOM_TAG }}
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          labels: |
+            org.opencontainers.image.description=abn container with R package development tooling and resolved dependencies.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+          annotations: |
+            org.opencontainers.image.description=abn container with R package development tooling and resolved dependencies.
+            org.opencontainers.image.source=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.documentation=https://github.com/furrer-lab/r-containers
+            org.opencontainers.image.vendor=Furrer Lab
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: ./containers/
@@ -642,6 +795,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn:latest
           cache-to: type=inline
           build-args: |

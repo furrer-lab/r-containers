@@ -3,6 +3,13 @@
 
 ARG R_VERSION=devel
 FROM ghcr.io/r-hub/containers/valgrind:latest
+
+LABEL org.opencontainers.image.description="R-hub-based image with system libraries for R packages." \
+      org.opencontainers.image.licenses="GPL-3.0-only" \
+      org.opencontainers.image.authors="Jonas I. Liechti <j-i-l@t4d.ch>" \
+      org.opencontainers.image.source="https://github.com/furrer-lab/r-containers" \
+      org.opencontainers.image.documentation="https://github.com/furrer-lab/r-containers" \
+      org.opencontainers.image.vendor="Furrer Lab"
 LABEL org.opencontainers.image.licenses="GPL-3.0-only" \
       org.opencontainers.image.authors="Jonas I. Liechti <j-i-l@t4d.ch>"
 ARG DRMEMORY
