@@ -49,25 +49,33 @@ docker run --rm -it --user 1001 \
 
 ## Container variants
 
-All containers are built on top of [R-hub base images](https://r-hub.github.io/containers/containers.html) and published to the GitHub Container Registry (GHCR).
+This repository wraps a selected set of [R-hub base images](https://r-hub.github.io/containers/containers.html) with the system libraries and R packages needed by `abn`. The R-hub image is the build and runtime foundation; the images published by this repository are derived images and are not aliases for the R-hub images.
 
-| Container | Base image | OS | Compiler | R version | JAGS | Notes |
+| Published variant | R-hub base image | OS | Compiler | R version | JAGS | Notes |
 |-----------|------------|----|----------|-----------|------|-------|
-| `debian-clang-devel` | `ghcr.io/r-hub/containers/ubuntu-clang:latest` | Ubuntu | clang | devel | system package | |
+| `debian-clang-devel` | `ghcr.io/r-hub/containers/ubuntu-clang:latest` | Ubuntu | clang | development | system package | |
 | `debian-gcc-release` | `ghcr.io/r-hub/containers/ubuntu-release:latest` | Ubuntu | gcc | release | system package | recommended for general use |
-| `fedora-gcc-devel` | `ghcr.io/r-hub/containers/gcc16:latest` | Fedora | gcc 16 | devel | built from source | |
-| `fedora-valgrind-gcc-devel` | `ghcr.io/r-hub/containers/valgrind:latest` | Fedora-based Valgrind environment | gcc | devel | built from source | includes Valgrind + DrMemory |
+| `fedora-gcc-devel` | `ghcr.io/r-hub/containers/gcc16:latest` | Fedora | gcc 16 | development | built from source | |
+| `fedora-valgrind-gcc-devel` | `ghcr.io/r-hub/containers/valgrind:latest` | Fedora-based Valgrind environment | gcc | development | built from source | includes Valgrind + DrMemory |
+
+The three variants labelled `-devel` use R-hub development images. The
+`debian-gcc-release` variant intentionally uses the R-hub release image.
+
+These are the only R-hub bases wrapped and published by this repository. We do
+not publish derived images for other R-hub bases, including `ubuntu-gcc16`,
+`ubuntu-next`, `ubuntu-gcc12`, or the retired `gcc15` image.
 
 Images are available at:
 
 ```
-ghcr.io/furrer-lab/r-containers/<container>/abn:<tag>
+ghcr.io/furrer-lab/r-containers/<variant>/<layer>:<tag>
 ```
 
 ### Published image matrix
 
 The links below point to the corresponding GitHub Container Registry package.
-All published images receive both the release tag and `latest`.
+Each variant publishes the seven layers listed below, and all production images
+receive both the release tag and `latest`.
 
 | Variant | `syslibs` | `jags` | `inla` | `bioc` | `jags-inla` | `jags-inla-bioc` | `abn` |
 |---|---|---|---|---|---|---|---|
@@ -130,7 +138,7 @@ r-containers/
 │   ├── create-publish-docker.yml   # Main CI: build, push, and verify containers
 │   └── onlabel_check_build.yml     # PR check: build containers on label trigger
 ├── containers/
-│   ├── debian/Dockerfile           # Final Debian/Ubuntu abn image
+│   ├── debian/Dockerfile           # Final Debian/Ubuntu image
 │   ├── debian/Dockerfile.syslibs   # Common Debian/Ubuntu system base
 │   ├── debian/Dockerfile.jags      # Reusable JAGS/rjags image
 │   ├── debian/Dockerfile.inla      # Reusable INLA image
@@ -206,7 +214,6 @@ The following GitHub Actions repository variables are used:
 | `DRMEMORY` | DrMemory version for the valgrind container |
 | `CHGLOG_RELEASE` | git-chglog release version |
 | `CHGLOG_PATH` | git-chglog binary path |
-| `CONTAINER_SOURCE` | Registry path prefix for pulling images in integrity checks |
 
 ## License
 
