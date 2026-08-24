@@ -110,7 +110,7 @@
 |credentials       |2.0.3       |
 |crosstalk         |1.2.2       |
 |curl              |7.1.0       |
-|data.table        |1.18.4      |
+|data.table        |1.18.6.1    |
 |desc              |1.4.3       |
 |devtools          |2.5.2       |
 |diffobj           |0.3.8       |
