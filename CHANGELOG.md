@@ -1,3 +1,14 @@
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<!-- SPDX-FileCopyrightText: Copyright 2026 Jonas I. Liechti <j-i-l@t4d.ch> -->
+
+
+<a name="2026.8.2"></a>
+## [2026.8.2](https://github.com/furrer-lab/r-containers/compare/2026.8.1...2026.8.2) (2026-08-24)
+
+### Feature
+
+* multi-layered container builds ([#64](https://github.com/furrer-lab/r-containers/issues/64))
+
 
 <a name="2026.8.1"></a>
 ## [2026.8.1](https://github.com/furrer-lab/r-containers/compare/2026.4.5...2026.8.1) (2026-08-19)
