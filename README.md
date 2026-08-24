@@ -55,7 +55,7 @@ All containers are built on top of [R-hub base images](https://r-hub.github.io/c
 |-----------|------------|----|----------|-----------|------|-------|
 | `debian-clang-devel` | `ghcr.io/r-hub/containers/ubuntu-clang:latest` | Ubuntu | clang | devel | system package | |
 | `debian-gcc-release` | `ghcr.io/r-hub/containers/ubuntu-release:latest` | Ubuntu | gcc | release | system package | recommended for general use |
-| `fedora-gcc-devel` | `ghcr.io/r-hub/containers/gcc15:latest` | Fedora | gcc 15 | devel | built from source | |
+| `fedora-gcc-devel` | `ghcr.io/r-hub/containers/gcc16:latest` | Fedora | gcc 16 | devel | built from source | |
 | `fedora-valgrind-gcc-devel` | `ghcr.io/r-hub/containers/valgrind:latest` | Fedora-based Valgrind environment | gcc | devel | built from source | includes Valgrind + DrMemory |
 
 Images are available at:

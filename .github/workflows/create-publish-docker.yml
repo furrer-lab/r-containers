@@ -374,7 +374,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - rhub-image: gcc15
+          - rhub-image: gcc16
             label: fedora-gcc-devel
             r-version: devel
           - rhub-image: valgrind
@@ -425,7 +425,7 @@ jobs:
       matrix:
         include:
           - label: fedora-gcc-devel
-            rhub-image: gcc15
+            rhub-image: gcc16
             compiler: gcc
           - label: fedora-valgrind-gcc-devel
             rhub-image: valgrind

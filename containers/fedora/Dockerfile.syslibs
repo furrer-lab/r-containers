@@ -4,7 +4,7 @@
 # Fedora system-library base. JAGS is installed in the jags layer.
 
 ARG R_VERSION
-ARG RHUB_IMAGE=gcc15
+ARG RHUB_IMAGE=gcc16
 FROM ghcr.io/r-hub/containers/${RHUB_IMAGE}:latest
 
 LABEL org.opencontainers.image.licenses="GPL-3.0-only" \

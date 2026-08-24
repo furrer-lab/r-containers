@@ -54,7 +54,7 @@ jobs:
             dockerfile: fedora
             final_dockerfile: Dockerfile.abn
             compiler: gcc
-            rhub_image: gcc15
+            rhub_image: gcc16
             r_version: devel
           - label: fedora-valgrind-gcc-devel
             dockerfile: valgrind
