@@ -90,20 +90,6 @@ dir.create(inla_dir)
 on.exit(unlink(inla_dir, recursive = TRUE), add = TRUE)
 utils::untar("/tmp/INLA.tar.gz", exdir = inla_dir)
 
-# rlang >= 1.2.0 uses R_envSymbols(), which is not available in the
-# R-devel snapshot used by the Fedora images. Install the last compatible
-# release first so dependency resolution does not select the broken version.
-if (grepl("Under development", R.version$status, fixed = TRUE)) {
-  message(">>> Pinning rlang to 1.1.7 for R-devel")
-  remotes::install_version(
-    "rlang",
-    version = "1.1.7",
-    lib = .Library,
-    upgrade = "never",
-    repos = repos
-  )
-}
-
 message(">>> Installing INLA dependency chain")
 remotes::install_deps(
   file.path(inla_dir, "INLA"),
