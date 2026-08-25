@@ -8,15 +8,12 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
-LABEL org.opencontainers.image.description="R-hub-based image with JAGS and rjags." \
-      org.opencontainers.image.licenses="GPL-3.0-only" \
-      org.opencontainers.image.authors="Jonas I. Liechti <j-i-l@t4d.ch>" \
-      org.opencontainers.image.source="https://github.com/furrer-lab/r-containers" \
-      org.opencontainers.image.documentation="https://github.com/furrer-lab/r-containers" \
-      org.opencontainers.image.vendor="Furrer Lab"
-
-LABEL org.opencontainers.image.licenses="GPL-3.0-only" \
-      org.opencontainers.image.authors="Jonas I. Liechti <j-i-l@t4d.ch>"
+LABEL org.opencontainers.image.description="R-hub-based image with JAGS and rjags."
+LABEL org.opencontainers.image.licenses="GPL-3.0-only"
+LABEL org.opencontainers.image.authors="Jonas I. Liechti <j-i-l@t4d.ch>"
+LABEL org.opencontainers.image.source="https://github.com/furrer-lab/r-containers"
+LABEL org.opencontainers.image.documentation="https://github.com/furrer-lab/r-containers"
+LABEL org.opencontainers.image.vendor="Furrer Lab"
 
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install-recommends \
   jags \

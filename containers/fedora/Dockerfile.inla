@@ -4,13 +4,12 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
-LABEL org.opencontainers.image.description="R-hub-based image with INLA." \
-      org.opencontainers.image.licenses="GPL-3.0-only" \
-      org.opencontainers.image.authors="Jonas I. Liechti <j-i-l@t4d.ch>" \
-      org.opencontainers.image.source="https://github.com/furrer-lab/r-containers" \
-      org.opencontainers.image.documentation="https://github.com/furrer-lab/r-containers" \
-      org.opencontainers.image.vendor="Furrer Lab"
-LABEL org.opencontainers.image.licenses="GPL-3.0-only" \
-      org.opencontainers.image.authors="Jonas I. Liechti <j-i-l@t4d.ch>"
+LABEL org.opencontainers.image.description="R-hub-based image with INLA."
+LABEL org.opencontainers.image.licenses="GPL-3.0-only"
+LABEL org.opencontainers.image.authors="Jonas I. Liechti <j-i-l@t4d.ch>"
+LABEL org.opencontainers.image.source="https://github.com/furrer-lab/r-containers"
+LABEL org.opencontainers.image.documentation="https://github.com/furrer-lab/r-containers"
+LABEL org.opencontainers.image.vendor="Furrer Lab"
+
 COPY shared/install_inla.sh /tmp/install_inla.sh
 RUN chmod +x /tmp/install_inla.sh && /tmp/install_inla.sh
