@@ -17,7 +17,7 @@ LABEL org.opencontainers.image.vendor="Furrer Lab"
 ARG R_VERSION
 
 RUN dnf -y upgrade && dnf -y install \
-  cmake git openssh-clients gcc-gfortran pkgconf libpkgconf-devel \
+  cmake autoconf automake git openssh-clients gcc-gfortran pkgconf libpkgconf-devel \
   openssl-devel libcurl-devel libuv-devel \
   fontconfig-devel harfbuzz-devel fribidi-devel freetype-devel \
   libpng-devel libtiff-devel libjpeg-devel libwebp-devel libxml2-devel \
