@@ -138,7 +138,7 @@ r-containers/
 │   ├── create-publish-docker.yml   # Main CI: build, push, and verify containers
 │   └── onlabel_check_build.yml     # PR check: build containers on label trigger
 ├── containers/
-│   ├── debian/Dockerfile           # Final Debian/Ubuntu image
+│   ├── debian/Dockerfile.abn       # Final Debian/Ubuntu image
 │   ├── debian/Dockerfile.syslibs   # Common Debian/Ubuntu system base
 │   ├── debian/Dockerfile.jags      # Reusable JAGS/rjags image
 │   ├── debian/Dockerfile.inla      # Reusable INLA image

@@ -82,7 +82,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs
           tags: |
@@ -96,14 +96,13 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
           file: ./containers/debian/Dockerfile.syslibs
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs:latest
           cache-to: type=inline
@@ -135,7 +134,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags
           tags: |
@@ -149,14 +148,13 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
           file: ./containers/debian/Dockerfile.jags
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags:latest
           cache-to: type=inline
@@ -187,7 +185,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla
           tags: |
@@ -201,14 +199,13 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
           file: ./containers/debian/Dockerfile.inla
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla:latest
           cache-to: type=inline
@@ -239,7 +236,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc
           tags: |
@@ -253,14 +250,13 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
           file: ./containers/debian/Dockerfile.bioc
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc:latest
           cache-to: type=inline
@@ -291,7 +287,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla
           tags: |
@@ -305,14 +301,13 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
           file: ./containers/debian/Dockerfile.jags-inla
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla:latest
           cache-to: type=inline
@@ -343,7 +338,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla-bioc
           tags: |
@@ -357,14 +352,13 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
           file: ./containers/debian/Dockerfile.jags-inla-bioc
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla-bioc:latest
           cache-to: type=inline
@@ -397,7 +391,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn
           tags: |
@@ -418,11 +412,11 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
-          file: ./containers/debian/Dockerfile
+          file: ./containers/debian/Dockerfile.abn
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -467,7 +461,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/syslibs
           tags: |
@@ -481,8 +475,8 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
           file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.syslibs
@@ -526,7 +520,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags
           tags: |
@@ -540,14 +534,13 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
           file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags:latest
           cache-to: type=inline
@@ -576,7 +569,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla
           tags: |
@@ -590,14 +583,13 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
           file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.inla
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/inla:latest
           cache-to: type=inline
@@ -623,7 +615,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc
           tags: |
@@ -637,14 +629,13 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
           file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.bioc
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/bioc:latest
           cache-to: type=inline
@@ -670,7 +661,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla
           tags: |
@@ -684,14 +675,13 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
           file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags-inla
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla:latest
           cache-to: type=inline
@@ -717,7 +707,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla-bioc
           tags: |
@@ -731,14 +721,13 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
           file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.jags-inla-bioc
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/jags-inla-bioc:latest
           cache-to: type=inline
@@ -766,7 +755,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
         with:
           images: ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/${{ matrix.label }}/abn
           tags: |
@@ -787,8 +776,8 @@ jobs:
             org.opencontainers.image.licenses=GPL-3.0-only
             org.opencontainers.image.authors=Jonas I. Liechti <j-i-l@t4d.ch>
         env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
-      - uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+      - uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
           context: ./containers/
           file: ./containers/${{ matrix.label == 'fedora-valgrind-gcc-devel' && 'valgrind' || 'fedora' }}/Dockerfile.abn
