@@ -2,6 +2,14 @@
 <!-- SPDX-FileCopyrightText: Copyright 2026 Jonas I. Liechti <j-i-l@t4d.ch> -->
 
 
+<a name="2026.8.3"></a>
+## [2026.8.3](https://github.com/furrer-lab/r-containers/compare/2026.8.2...2026.8.3) (2026-08-24)
+
+### Feature
+
+* add annotations and descriptions
+
+
 <a name="2026.8.2"></a>
 ## [2026.8.2](https://github.com/furrer-lab/r-containers/compare/2026.8.1...2026.8.2) (2026-08-24)
 
