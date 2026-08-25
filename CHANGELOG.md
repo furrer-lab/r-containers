@@ -2,6 +2,14 @@
 <!-- SPDX-FileCopyrightText: Copyright 2026 Jonas I. Liechti <j-i-l@t4d.ch> -->
 
 
+<a name="2026.8.4"></a>
+## [2026.8.4](https://github.com/furrer-lab/r-containers/compare/2026.8.3...2026.8.4) (2026-08-25)
+
+### Feature
+
+* ship autoconf and automake with fedora
+
+
 <a name="2026.8.3"></a>
 ## [2026.8.3](https://github.com/furrer-lab/r-containers/compare/2026.8.2...2026.8.3) (2026-08-24)
 
