@@ -2,6 +2,10 @@
 <!-- SPDX-FileCopyrightText: Copyright 2026 Jonas I. Liechti <j-i-l@t4d.ch> -->
 
 
+<a name="2026.10.1"></a>
+## [2026.10.1](https://github.com/furrer-lab/r-containers/compare/2026.8.4...2026.10.1) (2026-10-02)
+
+
 <a name="2026.8.4"></a>
 ## [2026.8.4](https://github.com/furrer-lab/r-containers/compare/2026.8.3...2026.8.4) (2026-08-25)
 
