@@ -124,4 +124,22 @@ else
   exit 1
 fi
 
+echo ">>> Smoke-testing INLA binary (fails build if inla.mkl cannot run)"
+Rscript --vanilla - <<'RSCRIPT'
+library(INLA)
+set.seed(1)
+d <- data.frame(y = rnorm(100), x = rnorm(100))
+m <- inla(y ~ x, data = d, family = "gaussian")
+if (is.null(m$summary.fixed)) {
+  stop("INLA smoke test failed: inla() returned no results (binary mismatch?)")
+}
+cat(">>> INLA smoke test passed (INLA", as.character(packageVersion("INLA")), ")\n")
+RSCRIPT
+
+# The smoke test above runs INLA as root, which materializes the runtime
+# wrapper (inla.mkl.run) in the package directory owner-executable only.
+# Images are consumed with --user 1001, so open up the INLA bin tree.
+INLA_BIN=$(R -s -e 'cat(system.file("bin", package = "INLA"))')
+chmod -R a+rX "$INLA_BIN"
+
 echo ">>> INLA installation complete"

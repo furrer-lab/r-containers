@@ -67,7 +67,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - rhub-image: ubuntu-clang
+          - rhub-image: debian-clang
             label: debian-clang-devel
             r-version: devel
           - rhub-image: ubuntu-release

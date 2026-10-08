@@ -53,7 +53,7 @@ This repository wraps a selected set of [R-hub base images](https://r-hub.github
 
 | Published variant | R-hub base image | OS | Compiler | R version | JAGS | Notes |
 |-----------|------------|----|----------|-----------|------|-------|
-| `debian-clang-devel` | `ghcr.io/r-hub/containers/ubuntu-clang:latest` | Ubuntu | clang | development | system package | |
+| `debian-clang-devel` | `ghcr.io/r-hub/containers/debian-clang:latest` | Debian trixie | clang | development | system package | matches CRAN's `debian-clang` check flavor |
 | `debian-gcc-release` | `ghcr.io/r-hub/containers/ubuntu-release:latest` | Ubuntu | gcc | release | system package | recommended for general use |
 | `fedora-gcc-devel` | `ghcr.io/r-hub/containers/gcc16:latest` | Fedora | gcc 16 | development | built from source | |
 | `fedora-valgrind-gcc-devel` | `ghcr.io/r-hub/containers/valgrind:latest` | Fedora-based Valgrind environment | gcc | development | built from source | includes Valgrind + DrMemory |
@@ -62,8 +62,9 @@ The three variants labelled `-devel` use R-hub development images. The
 `debian-gcc-release` variant intentionally uses the R-hub release image.
 
 These are the only R-hub bases wrapped and published by this repository. We do
-not publish derived images for other R-hub bases, including `ubuntu-gcc16`,
-`ubuntu-next`, `ubuntu-gcc12`, or the retired `gcc15` image.
+not publish derived images for other R-hub bases, including `ubuntu-clang`
+(Ubuntu 22.04, glibc 2.35 — incompatible with current INLA binaries),
+`ubuntu-gcc16`, `ubuntu-next`, `ubuntu-gcc12`, or the retired `gcc15` image.
 
 Images are available at:
 
