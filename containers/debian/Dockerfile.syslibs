@@ -8,7 +8,7 @@
 # This layer changes rarely, so it is a high-value caching boundary.
 
 ARG R_VERSION
-ARG RHUB_IMAGE=ubuntu-clang
+ARG RHUB_IMAGE=debian-clang
 
 # Use the mapped R-hub image name from the workflow
 FROM ghcr.io/r-hub/containers/${RHUB_IMAGE}:latest
@@ -91,10 +91,6 @@ ENV PATH="/opt/R/$R_VERSION/bin:${PATH}"
 ENV R_LIBS_USER=" "
 # Prevent renv auto-activation when cloning repos that contain .Rprofile
 ENV RENV_CONFIG_AUTOLOADER_ENABLED=false
-
-# Configure clang C++ compilation environment
-ENV CPLUS_INCLUDE_PATH="/usr/include/c++/13:/usr/include/x86_64-linux-gnu/c++/13"
-ENV C_INCLUDE_PATH="/usr/include"
 
 # Set CRAN mirror (must happen before any R package installs)
 RUN R_HOME=$(R RHOME) && \

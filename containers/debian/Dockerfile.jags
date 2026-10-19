@@ -20,4 +20,15 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   && rm -rf /var/lib/apt/lists/*
 
 # Install rjags against the system JAGS installation.
-RUN R -e "install.packages('rjags', lib=.Library); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
+# Debian's libjags.so is built against libstdc++, but the r-hub debian-clang
+# base forces -stdlib=libc++ via ~/.R/Makevars, breaking the ABI. Compile
+# rjags with clang against libstdc++ by stripping the libc++ flag for this
+# install only; bases without the flag are unaffected.
+RUN if [ -f /root/.R/Makevars ] && grep -q 'stdlib=libc++' /root/.R/Makevars; then \
+      sed 's/ -stdlib=libc++//g' /root/.R/Makevars > /tmp/rjags-Makevars && \
+      R_MAKEVARS_USER=/tmp/rjags-Makevars \
+        R -e "install.packages('rjags', lib=.Library); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')" && \
+      rm /tmp/rjags-Makevars; \
+    else \
+      R -e "install.packages('rjags', lib=.Library); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"; \
+    fi
