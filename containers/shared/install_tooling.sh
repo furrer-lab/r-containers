@@ -13,6 +13,7 @@
 #   - R is on PATH
 #   - .Library is writable
 #   - CRAN mirror is configured in Rprofile / Rprofile.site
+#   - pak is installed and PKG_SYSREQS is enabled (the R-hub bases provide both)
 set -e
 
 echo ">>> Verifying .Library is writable"
@@ -21,10 +22,30 @@ R -e "if (file.access(.Library, 2) != 0) stop('.Library is not writable: ', .Lib
 echo ">>> Verifying CRAN mirror is configured"
 R -e "if (is.null(getOption('repos')['CRAN']) || getOption('repos')['CRAN'] == '@CRAN@') stop('CRAN mirror not configured. Set it up in the Dockerfile before running this script.')"
 
+# --- Fortran compiler workaround -----------------------------------------
+# R-hub's debian-clang base uses flang-23, which does not accept
+# -fvisibility=hidden. R sets F_VISIBILITY and packages such as igraph
+# forward it to Fortran. The user Makevars is read after Makeconf and the
+# package Makevars, so this overrides the flag without patching packages.
+if R CMD config FC 2>/dev/null | grep -q flang; then
+  echo ">>> Detected flang; disabling F_VISIBILITY for Fortran packages"
+  makevars="${R_MAKEVARS_USER:-$HOME/.R/Makevars}"
+  if [ -f "$makevars" ]; then
+    cp "$makevars" /tmp/R-Makevars
+  else
+    : > /tmp/R-Makevars
+  fi
+  printf '\nF_VISIBILITY =\n' >> /tmp/R-Makevars
+  export R_MAKEVARS_USER=/tmp/R-Makevars
+fi
+
 # --- Helper: install a CRAN package into .Library and verify it loaded ---
+# pak resolves both R package dependencies and system requirements declared
+# in SystemRequirements (e.g. gdtools -> libcairo2-dev). The R-hub bases set
+# PKG_SYSREQS=true, so system packages are installed automatically as root.
 install_r_pkg() {
   echo ">>> Installing R package: $1"
-  R -e "install.packages('$1', lib=.Library); if (!requireNamespace('$1', quietly=TRUE)) stop('Failed to install: $1')"
+  R -e "pak::pkg_install('$1', lib=.Library); if (!requireNamespace('$1', quietly=TRUE)) stop('Failed to install: $1')"
 }
 
 # --- Development tooling ---
@@ -58,7 +79,7 @@ git clone --depth=1 "https://${REPO_PATH}" target
 cd target/
 
 echo ">>> Installing remaining package dependencies"
-R -e "package <- desc::desc()\$get_field('Package'); pckgs <- unique(renv::dependencies('${PACKAGE_PATH}')[,'Package']); pres_pckgs <- installed.packages()[,'Package']; missing <- pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)]; if (length(missing) > 0) { cat('Installing:', paste(missing, collapse=', '), '\n'); install.packages(missing, lib=.Library) } else { cat('No additional dependencies to install.\n') }"
+R -e "package <- desc::desc()\$get_field('Package'); pckgs <- unique(renv::dependencies('${PACKAGE_PATH}')[,'Package']); pres_pckgs <- installed.packages()[,'Package']; missing <- pckgs[!(pckgs %in% pres_pckgs) & !(pckgs == package)]; if (length(missing) > 0) { cat('Installing:', paste(missing, collapse=', '), '\n'); pak::pkg_install(missing, lib=.Library) } else { cat('No additional dependencies to install.\n') }"
 
 # --- Verify all dependencies installed ---
 echo ">>> Verifying all dependencies are installed"
