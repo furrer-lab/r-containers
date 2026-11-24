@@ -27,4 +27,8 @@ RUN if [ "$COMPILER" = "clang" ]; then \
       --libdir=/usr/local/lib64 \
     && make && make install
 ENV LD_LIBRARY_PATH="/usr/local/lib64:${LD_LIBRARY_PATH}"
-RUN R -e "install.packages('rjags', lib=.Library, configure.args='--enable-rpath'); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"
+# rjags 5.x requires JAGS >= 5.0.0. JAGS 5 is not packaged by the supported
+# distributions and this image builds JAGS 4.x from source. Pin rjags 4-17,
+# the last release compatible with JAGS 4.x.y.
+RUN R -e "install.packages('coda', lib=.Library); if (!requireNamespace('coda', quietly=TRUE)) stop('Failed to install: coda')"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/rjags/rjags_4-17.tar.gz', repos=NULL, type='source', lib=.Library, configure.args='--enable-rpath'); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"

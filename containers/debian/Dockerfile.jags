@@ -19,6 +19,11 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
   jags \
   && rm -rf /var/lib/apt/lists/*
 
+# rjags 5.x requires JAGS >= 5.0.0, which is not yet packaged by Debian
+# trixie (the system package is JAGS 4.3.2). Pin rjags 4-17 from CRAN
+# Archive, the last release compatible with JAGS 4.x.y.
+RUN R -e "install.packages('coda', lib=.Library); if (!requireNamespace('coda', quietly=TRUE)) stop('Failed to install: coda')"
+
 # Install rjags against the system JAGS installation.
 # Debian's libjags.so is built against libstdc++, but the r-hub debian-clang
 # base forces -stdlib=libc++ via ~/.R/Makevars, breaking the ABI. Compile
@@ -27,8 +32,8 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y --no-install
 RUN if [ -f /root/.R/Makevars ] && grep -q 'stdlib=libc++' /root/.R/Makevars; then \
       sed 's/ -stdlib=libc++//g' /root/.R/Makevars > /tmp/rjags-Makevars && \
       R_MAKEVARS_USER=/tmp/rjags-Makevars \
-        R -e "install.packages('rjags', lib=.Library); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')" && \
+        R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/rjags/rjags_4-17.tar.gz', repos=NULL, type='source', lib=.Library); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')" && \
       rm /tmp/rjags-Makevars; \
     else \
-      R -e "install.packages('rjags', lib=.Library); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"; \
+      R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/rjags/rjags_4-17.tar.gz', repos=NULL, type='source', lib=.Library); if (!requireNamespace('rjags', quietly=TRUE)) stop('Failed to install: rjags')"; \
     fi
