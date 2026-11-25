@@ -4,11 +4,11 @@
 # Configuration
 
 >
->  R version 4.6.1 (2026-06-24)
+>  R version 4.6.2 (2026-10-29)
 >
 >  Platform: x86_64-pc-linux-gnu
 >
->  Running under: Ubuntu 24.04.5 LTS
+>  Running under: Ubuntu 26.04.1 LTS
 >
 >  
 >
@@ -16,7 +16,7 @@
 >
 >  BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
 >
->  LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+>  LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.32.so;  LAPACK version 3.12.0
 >
 >  
 >
@@ -50,9 +50,9 @@
 >
 >  loaded via a namespace (and not attached):
 >
->  [1] compiler_4.6.1 cli_3.6.6      tools_4.6.1    otel_0.2.0     knitr_1.52    
+>  [1] compiler_4.6.2 cli_3.6.6      tools_4.6.2    otel_0.3.0     knitr_1.52    
 >
->  [6] xfun_0.61      rlang_1.3.0    evaluate_1.0.5
+>  [6] xfun_0.62      rlang_1.3.0    evaluate_1.0.5
 
 
 # Installed packages
@@ -67,7 +67,7 @@
 |BiocVersion       |3.23.1      |
 |DBI               |1.3.0       |
 |DT                |0.34.0      |
-|Deriv             |4.3.5       |
+|Deriv             |4.3.6       |
 |INLA              |26.08.07    |
 |MatrixModels      |0.5-4       |
 |R.cache           |0.17.0      |
@@ -79,18 +79,19 @@
 |RColorBrewer      |1.1-3       |
 |RTMB              |2.0         |
 |Rcpp              |1.1.2       |
-|RcppArmadillo     |15.6.0-1    |
+|RcppArmadillo     |15.8.0-1    |
 |RcppEigen         |0.3.4.0.2   |
 |Rdpack            |2.6.6       |
 |Rgraphviz         |2.56.0      |
 |RhpcBLASctl       |0.23-42     |
-|S7                |0.2.2       |
+|S7                |1.0.0       |
 |TMB               |1.9.25      |
 |akima             |0.6-3.6     |
 |askpass           |1.2.1       |
 |backports         |1.5.1       |
 |base64enc         |0.1-6       |
 |bnlearn           |5.2.1       |
+|bookdown          |0.48        |
 |brew              |1.0-10      |
 |brglm             |0.7.3       |
 |brio              |1.1.5       |
@@ -102,19 +103,19 @@
 |cli               |3.6.6       |
 |clipr             |0.8.1       |
 |coda              |0.19-4.1    |
-|colorspace        |2.1-3       |
+|colorspace        |2.1-4       |
 |commonmark        |2.0.0       |
-|covr              |3.6.5       |
+|covr              |4.0.0       |
 |cowplot           |1.2.0       |
 |cpp11             |0.5.5       |
 |crayon            |1.5.3       |
 |credentials       |2.0.3       |
 |crosstalk         |1.2.2       |
-|curl              |8.0.0       |
+|curl              |8.2.0       |
 |data.table        |1.18.6.1    |
 |desc              |1.4.3       |
 |devtools          |2.5.2       |
-|diffobj           |0.3.9       |
+|diffobj           |0.3.10      |
 |digest            |0.6.39      |
 |doBy              |4.7.2       |
 |doParallel        |1.0.17      |
@@ -128,8 +129,8 @@
 |fansi             |1.0.7       |
 |farver            |2.1.2       |
 |fastmap           |1.2.0       |
-|fields            |17.3        |
-|fmesher           |0.8.0.9004  |
+|fields            |18.0        |
+|fmesher           |0.8.0.9005  |
 |fontBitstreamVera |0.1.1       |
 |fontLiberation    |0.1.0       |
 |fontawesome       |0.5.3       |
@@ -138,14 +139,14 @@
 |forecast          |9.0.2       |
 |fracdiff          |1.5-4       |
 |fs                |2.1.0       |
-|gdtools           |0.5.1       |
+|gdtools           |0.6.0       |
 |generics          |0.1.4       |
-|gert              |2.4.1       |
-|ggfun             |0.2.1       |
-|ggimage           |0.3.6       |
-|ggiraph           |0.9.6       |
-|ggplot2           |4.0.3       |
-|ggplotify         |0.1.3       |
+|gert              |2.5.0       |
+|ggfun             |0.2.2       |
+|ggimage           |0.3.8       |
+|ggiraph           |0.9.7       |
+|ggplot2           |4.0.4       |
+|ggplotify         |0.1.4       |
 |gh                |1.6.1       |
 |gitcreds          |0.1.2       |
 |glmmTMB           |1.1.15.2    |
@@ -159,8 +160,8 @@
 |htmltools         |0.5.9       |
 |htmlwidgets       |1.6.4       |
 |httpuv            |1.6.17      |
-|httr              |1.4.9       |
 |httr2             |1.3.0       |
+|igraph            |2.3.4       |
 |ini               |0.3.1       |
 |isoband           |0.3.0       |
 |iterators         |1.0.14      |
@@ -172,24 +173,25 @@
 |later             |1.4.8       |
 |lazyeval          |0.2.3       |
 |lifecycle         |1.0.5       |
-|lme4              |2.0-6       |
+|lme4              |2.1-0       |
 |lmtest            |0.9-40      |
 |magick            |2.9.1       |
 |magrittr          |2.0.5       |
-|maps              |3.4.3       |
+|maps              |3.4.4       |
 |mclogit           |0.9.15      |
 |memisc            |0.99.31.8.3 |
 |memoise           |2.0.1       |
 |mime              |0.13        |
 |miniUI            |0.1.2       |
 |minqa             |1.2.8       |
+|mockery           |0.4.5       |
 |modelr            |0.1.11      |
 |moments           |0.14.1      |
 |nloptr            |2.2.1       |
 |numDeriv          |2016.8-1.1  |
-|openssl           |2.4.2       |
-|otel              |0.2.0       |
-|pak               |0.11.1      |
+|openssl           |2.6.0       |
+|otel              |0.3.0       |
+|pak               |0.11.2      |
 |pbkrtest          |0.5.5       |
 |pillar            |1.11.1      |
 |pkgbuild          |1.4.8       |
@@ -199,7 +201,7 @@
 |plyr              |1.8.9       |
 |praise            |1.0.0       |
 |prettyunits       |1.2.0       |
-|processx          |3.9.0       |
+|processx          |3.10.0      |
 |profileModel      |0.6.2       |
 |profvis           |0.4.0       |
 |promises          |1.5.0       |
@@ -213,27 +215,27 @@
 |rdtools           |0.1.0       |
 |reformulas        |0.4.4       |
 |remotes           |2.5.0       |
-|renv              |1.3.0       |
+|renv              |1.3.1       |
 |reshape2          |1.4.5       |
 |rex               |1.2.2       |
 |rjags             |4-17        |
 |rlang             |1.3.0       |
 |rmarkdown         |2.32        |
-|roxygen2          |8.1.0       |
+|roxygen2          |8.1.1       |
 |rprojroot         |2.1.1       |
 |rstudioapi        |0.19.0      |
 |rversions         |3.0.0       |
 |s2                |1.1.13      |
 |sandwich          |3.1-3       |
-|sass              |0.4.10      |
+|sass              |0.5.0       |
 |scales            |1.4.0       |
 |sessioninfo       |1.2.4       |
 |sf                |1.1-3       |
-|shiny             |1.14.0      |
+|shiny             |1.15.0      |
 |showtext          |0.9-8       |
 |showtextdb        |3.0         |
 |sourcetools       |0.1.7-2     |
-|sp                |2.2-3       |
+|sp                |2.2-4       |
 |spam              |2.11-4      |
 |splancs           |2.01-45     |
 |stringi           |1.8.9       |
@@ -241,9 +243,9 @@
 |svglite           |2.2.2       |
 |sys               |3.4.3       |
 |sysfonts          |0.8.9       |
-|systemfonts       |1.3.2       |
+|systemfonts       |1.3.4       |
 |testthat          |3.3.2       |
-|textshaping       |1.0.5       |
+|textshaping       |1.1.0       |
 |tibble            |3.3.1       |
 |tidyr             |1.3.2       |
 |tidyselect        |1.2.1       |
@@ -257,15 +259,16 @@
 |vctrs             |0.7.3       |
 |viridisLite       |0.4.3       |
 |waldo             |0.6.2       |
+|watcher           |0.2.2       |
 |whisker           |0.4.1       |
 |withr             |3.0.3       |
 |wk                |0.9.5       |
-|xfun              |0.61        |
+|xfun              |0.62        |
 |xml2              |1.6.0       |
 |xopen             |1.0.1       |
 |xtable            |1.8-8       |
 |yaml              |2.3.12      |
-|yulab.utils       |0.2.5       |
+|yulab.utils       |0.2.6       |
 |zip               |3.0.2       |
 |zoo               |1.9-1       |
 
