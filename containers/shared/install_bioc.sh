@@ -8,6 +8,7 @@
 #   - R is on PATH
 #   - .Library is writable
 #   - CRAN mirror is configured in Rprofile / Rprofile.site
+#   - pak is installed and PKG_SYSREQS is enabled (the R-hub bases provide both)
 set -e
 
 echo ">>> Verifying .Library is writable"
@@ -16,10 +17,7 @@ R -e "if (file.access(.Library, 2) != 0) stop('.Library is not writable: ', .Lib
 echo ">>> Verifying CRAN mirror is configured"
 R -e "if (is.null(getOption('repos')['CRAN']) || getOption('repos')['CRAN'] == '@CRAN@') stop('CRAN mirror not configured. Set it up in the Dockerfile before running this script.')"
 
-echo ">>> Installing BiocManager"
-R -e "install.packages('BiocManager', lib=.Library); if (!requireNamespace('BiocManager', quietly=TRUE)) stop('Failed to install: BiocManager')"
-
-echo ">>> Installing Rgraphviz (Bioconductor)"
-R -e "BiocManager::install('Rgraphviz', lib=.Library); if (!requireNamespace('Rgraphviz', quietly=TRUE)) stop('Failed to install: Rgraphviz')"
+echo ">>> Installing BiocManager and Rgraphviz"
+R -e "pak::pkg_install(c('BiocManager', 'bioc::Rgraphviz'), lib=.Library); if (!requireNamespace('BiocManager', quietly=TRUE)) stop('Failed to install: BiocManager'); if (!requireNamespace('Rgraphviz', quietly=TRUE)) stop('Failed to install: Rgraphviz')"
 
 echo ">>> Bioconductor installation complete"
